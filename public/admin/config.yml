@@ -1,0 +1,24 @@
+backend:
+  name: github
+  repo: Olmikaya/olmikaya
+  branch: main
+  base_url: https://olmikaya.pages.dev
+  auth_endpoint: /api/auth
+
+media_folder: "public/uploads"
+public_folder: "/uploads"
+
+collections:
+  - name: "stories"
+    label: "Stories"
+    folder: "src/content/stories"
+    create: true
+    slug: "{{slug}}"
+    fields:
+      - { label: "Title", name: "title", widget: "string" }
+      - { label: "Description / Excerpt", name: "description", widget: "text" }
+      - { label: "Publication Date", name: "pubDate", widget: "datetime" }
+      - { label: "Category", name: "category", widget: "select", options: ["People", "Spaces", "Objects", "Table", "Culture", "Field Notes"] }
+      - { label: "Featured Story", name: "featured", widget: "boolean", default: false }
+      - { label: "Cover Image", name: "heroImage", widget: "image", required: false }
+      - { label: "Body Content", name: "body", widget: "markdown" }
