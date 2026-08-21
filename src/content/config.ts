@@ -5,7 +5,7 @@ const stories = defineCollection({
   schema: z.object({
     title: z.string().default("Untitled Story"),
     description: z.string().optional().nullable().transform((v) => v || ""),
-    pubDate: z.any().optional().nullable(),
+    pubDate: z.union([z.string(), z.date()]).optional().nullable(),
     category: z.string().optional().nullable().transform((v) => v || "People"),
     heroImage: z.string().optional().nullable().transform((v) => v || ""),
   }),
