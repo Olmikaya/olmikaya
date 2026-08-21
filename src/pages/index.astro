@@ -12,31 +12,63 @@ import { SITE_TITLE, SITE_DESCRIPTION } from '../consts';
 	</head>
 	<body>
 		<Header />
-		
-		<main class="container">
-			<section class="hero-teaser">
-				<p class="section-label">Volume I</p>
-				<h2>Home of Ordinary Living Made Intentional</h2>
+
+		<main class="container-editorial">
+			<!-- Section 1: Asymmetric Assembled Grid -->
+			<section class="asymmetric-grid">
+				<div class="col-left">
+					<article class="card">
+						<div class="img-wrapper ratio-4-3">
+							<img src="https://images.unsplash.com/photo-1540555700478-4be289fbecef?q=80&w=800&auto=format&fit=crop" alt="Farm table" />
+						</div>
+						<span class="date">10.04.26</span>
+						<h3>Farm-to-Table Delights: Rediscovering the Joy of Locally Sourced Food</h3>
+					</article>
+
+					<article class="card">
+						<div class="img-wrapper ratio-1-1">
+							<img src="https://images.unsplash.com/photo-1513519245088-0e12902e5a38?q=80&w=800&auto=format&fit=crop" alt="Pears on linen" />
+						</div>
+						<span class="date">12.01.26</span>
+						<h3>Expressing Creativity: Unleashing the Artist Within</h3>
+					</article>
+				</div>
+
+				<div class="col-center">
+					<article class="card featured-center">
+						<div class="img-wrapper ratio-tall">
+							<img src="https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?q=80&w=1000&auto=format&fit=crop" alt="Interior light shadow" />
+						</div>
+						<span class="date">12.01.26</span>
+						<h2>Finding Balance: The Art of Cultivating a Healthy Lifestyle</h2>
+						<p class="excerpt">In the fast-paced world we live in, finding balance can often feel like an elusive pursuit. However, it is through the art of cultivating a healthy lifestyle that we can achieve grounding...</p>
+					</article>
+				</div>
+
+				<div class="col-right">
+					<article class="card">
+						<div class="img-wrapper ratio-1-1">
+							<img src="https://images.unsplash.com/photo-1507652313519-d4e9174996dd?q=80&w=800&auto=format&fit=crop" alt="Still life glass object" />
+						</div>
+						<span class="date">06.12.25</span>
+						<h3>The Power of Gratitude: Cultivating Appreciation in Everyday Life</h3>
+					</article>
+
+					<article class="card">
+						<div class="img-wrapper ratio-4-3">
+							<img src="https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?q=80&w=800&auto=format&fit=crop" alt="Hands holding glass" />
+						</div>
+						<span class="date">15.12.25</span>
+						<h3>Sustainable Skincare: Ethical Practices for a Healthier Planet and Complexion</h3>
+					</article>
+				</div>
 			</section>
 
-			<section class="editorial-grid">
-				<article class="grid-card">
-					<p class="card-category">People</p>
-					<h3>Crafting Space with Purpose</h3>
-					<p class="card-excerpt">A look into intentional living environments across East Africa.</p>
-				</article>
-
-				<article class="grid-card">
-					<p class="card-category">Spaces</p>
-					<h3>Architectural Balance</h3>
-					<p class="card-excerpt">How light, materials, and form establish tranquility at home.</p>
-				</article>
-
-				<article class="grid-card">
-					<p class="card-category">Objects</p>
-					<h3>Functional Permanence</h3>
-					<p class="card-excerpt">Everyday items built to age with grace and longevity.</p>
-				</article>
+			<!-- Editorial Quote Banner Section -->
+			<section class="banner-quote">
+				<blockquote>
+					"Our magazine is a vibrant tapestry of articles, features, and stories that explore diverse aspects of lifestyle, including wellness, travel, fashion, art, food, and relationships. We aim to create a space where readers can find inspiration, practical tips, and thought-provoking insights to enhance their overall well-being and cultivate a life that aligns with their values and aspirations."
+				</blockquote>
 			</section>
 		</main>
 
@@ -45,53 +77,72 @@ import { SITE_TITLE, SITE_DESCRIPTION } from '../consts';
 </html>
 
 <style>
-	.hero-teaser {
-		text-align: center;
-		padding: 4rem 1rem 3rem;
-		max-width: 800px;
-		margin: 0 auto;
-	}
-	.section-label {
-		font-family: var(--font-heading);
-		text-transform: uppercase;
-		letter-spacing: 0.2em;
-		font-size: 0.75rem;
-		color: var(--color-muted);
-		margin-bottom: 0.75rem;
-	}
-	.hero-teaser h2 {
-		font-size: 2.25rem;
-		line-height: 1.3;
-	}
-	.editorial-grid {
+	.asymmetric-grid {
 		display: grid;
-		grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-		gap: 2rem;
-		padding-bottom: 5rem;
+		grid-template-columns: 1fr 1.25fr 1fr;
+		gap: 2.5rem;
+		padding: 3rem 0;
 	}
-	.grid-card {
-		background: var(--color-card-bg);
-		padding: 2rem;
-		border: 1px solid var(--color-border);
-		transition: transform 0.2s ease, box-shadow 0.2s ease;
+	.card {
+		margin-bottom: 2.5rem;
 	}
-	.grid-card:hover {
-		transform: translateY(-2px);
-	}
-	.card-category {
-		font-family: var(--font-heading);
-		font-size: 0.7rem;
-		text-transform: uppercase;
-		letter-spacing: 0.15em;
-		color: var(--color-muted);
+	.img-wrapper {
+		width: 100%;
+		background-color: #EFECE6;
+		overflow: hidden;
 		margin-bottom: 0.75rem;
 	}
-	.grid-card h3 {
-		font-size: 1.35rem;
+	.img-wrapper img {
+		width: 100%;
+		height: 100%;
+		object-fit: cover;
+		display: block;
+	}
+	.ratio-4-3 { aspect-ratio: 4/3; }
+	.ratio-1-1 { aspect-ratio: 1/1; }
+	.ratio-tall { aspect-ratio: 3/4; }
+
+	.date {
+		font-size: 0.7rem;
+		color: #8C8A85;
+		display: block;
+		margin-bottom: 0.35rem;
+	}
+	h2 {
+		font-size: 1.75rem;
 		margin-bottom: 0.5rem;
 	}
-	.card-excerpt {
-		font-size: 0.9rem;
-		color: var(--color-muted);
+	h3 {
+		font-size: 1.15rem;
+		line-height: 1.35;
+	}
+	.excerpt {
+		font-size: 0.825rem;
+		line-height: 1.5;
+		color: #666460;
+		margin-top: 0.5rem;
+	}
+
+	/* Editorial Banner Styling */
+	.banner-quote {
+		background-color: var(--color-sand);
+		padding: 4rem 3rem;
+		margin: 2rem 0 4rem;
+		text-align: center;
+	}
+	blockquote {
+		font-family: var(--font-heading);
+		font-size: 1.4rem;
+		font-style: italic;
+		line-height: 1.6;
+		max-width: 1000px;
+		margin: 0 auto;
+		color: var(--color-burgundy);
+	}
+
+	@media (max-width: 900px) {
+		.asymmetric-grid {
+			grid-template-columns: 1fr;
+		}
 	}
 </style>

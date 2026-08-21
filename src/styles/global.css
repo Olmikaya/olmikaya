@@ -1,17 +1,22 @@
-@import url('https://fonts.googleapis.com/css2?family=Ovo&family=Cinzel:wght@400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Ovo&family=Inter:wght@300;400;500;600&family=Cinzel:wght@400;500&display=swap');
 
 :root {
-  /* Olmikaya Color Palette */
-  --color-bg: #FAF9F6;          /* Off-white / Warm Linen background */
-  --color-text: #1C1C1C;        /* Deep Charcoal text */
-  --color-accent: #33322E;      /* Soft Off-Black accent */
-  --color-muted: #7A7873;       /* Muted Warm Grey */
-  --color-border: #E5E3DF;      /* Light Subtle Border */
-  --color-card-bg: #FFFFFF;     /* Pure White Card Accent */
+  /* Brand Color Palette */
+  --color-red: #BF2426;
+  --color-burgundy: #521D20;
+  --color-green: #283B30;
+  --color-rust: #8D3E25;
+  --color-charcoal: #1C1C1A;
+  --color-sky: #A8C4D8;
+  --color-sand: #F5EDD8;
+  --color-bg: #FAF8F5;
+  --color-white: #FFFFFF;
+  --color-border: #E0DDD7;
 
-  /* Editorial Typography Defaults */
-  --font-heading: 'The Seasons', 'Cinzel', 'Ovo', serif;
-  --font-body: 'Ovo', Georgia, serif;
+  /* Typography Rules */
+  --font-heading: 'Ovo', serif;
+  --font-subheading: 'The Seasons', 'Cinzel', 'Ovo', serif;
+  --font-body: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
 }
 
 * {
@@ -22,28 +27,34 @@
 
 body {
   background-color: var(--color-bg);
-  color: var(--color-text);
+  color: var(--color-charcoal);
   font-family: var(--font-body);
-  line-height: 1.7;
+  line-height: 1.6;
   -webkit-font-smoothing: antialiased;
 }
 
-/* Typography Hierarchy */
-h1, h2, h3, h4 {
+/* Headings (Ovo for Large Display Text) */
+h1, h2, h3, .heading-xl, .heading-lg {
   font-family: var(--font-heading);
   font-weight: 400;
-  color: var(--color-text);
-  letter-spacing: 0.05em;
+  color: var(--color-charcoal);
+  line-height: 1.15;
 }
 
 p {
-  color: var(--color-text);
-  font-size: 1rem;
+  font-family: var(--font-body);
+  font-size: 0.875rem;
+  color: #4A4A46;
 }
 
-/* Common Layout Wrappers */
-.container {
-  max-width: 1200px;
+/* Container Structure */
+.container-editorial {
+  max-width: 1320px;
   margin: 0 auto;
-  padding: 0 1.5rem;
+  padding: 0 2rem;
+}
+
+/* Utility Rule for Thin Borders */
+.border-divider {
+  border-bottom: 1px solid var(--color-border);
 }
