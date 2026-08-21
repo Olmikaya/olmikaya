@@ -12,7 +12,7 @@ export async function onRequestGet(context) {
     body: JSON.stringify({
       client_id: env.GITHUB_CLIENT_ID,
       client_secret: env.GITHUB_CLIENT_SECRET,
-      code,
+      code: code,
     }),
   });
 
@@ -23,7 +23,7 @@ export async function onRequestGet(context) {
     <script>
       const receiveMessage = (message) => {
         window.opener.postMessage(
-          "authorization:github:success:${JSON.stringify({ token, provider: "github" })}",
+          'authorization:github:success:${JSON.stringify({ token: token, provider: "github" })}',
           message.origin
         );
         window.removeEventListener("message", receiveMessage, false);
