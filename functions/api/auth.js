@@ -1,5 +1,7 @@
-export async function onRequest(context) {
-  const clientId = context.env.GITHUB_CLIENT_ID;
-  const redirectUri = `https://github.com/login/oauth/authorize?client_id=${clientId}&scope=repo`;
-  return Response.redirect(redirectUri, 302);
+export async function onRequestGet(context) {
+  const { env } = context;
+  const client_id = env.GITHUB_CLIENT_ID;
+  
+  const redirectUrl = `https://github.com/login/oauth/authorize?client_id=${client_id}&scope=repo`;
+  return Response.redirect(redirectUrl, 302);
 }

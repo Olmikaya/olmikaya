@@ -1,6 +1,6 @@
 backend:
   name: github
-  repo: Olmikaya/olmikaya
+  repo: YOUR_GITHUB_USERNAME/YOUR_REPO_NAME
   branch: main
   base_url: https://olmikaya.pages.dev
   auth_endpoint: /api/auth
@@ -16,9 +16,6 @@ collections:
     slug: "{{slug}}"
     fields:
       - { label: "Title", name: "title", widget: "string" }
-      - { label: "Description / Excerpt", name: "description", widget: "text" }
-      - { label: "Publication Date", name: "pubDate", widget: "datetime" }
-      - { label: "Category", name: "category", widget: "select", options: ["People", "Spaces", "Objects", "Table", "Culture", "Field Notes"] }
-      - { label: "Featured Story", name: "featured", widget: "boolean", default: false }
-      - { label: "Cover Image", name: "heroImage", widget: "image", required: false }
-      - { label: "Body Content", name: "body", widget: "markdown" }
+      - { label: "Description", name: "description", widget: "text" }
+      - { label: "Pub Date", name: "pubDate", widget: "datetime" }
+      - { label: "Body", name: "body", widget: "markdown" }
