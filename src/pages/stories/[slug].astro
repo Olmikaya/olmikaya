@@ -1,0 +1,110 @@
+---
+import { getCollection } from "astro:content";
+import Header from "../../components/Header.astro";
+import BaseHead from "../../components/BaseHead.astro";
+import Footer from "../../components/Footer.astro";
+
+export async function getStaticPaths() {
+  const posts = await getCollection("stories");
+  return posts.map((post) => ({
+    params: { slug: post.slug },
+    props: post,
+  }));
+}
+
+const post = Astro.props;
+const { Content } = await post.render();
+---
+
+<!html>
+<html lang="en">
+  <head>
+    <BaseHead title={`${post.data.title} | Olmikaya`} description={post.data.description || ""} />
+  </head>
+  <body>
+    <Header />
+
+    <article class="article-container">
+      <header class="article-header">
+        <span class="article-category">{post.data.category}</span>
+        <h1 class="article-title">{post.data.title}</h1>
+        {post.data.pubDate && (
+          <time class="article-date">
+            {new Date(post.data.pubDate).toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" })}
+          </time>
+        )}
+      </header>
+
+      {post.data.heroImage && (
+        <div class="article-hero-img">
+          <img src={post.data.heroImage} alt={post.data.title} />
+        </div>
+      )}
+
+      <main class="article-body">
+        <Content />
+      </main>
+    </article>
+
+    <Footer />
+  </body>
+</html>
+
+<style>
+  .article-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 4rem 1.5rem;
+  }
+  .article-header {
+    text-align: center;
+    margin-bottom: 3rem;
+  }
+  .article-category {
+    font-family: var(--font-seasons);
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.25em;
+    color: var(--olmi-burgundy);
+    display: block;
+    margin-bottom: 1rem;
+  }
+  .article-title {
+    font-family: var(--font-seasons);
+    font-size: 2.75rem;
+    line-height: 1.15;
+    color: var(--olmi-charcoal);
+    margin-bottom: 1rem;
+  }
+  @media (min-width: 768px) {
+    .article-title { font-size: 3.75rem; }
+  }
+  .article-date {
+    font-family: var(--font-seasons);
+    font-size: 0.85rem;
+    color: rgba(42, 42, 40, 0.6);
+    font-style: italic;
+  }
+  .article-hero-img {
+    width: 100%;
+    margin-bottom: 3.5rem;
+  }
+  .article-hero-img img {
+    width: 100%;
+    max-height: 70vh;
+    object-fit: cover;
+  }
+  .article-body {
+    font-family: var(--font-ovo);
+    font-size: 1.125rem;
+    line-height: 1.8;
+  }
+  .article-body :global(p) {
+    margin-bottom: 1.75rem;
+  }
+  .article-body :global(h2) {
+    font-family: var(--font-seasons);
+    font-size: 2rem;
+    margin: 2.5rem 0 1rem;
+  }
+</style>
