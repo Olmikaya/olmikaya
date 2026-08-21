@@ -1,116 +1,183 @@
 ---
-import { getCollection } from 'astro:content';
-import Header from '../components/Header.astro';
-import BaseHead from '../components/BaseHead.astro';
-import Footer from '../components/Footer.astro';
-import { SITE_TITLE, SITE_DESCRIPTION } from '../consts';
+import { getCollection } from "astro:content";
+import Header from "../components/Header.astro";
+import BaseHead from "../components/BaseHead.astro";
+import Footer from "../components/Footer.astro";
+import { SITE_TITLE, SITE_DESCRIPTION } from "../consts";
 
-const rawStories = await getCollection('stories');
-const stories = rawStories.sort((a, b) => {
-	const dateA = a.data.pubDate ? new Date(a.data.pubDate).getTime() : 0;
-	const dateB = b.data.pubDate ? new Date(b.data.pubDate).getTime() : 0;
-	return dateB - dateA;
-});
+let stories = [];
+try {
+  const rawStories = await getCollection("stories");
+  stories = rawStories.sort((a, b) => {
+    const dateA = a.data.pubDate ? new Date(a.data.pubDate).getTime() : 0;
+    const dateB = b.data.pubDate ? new Date(b.data.pubDate).getTime() : 0;
+    return dateB - dateA;
+  });
+} catch (e) {
+  console.error("Collection error:", e);
+}
 
-const featuredStory = stories[0];
-const secondaryStories = stories.slice(1, 4);
+const featuredStory = stories.length > 0 ? stories[0] : null;
+const secondaryStories = stories.length > 1 ? stories.slice(1, 4) : [];
 ---
 
 <!html>
 <html lang="en">
-	<head>
-		<BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION} />
-	</head>
-	<body>
-		<Header />
+  <head>
+    <BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION} />
+  </head>
+  <body>
+    <Header />
 
-		<section class="hero-statement reveal">
-			<h2 class="mantra-title">
-				<span class="line-block">Home of</span>
-				<span class="line-block line-italic">Ordinary Living</span>
-				<span class="line-block">Made Intentional.</span>
-			</h2>
-		</section>
+    <main class="main-wrapper">
+      <section class="hero-statement">
+        <h2 class="mantra-title">
+          <span>Home of</span>
+          <span class="line-italic">Ordinary Living</span>
+          <span>Made Intentional.</span>
+        </h2>
+      </section>
 
-		<main class="container-editorial">
-			{featuredStory ? (
-				<section class="hero-feature reveal">
-					<a href={`/stories/${featuredStory.slug}`} class="editorial-card hero-link">
-						<div class="img-wrap hero-image-container">
-							<img 
-								src={featuredStory.data.heroImage || "https://images.unsplash.com/photo-1610701596007-11502861dcfa?q=80&w=2000&auto=format&fit=crop"} 
-								alt={featuredStory.data.title} 
-								loading="lazy"
-							/>
-							<div class="inner-border-detail"></div>
-						</div>
+      {featuredStory ? (
+        <section class="featured-story">
+          <a href={`/stories/${featuredStory.slug}`} class="story-card-hero">
+            <div class="img-wrap">
+              <img 
+                src={featuredStory.data.heroImage || "https://images.unsplash.com/photo-1610701596007-11502861dcfa?q=80&w=2000&auto=format&fit=crop"} 
+                alt={featuredStory.data.title} 
+              />
+            </div>
+            <div class="hero-content">
+              <span class="category-tag">{featuredStory.data.category || "People"}</span>
+              <h3 class="hero-title">{featuredStory.data.title}</h3>
+              {featuredStory.data.description && <p>{featuredStory.data.description}</p>}
+            </div>
+          </a>
+        </section>
+      ) : (
+        <section class="featured-story">
+          <div class="story-card-hero">
+            <div class="img-wrap">
+              <img src="https://images.unsplash.com/photo-1610701596007-11502861dcfa?q=80&w=2000&auto=format&fit=crop" alt="Ceramic studio" />
+            </div>
+            <div class="hero-content">
+              <span class="category-tag">People &mdash; Nairobi</span>
+              <h3 class="hero-title">The People Making Things Well</h3>
+              <p>Inside the studios of three contemporary ceramicists redefining everyday Kenyan design...</p>
+            </div>
+          </div>
+        </section>
+      )}
 
-						<div class="hero-caption">
-							<span class="tag-label">{featuredStory.data.category || 'People'}</span>
-							<h3 class="hero-heading">{featuredStory.data.title}</h3>
-							{featuredStory.data.description && (
-								<p class="hero-text">{featuredStory.data.description}</p>
-							)}
-							<span class="read-button">Read Story</span>
-						</div>
-					</a>
-				</section>
-			) : (
-				<section class="hero-feature reveal">
-					<a href="/stories" class="editorial-card hero-link">
-						<div class="img-wrap hero-image-container">
-							<img src="https://images.unsplash.com/photo-1610701596007-11502861dcfa?q=80&w=2000&auto=format&fit=crop" alt="Ceramic studio" />
-						</div>
-						<div class="hero-caption">
-							<span class="tag-label">People &mdash; Nairobi</span>
-							<h3 class="hero-heading">The People Making Things Well</h3>
-							<p class="hero-text">Inside the studios of three contemporary ceramicists redefining the texture of everyday Kenyan life...</p>
-							<span class="read-button">Read Story</span>
-						</div>
-					</a>
-				</section>
-			)}
+      <section class="discoveries">
+        <h2 class="section-heading">Latest Discoveries</h2>
+        <div class="grid-container">
+          {secondaryStories.length > 0 ? (
+            secondaryStories.map((story) => (
+              <article class="grid-card">
+                <a href={`/stories/${story.slug}`}>
+                  <div class="img-wrap aspect">
+                    <img src={story.data.heroImage || "https://images.unsplash.com/photo-1542361345-89e58247f2d5?q=80&w=1200&auto=format&fit=crop"} alt={story.data.title} />
+                  </div>
+                  <span class="category-tag">{story.data.category}</span>
+                  <h3 class="card-heading">{story.data.title}</h3>
+                </a>
+              </article>
+            ))
+          ) : (
+            <article class="grid-card">
+              <div class="img-wrap aspect">
+                <img src="https://images.unsplash.com/photo-1542361345-89e58247f2d5?q=80&w=1200&auto=format&fit=crop" alt="Coastal Architecture" />
+              </div>
+              <span class="category-tag">Spaces &mdash; Lamu</span>
+              <h3 class="card-heading">The Quiet Architecture of Swahili Homes</h3>
+            </article>
+          )}
+        </div>
+      </section>
+    </main>
 
-			<section class="discoveries-section">
-				<div class="section-header reveal">
-					<h2 class="section-title">Latest Discoveries</h2>
-					<a href="/stories" class="view-all-link">View All</a>
-				</div>
-
-				<div class="discoveries-grid">
-					{secondaryStories.length > 0 ? (
-						secondaryStories.map((story) => (
-							<article class="reveal editorial-card">
-								<a href={`/stories/${story.slug}`} class="card-link">
-									<div class="img-wrap aspect-4-3">
-										<img src={story.data.heroImage || "https://images.unsplash.com/photo-1542361345-89e58247f2d5?q=80&w=1200&auto=format&fit=crop"} alt={story.data.title} />
-									</div>
-									<div class="card-content">
-										<span class="tag-rust">{story.data.category}</span>
-										<h3 class="card-title-lg">{story.data.title}</h3>
-										{story.data.description && <p class="card-desc">{story.data.description}</p>}
-									</div>
-								</a>
-							</article>
-						))
-					) : (
-						<article class="col-main reveal editorial-card">
-							<a href="/stories" class="card-link">
-								<div class="img-wrap aspect-4-3">
-									<img src="https://images.unsplash.com/photo-1542361345-89e58247f2d5?q=80&w=1200&auto=format&fit=crop" alt="Swahili architecture" />
-								</div>
-								<div class="card-content">
-									<span class="tag-rust">Spaces &mdash; Lamu</span>
-									<h3 class="card-title-lg">The Quiet Architecture of Coastal Swahili Homes</h3>
-									<p class="card-desc">Observing the interplay of light, shadow, and carved plaster in spaces designed for slowness.</p>
-								</div>
-							</a>
-						</article>
-					)}
-				</div>
-			</section>
-		</main>
-
-		<Footer />
-	</body>
+    <Footer />
+  </body>
 </html>
+
+<style>
+  .main-wrapper {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem 6rem;
+  }
+  .hero-statement {
+    text-align: center;
+    padding: 3rem 0;
+  }
+  .mantra-title {
+    font-family: var(--font-seasons, serif);
+    font-size: 2.25rem;
+    line-height: 1.3;
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+  .line-italic {
+    font-style: italic;
+  }
+  .featured-story {
+    margin-bottom: 4rem;
+  }
+  .story-card-hero {
+    display: block;
+    text-decoration: none;
+    color: inherit;
+  }
+  .img-wrap {
+    width: 100%;
+    overflow: hidden;
+    background: #f0f0f0;
+  }
+  .img-wrap img {
+    width: 100%;
+    height: 450px;
+    object-fit: cover;
+    display: block;
+  }
+  .aspect img {
+    height: 260px;
+  }
+  .hero-content {
+    padding: 1.5rem 0;
+  }
+  .category-tag {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    color: #8b263e;
+    font-weight: 600;
+  }
+  .hero-title {
+    font-family: var(--font-seasons, serif);
+    font-size: 2rem;
+    margin: 0.5rem 0;
+  }
+  .section-heading {
+    font-family: var(--font-seasons, serif);
+    font-size: 1.5rem;
+    margin-bottom: 2rem;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 0.5rem;
+  }
+  .grid-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 2rem;
+  }
+  .grid-card a {
+    text-decoration: none;
+    color: inherit;
+  }
+  .card-heading {
+    font-family: var(--font-seasons, serif);
+    font-size: 1.25rem;
+    margin-top: 0.5rem;
+  }
+</style>
