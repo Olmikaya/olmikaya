@@ -9,9 +9,11 @@ export async function getStaticPaths() {
   const allPosts = await getCollection("stories");
 
   return categories.map((cat) => {
-    const filtered = allPosts.filter(
-      (post) => (post.data.category || "").toLowerCase().replace(/\s+/g, "-") === cat
-    );
+    const filtered = allPosts.filter((post) => {
+      const rawCat = (post.data.category || "").toLowerCase().trim();
+      const targetCat = cat.replace("-", " ");
+      return rawCat.includes(cat) || rawCat.includes(targetCat);
+    });
     return {
       params: { category: cat },
       props: { posts: filtered, categoryName: cat },
@@ -55,8 +57,8 @@ const formattedTitle = categoryName.replace("-", " ").toUpperCase();
         </div>
       ) : (
         <div class="empty-state">
-          <p>No stories published under this category yet.</p>
-          <a href="/admin" class="admin-link">Add story via Decap CMS &rarr;</a>
+          <p>No stories published under {formattedTitle} yet.</p>
+          <a href="/admin" class="admin-link">Publish a story in Decap CMS &rarr;</a>
         </div>
       )}
     </main>
@@ -66,74 +68,15 @@ const formattedTitle = categoryName.replace("-", " ").toUpperCase();
 </html>
 
 <style>
-  .category-container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 4rem 1.5rem;
-  }
-  .category-header {
-    text-align: center;
-    margin-bottom: 4rem;
-  }
-  .category-subtitle {
-    font-family: var(--font-seasons);
-    font-size: 0.8rem;
-    text-transform: uppercase;
-    letter-spacing: 0.25em;
-    color: var(--olmi-burgundy);
-    display: block;
-    margin-bottom: 0.5rem;
-  }
-  .category-title {
-    font-family: var(--font-seasons);
-    font-size: 3rem;
-    color: var(--olmi-charcoal);
-  }
-  .stories-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-    gap: 2.5rem;
-  }
-  .story-card a {
-    text-decoration: none;
-    color: inherit;
-  }
-  .aspect-4-3 {
-    aspect-ratio: 4/3;
-    overflow: hidden;
-    margin-bottom: 1.25rem;
-  }
-  .aspect-4-3 img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    transition: transform 0.4s ease;
-  }
-  .story-card:hover img {
-    transform: scale(1.03);
-  }
-  .card-title {
-    font-family: var(--font-seasons);
-    font-size: 1.5rem;
-    margin-bottom: 0.5rem;
-    color: var(--olmi-charcoal);
-  }
-  .card-desc {
-    font-family: var(--font-ovo);
-    font-size: 0.95rem;
-    line-height: 1.6;
-    color: rgba(42, 42, 40, 0.75);
-  }
-  .empty-state {
-    text-align: center;
-    padding: 6rem 0;
-    font-family: var(--font-ovo);
-    color: rgba(42, 42, 40, 0.6);
-  }
-  .admin-link {
-    display: inline-block;
-    margin-top: 1rem;
-    color: var(--olmi-burgundy);
-    text-decoration: underline;
-  }
+  .category-container { max-width: 1200px; margin: 0 auto; padding: 4rem 1.5rem; }
+  .category-header { text-align: center; margin-bottom: 4rem; }
+  .category-subtitle { font-family: var(--font-seasons); font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.25em; color: #8b263e; display: block; margin-bottom: 0.5rem; }
+  .category-title { font-family: var(--font-seasons); font-size: 3rem; color: #2a2a28; }
+  .stories-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 2.5rem; }
+  .story-card a { text-decoration: none; color: inherit; }
+  .aspect-4-3 img { width: 100%; height: 240px; object-fit: cover; }
+  .card-title { font-family: var(--font-seasons); font-size: 1.5rem; margin: 0.75rem 0 0.5rem; color: #2a2a28; }
+  .card-desc { font-family: var(--font-ovo); font-size: 0.95rem; line-height: 1.6; color: rgba(42, 42, 40, 0.75); }
+  .empty-state { text-align: center; padding: 6rem 0; font-family: var(--font-ovo); }
+  .admin-link { color: #8b263e; text-decoration: underline; }
 </style>
