@@ -3,11 +3,11 @@ import { defineCollection, z } from "astro:content";
 const stories = defineCollection({
   type: "content",
   schema: z.object({
-    title: z.string(),
-    description: z.string().optional(),
-    pubDate: z.coerce.date().optional(),
-    category: z.string().default("People"),
-    heroImage: z.string().optional(),
+    title: z.string().default("Untitled Story"),
+    description: z.string().optional().nullable().transform((v) => v || ""),
+    pubDate: z.any().optional().nullable(),
+    category: z.string().optional().nullable().transform((v) => v || "People"),
+    heroImage: z.string().optional().nullable().transform((v) => v || ""),
   }),
 });
 
