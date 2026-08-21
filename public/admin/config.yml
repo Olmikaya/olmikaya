@@ -16,6 +16,6 @@ collections:
     slug: "{{slug}}"
     fields:
       - { label: "Title", name: "title", widget: "string" }
-      - { label: "Description", name: "description", widget: "text" }
-      - { label: "Pub Date", name: "pubDate", widget: "datetime" }
+      - { label: "Description", name: "description", widget: "text", required: false }
+      - { label: "Pub Date", name: "pubDate", widget: "datetime", required: false }
       - { label: "Body", name: "body", widget: "markdown" }
