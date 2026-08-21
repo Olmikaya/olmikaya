@@ -1,22 +1,21 @@
-@import url('https://fonts.googleapis.com/css2?family=Ovo&family=Inter:wght@300;400;500;600&family=Cinzel:wght@400;500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400;1,500&family=Ovo&family=Lora:ital,wght@0,400;0,500;1,400&family=Inter:wght@300;400;500&display=swap');
 
 :root {
-  /* Brand Color Palette */
-  --color-red: #BF2426;
-  --color-burgundy: #521D20;
-  --color-green: #283B30;
-  --color-rust: #8D3E25;
-  --color-charcoal: #1C1C1A;
-  --color-sky: #A8C4D8;
-  --color-sand: #F5EDD8;
-  --color-bg: #FAF8F5;
-  --color-white: #FFFFFF;
-  --color-border: #E0DDD7;
+  /* Olmikaya Color Palette */
+  --olmi-charcoal: #2A2A28;
+  --olmi-forest: #2F3E32;
+  --olmi-burgundy: #692420;
+  --olmi-rust: #8F4A2F;
+  --olmi-sand: #F5E6C4;
+  --olmi-sky: #A8C6DF;
+  --olmi-cream: #FFF9F2;
+  --olmi-white: #FFFFFF;
+  --olmi-line: #E5E5E5;
 
-  /* Typography Rules */
-  --font-heading: 'Ovo', serif;
-  --font-subheading: 'The Seasons', 'Cinzel', 'Ovo', serif;
-  --font-body: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  /* Typography Stacks */
+  --font-seasons: "The Seasons", "Cormorant Garamond", serif;
+  --font-ovo: "Ovo", "Lora", serif;
+  --font-sans: 'Inter', sans-serif;
 }
 
 * {
@@ -26,35 +25,58 @@
 }
 
 body {
-  background-color: var(--color-bg);
-  color: var(--color-charcoal);
-  font-family: var(--font-body);
+  background-color: var(--olmi-white);
+  color: var(--olmi-charcoal);
+  font-family: var(--font-ovo);
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
 }
 
-/* Headings (Ovo for Large Display Text) */
-h1, h2, h3, .heading-xl, .heading-lg {
-  font-family: var(--font-heading);
-  font-weight: 400;
-  color: var(--color-charcoal);
-  line-height: 1.15;
+/* Typography Helpers */
+.font-seasons { font-family: var(--font-seasons); }
+.font-ovo { font-family: var(--font-ovo); }
+
+/* Animation Reveals */
+.reveal {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 1.2s cubic-bezier(0.2, 0.8, 0.2, 1), transform 1.2s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
-p {
-  font-family: var(--font-body);
-  font-size: 0.875rem;
-  color: #4A4A46;
+.reveal.active {
+  opacity: 1;
+  transform: translateY(0);
 }
 
-/* Container Structure */
+/* Image Hovers */
+.img-wrap {
+  overflow: hidden;
+  position: relative;
+  background-color: var(--olmi-cream);
+}
+
+.img-wrap img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 1.5s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.editorial-card:hover .img-wrap img {
+  transform: scale(1.04);
+}
+
+/* Common Layout Utilities */
 .container-editorial {
-  max-width: 1320px;
+  width: 100%;
+  max-width: 1400px;
   margin: 0 auto;
-  padding: 0 2rem;
+  padding: 0 1.5rem;
 }
 
-/* Utility Rule for Thin Borders */
-.border-divider {
-  border-bottom: 1px solid var(--color-border);
+@media (min-width: 768px) {
+  .container-editorial {
+    padding: 0 3rem;
+  }
 }

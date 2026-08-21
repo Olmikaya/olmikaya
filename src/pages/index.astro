@@ -13,136 +13,257 @@ import { SITE_TITLE, SITE_DESCRIPTION } from '../consts';
 	<body>
 		<Header />
 
+		<!-- Section 1: Statement Mantra Hero -->
+		<section class="hero-statement reveal">
+			<h2 class="mantra-title">
+				<span class="line-block">Home of</span>
+				<span class="line-block line-italic">Ordinary Living</span>
+				<span class="line-block">Made Intentional.</span>
+			</h2>
+		</section>
+
+		<!-- Section 2: Large Hero Feature Story -->
 		<main class="container-editorial">
-			<!-- Section 1: Asymmetric Assembled Grid -->
-			<section class="asymmetric-grid">
-				<div class="col-left">
-					<article class="card">
-						<div class="img-wrapper ratio-4-3">
-							<img src="https://images.unsplash.com/photo-1540555700478-4be289fbecef?q=80&w=800&auto=format&fit=crop" alt="Farm table" />
-						</div>
-						<span class="date">10.04.26</span>
-						<h3>Farm-to-Table Delights: Rediscovering the Joy of Locally Sourced Food</h3>
-					</article>
+			<section class="hero-feature reveal">
+				<a href="/stories" class="editorial-card hero-link">
+					<div class="img-wrap hero-image-container">
+						<img 
+							src="https://images.unsplash.com/photo-1610701596007-11502861dcfa?q=80&w=2000&auto=format&fit=crop" 
+							alt="Ceramic studio in Nairobi" 
+							loading="lazy"
+						/>
+						<div class="inner-border-detail"></div>
+					</div>
 
-					<article class="card">
-						<div class="img-wrapper ratio-1-1">
-							<img src="https://images.unsplash.com/photo-1513519245088-0e12902e5a38?q=80&w=800&auto=format&fit=crop" alt="Pears on linen" />
-						</div>
-						<span class="date">12.01.26</span>
-						<h3>Expressing Creativity: Unleashing the Artist Within</h3>
-					</article>
-				</div>
-
-				<div class="col-center">
-					<article class="card featured-center">
-						<div class="img-wrapper ratio-tall">
-							<img src="https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?q=80&w=1000&auto=format&fit=crop" alt="Interior light shadow" />
-						</div>
-						<span class="date">12.01.26</span>
-						<h2>Finding Balance: The Art of Cultivating a Healthy Lifestyle</h2>
-						<p class="excerpt">In the fast-paced world we live in, finding balance can often feel like an elusive pursuit. However, it is through the art of cultivating a healthy lifestyle that we can achieve grounding...</p>
-					</article>
-				</div>
-
-				<div class="col-right">
-					<article class="card">
-						<div class="img-wrapper ratio-1-1">
-							<img src="https://images.unsplash.com/photo-1507652313519-d4e9174996dd?q=80&w=800&auto=format&fit=crop" alt="Still life glass object" />
-						</div>
-						<span class="date">06.12.25</span>
-						<h3>The Power of Gratitude: Cultivating Appreciation in Everyday Life</h3>
-					</article>
-
-					<article class="card">
-						<div class="img-wrapper ratio-4-3">
-							<img src="https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?q=80&w=800&auto=format&fit=crop" alt="Hands holding glass" />
-						</div>
-						<span class="date">15.12.25</span>
-						<h3>Sustainable Skincare: Ethical Practices for a Healthier Planet and Complexion</h3>
-					</article>
-				</div>
+					<div class="hero-caption">
+						<span class="tag-label">People &mdash; Nairobi</span>
+						<h3 class="hero-heading">The People Making Things Well</h3>
+						<p class="hero-text">
+							Inside the studios of three contemporary ceramicists redefining the texture of everyday Kenyan life through earth, fire, and extraordinary patience.
+						</p>
+						<span class="read-button">Read Story</span>
+					</div>
+				</a>
 			</section>
 
-			<!-- Editorial Quote Banner Section -->
-			<section class="banner-quote">
-				<blockquote>
-					"Our magazine is a vibrant tapestry of articles, features, and stories that explore diverse aspects of lifestyle, including wellness, travel, fashion, art, food, and relationships. We aim to create a space where readers can find inspiration, practical tips, and thought-provoking insights to enhance their overall well-being and cultivate a life that aligns with their values and aspirations."
-				</blockquote>
+			<!-- Section 3: Latest Discoveries Grid -->
+			<section class="discoveries-section">
+				<div class="section-header reveal">
+					<h2 class="section-title">Latest Discoveries</h2>
+					<a href="/stories" class="view-all-link">View All</a>
+				</div>
+
+				<div class="discoveries-grid">
+					<!-- Large Left Story -->
+					<article class="col-main reveal editorial-card">
+						<a href="/stories" class="card-link">
+							<div class="img-wrap aspect-4-3">
+								<img src="https://images.unsplash.com/photo-1542361345-89e58247f2d5?q=80&w=1200&auto=format&fit=crop" alt="Swahili coastal architecture" />
+							</div>
+							<div class="card-content">
+								<span class="tag-rust">Spaces &mdash; Lamu</span>
+								<h3 class="card-title-lg">The Quiet Architecture of Coastal Swahili Homes</h3>
+								<p class="card-desc">Observing the interplay of light, shadow, and carved plaster in spaces designed for slowness and sanctuary.</p>
+							</div>
+						</a>
+					</article>
+
+					<!-- Right Stacked Stories -->
+					<div class="col-side">
+						<article class="reveal editorial-card">
+							<a href="/stories" class="card-link">
+								<div class="img-wrap aspect-3-2">
+									<img src="https://images.unsplash.com/photo-1528458909336-e7a0adfed0a5?q=80&w=800&auto=format&fit=crop" alt="Woven textiles" />
+								</div>
+								<span class="tag-forest">Objects &mdash; Kampala</span>
+								<h3 class="card-title-sm">Threads of Intent: Sourcing Textiles in the Capital</h3>
+								<p class="card-desc">How contemporary weavers are interpreting historical motifs for the modern East African home.</p>
+							</a>
+						</article>
+
+						<article class="reveal editorial-card">
+							<a href="/stories" class="card-link row-card">
+								<div class="img-wrap aspect-square small-thumb">
+									<img src="https://images.unsplash.com/photo-1555939594-58d7cb561ad1?q=80&w=600&auto=format&fit=crop" alt="Culinary scene" />
+								</div>
+								<div class="row-content">
+									<span class="tag-charcoal">Table &mdash; Kigali</span>
+									<h3 class="card-title-xs">The Modern Table</h3>
+									<p class="card-desc">Reimagining indigenous ingredients through a minimalist culinary lens.</p>
+								</div>
+							</a>
+						</article>
+					</div>
+				</div>
 			</section>
 		</main>
 
 		<Footer />
+
+		<script>
+			// Intersection Observer for scroll reveals
+			document.addEventListener("DOMContentLoaded", () => {
+				const reveals = document.querySelectorAll(".reveal");
+				const revealOptions = { threshold: 0.15, rootMargin: "0px 0px -50px 0px" };
+
+				const observer = new IntersectionObserver((entries) => {
+					entries.forEach(entry => {
+						if (entry.isIntersecting) {
+							entry.target.classList.add("active");
+							observer.unobserve(entry.target);
+						}
+					});
+				}, revealOptions);
+
+				reveals.forEach(el => observer.observe(el));
+			});
+		</script>
 	</body>
 </html>
 
 <style>
-	.asymmetric-grid {
-		display: grid;
-		grid-template-columns: 1fr 1.25fr 1fr;
-		gap: 2.5rem;
-		padding: 3rem 0;
-	}
-	.card {
-		margin-bottom: 2.5rem;
-	}
-	.img-wrapper {
+	/* Hero Statement Section */
+	.hero-statement {
 		width: 100%;
-		background-color: #EFECE6;
-		overflow: hidden;
-		margin-bottom: 0.75rem;
-	}
-	.img-wrapper img {
-		width: 100%;
-		height: 100%;
-		object-fit: cover;
-		display: block;
-	}
-	.ratio-4-3 { aspect-ratio: 4/3; }
-	.ratio-1-1 { aspect-ratio: 1/1; }
-	.ratio-tall { aspect-ratio: 3/4; }
-
-	.date {
-		font-size: 0.7rem;
-		color: #8C8A85;
-		display: block;
-		margin-bottom: 0.35rem;
-	}
-	h2 {
-		font-size: 1.75rem;
-		margin-bottom: 0.5rem;
-	}
-	h3 {
-		font-size: 1.15rem;
-		line-height: 1.35;
-	}
-	.excerpt {
-		font-size: 0.825rem;
-		line-height: 1.5;
-		color: #666460;
-		margin-top: 0.5rem;
-	}
-
-	/* Editorial Banner Styling */
-	.banner-quote {
-		background-color: var(--color-sand);
-		padding: 4rem 3rem;
-		margin: 2rem 0 4rem;
+		padding: 4rem 1.5rem;
 		text-align: center;
+		border-bottom: 1px solid var(--olmi-line);
 	}
-	blockquote {
-		font-family: var(--font-heading);
-		font-size: 1.4rem;
-		font-style: italic;
-		line-height: 1.6;
+	@media (min-width: 768px) {
+		.hero-statement { padding: 6rem 3rem; }
+	}
+	.mantra-title {
+		font-family: var(--font-seasons);
+		font-size: 2.25rem;
+		font-weight: 400;
+		line-height: 1.15;
+		color: var(--olmi-charcoal);
 		max-width: 1000px;
 		margin: 0 auto;
-		color: var(--color-burgundy);
+	}
+	@media (min-width: 768px) { .mantra-title { font-size: 3.5rem; } }
+	@media (min-width: 1024px) { .mantra-title { font-size: 4.5rem; } }
+	
+	.line-block { display: block; margin-bottom: 0.5rem; }
+	.line-italic { font-style: italic; color: var(--olmi-forest); }
+
+	/* Hero Main Feature */
+	.hero-feature {
+		padding: 3rem 0;
+	}
+	.hero-link { text-decoration: none; color: inherit; display: block; }
+	.hero-image-container {
+		width: 100%;
+		height: 50vh;
+	}
+	@media (min-width: 768px) { .hero-image-container { height: 75vh; } }
+
+	.inner-border-detail {
+		position: absolute;
+		inset: 1rem;
+		border: 1px solid rgba(255, 255, 255, 0.3);
+		pointer-events: none;
+		display: none;
+	}
+	@media (min-width: 768px) { .inner-border-detail { display: block; } }
+
+	.hero-caption {
+		max-width: 800px;
+		margin: 2rem auto 0;
+		text-align: center;
+	}
+	.tag-label {
+		display: block;
+		font-family: var(--font-seasons);
+		font-size: 0.75rem;
+		text-transform: uppercase;
+		letter-spacing: 0.25em;
+		color: var(--olmi-burgundy);
+		margin-bottom: 1rem;
+	}
+	.hero-heading {
+		font-family: var(--font-seasons);
+		font-size: 2.25rem;
+		line-height: 1.2;
+		color: var(--olmi-charcoal);
+		margin-bottom: 1.25rem;
+	}
+	@media (min-width: 768px) { .hero-heading { font-size: 3.75rem; } }
+
+	.hero-text {
+		font-size: 1.125rem;
+		line-height: 1.6;
+		color: rgba(42, 42, 40, 0.8);
+		margin-bottom: 2rem;
 	}
 
-	@media (max-width: 900px) {
-		.asymmetric-grid {
-			grid-template-columns: 1fr;
+	.read-button {
+		display: inline-block;
+		border-bottom: 1px solid var(--olmi-charcoal);
+		padding-bottom: 0.25rem;
+		font-size: 0.875rem;
+		text-transform: uppercase;
+		letter-spacing: 0.1em;
+		transition: color 0.3s ease, border-color 0.3s ease;
+	}
+	.hero-link:hover .read-button {
+		color: var(--olmi-burgundy);
+		border-color: var(--olmi-burgundy);
+	}
+
+	/* Discoveries Grid Section */
+	.discoveries-section {
+		padding: 4rem 0;
+		border-top: 1px solid var(--olmi-line);
+	}
+	.section-header {
+		display: flex;
+		justify-content: space-between;
+		align-items: flex-end;
+		margin-bottom: 3rem;
+	}
+	.section-title {
+		font-family: var(--font-seasons);
+		font-style: italic;
+		font-size: 2rem;
+		color: var(--olmi-forest);
+	}
+	.view-all-link {
+		color: var(--olmi-charcoal);
+		text-decoration: none;
+		border-bottom: 1px solid var(--olmi-charcoal);
+		padding-bottom: 2px;
+		font-size: 0.85rem;
+		text-transform: uppercase;
+		letter-spacing: 0.1em;
+	}
+
+	.discoveries-grid {
+		display: grid;
+		grid-template-columns: 1fr;
+		gap: 3rem;
+	}
+	@media (min-width: 768px) {
+		.discoveries-grid {
+			grid-template-columns: 7fr 5fr;
+			gap: 2.5rem;
 		}
 	}
+
+	.card-link { text-decoration: none; color: inherit; display: block; }
+	.aspect-4-3 { aspect-ratio: 4/3; }
+	.aspect-3-2 { aspect-ratio: 3/2; margin-bottom: 1.25rem; }
+	.aspect-square { aspect-ratio: 1/1; }
+
+	.tag-rust { display: block; font-family: var(--font-seasons); font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.2em; color: var(--olmi-rust); margin: 1rem 0 0.5rem; }
+	.tag-forest { display: block; font-family: var(--font-seasons); font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.2em; color: var(--olmi-forest); margin-bottom: 0.5rem; }
+	.tag-charcoal { display: block; font-family: var(--font-seasons); font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.2em; color: var(--olmi-charcoal); margin-bottom: 0.5rem; }
+
+	.card-title-lg { font-family: var(--font-seasons); font-size: 1.85rem; line-height: 1.25; margin-bottom: 0.75rem; }
+	.card-title-sm { font-family: var(--font-seasons); font-size: 1.5rem; line-height: 1.25; margin-bottom: 0.5rem; }
+	.card-title-xs { font-family: var(--font-seasons); font-size: 1.25rem; line-height: 1.25; margin-bottom: 0.5rem; }
+	.card-desc { font-size: 0.925rem; color: rgba(42, 42, 40, 0.7); }
+
+	.col-side { display: flex; flex-direction: column; gap: 2.5rem; }
+	.row-card { display: grid; grid-template-columns: 100px 1fr; gap: 1.5rem; align-items: center; }
 </style>

@@ -1,87 +1,143 @@
 ---
 ---
 <header class="masthead">
-  <div class="top-bar">
-    <div class="top-left">
-      <a href="#">Subscribe</a>
+  <div class="top-row">
+    <div class="top-col left-col">
+      <span>Vol. 1 &mdash; Nairobi, Kenya</span>
+    </div>
+    <div class="top-col center-col">
+      <a href="/" class="brand-title">
+        <h1 class="logo-olmi">OLMI</h1>
+        <h1 class="logo-kaya">KAYA</h1>
+      </a>
+    </div>
+    <div class="top-col right-col">
       <a href="#">Search</a>
-    </div>
-    <div class="top-right">
-      <span>February</span>
-      <span>March</span>
-      <span>April</span>
-      <span>May</span>
-      <a href="/stories" class="all-issues">All Issues</a>
+      <a href="#">Newsletter</a>
     </div>
   </div>
 
-  <div class="logo-container">
-    <a href="/">
-      <img src="/logo.png" alt="Olmikaya Logo" class="brand-logo" />
-    </a>
-  </div>
-
-  <nav class="nav-bar">
-    <a href="/stories">Stories</a>
-    <a href="/people">People</a>
-    <a href="/spaces">Spaces</a>
-    <a href="/objects">Objects</a>
-    <a href="/table">Table</a>
-    <a href="/culture">Culture</a>
-    <a href="/field-notes">Field Notes</a>
+  <nav class="main-nav">
+    <a href="/stories" class="nav-link">Discover</a>
+    <a href="/stories" class="nav-link italic-link">Journal</a>
+    <a href="/people" class="nav-link">People</a>
+    <a href="/objects" class="nav-link">Objects</a>
+    <a href="/spaces" class="nav-link">Spaces</a>
+    <a href="/table" class="nav-link">Table</a>
+    <a href="/culture" class="nav-link">Culture</a>
+    <a href="/field-notes" class="nav-link italic-link">Field Notes</a>
+    <a href="/about" class="nav-link">About</a>
   </nav>
 </header>
 
 <style>
   .masthead {
-    border-bottom: 1px solid var(--color-border);
-    background-color: var(--color-bg);
-    padding: 1rem 2rem;
+    width: 100%;
+    padding: 2rem 1.5rem 1.5rem;
+    border-bottom: 1px solid var(--olmi-line);
+    background-color: var(--olmi-white);
   }
-  .top-bar {
+  @media (min-width: 768px) {
+    .masthead { padding: 2rem 3rem 1.5rem; }
+  }
+  .top-row {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    margin-bottom: 2rem;
+  }
+  .top-col {
+    font-family: var(--font-seasons);
     font-size: 0.75rem;
-    letter-spacing: 0.05em;
-    color: var(--color-charcoal);
-    padding-bottom: 1rem;
-    border-bottom: 1px solid var(--color-border);
+    text-transform: uppercase;
+    letter-spacing: 0.25em;
+    color: rgba(42, 42, 40, 0.7);
   }
-  .top-bar a {
-    color: var(--color-charcoal);
-    text-decoration: none;
-    margin-right: 1.5rem;
+  .left-col {
+    display: none;
+    width: 33.333%;
   }
-  .top-right span {
-    margin-right: 1.25rem;
-    color: #7A7873;
+  .right-col {
+    display: none;
+    width: 33.333%;
+    justify-content: flex-end;
+    gap: 1.5rem;
   }
-  .logo-container {
+  .center-col {
+    width: 100%;
     text-align: center;
-    padding: 2.5rem 0 1.5rem;
   }
-  .brand-logo {
-    max-height: 110px;
-    width: auto;
-    object-fit: contain;
+  @media (min-width: 768px) {
+    .left-col { display: block; }
+    .right-col { display: flex; }
+    .center-col { width: 33.333%; }
   }
-  .nav-bar {
+  .right-col a {
+    color: var(--olmi-charcoal);
+    text-decoration: none;
+    transition: color 0.3s ease;
+  }
+  .right-col a:hover { color: var(--olmi-burgundy); }
+
+  .brand-title { text-decoration: none; display: block; }
+  .logo-olmi {
+    font-family: var(--font-seasons);
+    font-size: 3rem;
+    font-weight: 500;
+    color: var(--olmi-burgundy);
+    line-height: 1;
+    letter-spacing: 0;
+  }
+  .logo-kaya {
+    font-family: var(--font-seasons);
+    font-size: 1.5rem;
+    font-weight: 400;
+    color: var(--olmi-charcoal);
+    line-height: 1;
+    letter-spacing: 0.05em;
+    margin-top: 0.25rem;
+  }
+  @media (min-width: 768px) {
+    .logo-olmi { font-size: 3.75rem; }
+    .logo-kaya { font-size: 1.875rem; }
+  }
+
+  .main-nav {
     display: flex;
     justify-content: center;
-    gap: 2.5rem;
-    padding-top: 1rem;
-    border-top: 1px solid var(--color-border);
+    flex-wrap: wrap;
+    gap: 1rem 1.5rem;
   }
-  .nav-bar a {
+  @media (min-width: 768px) {
+    .main-nav { gap: 0 2.5rem; }
+  }
+  .nav-link {
     text-decoration: none;
-    color: var(--color-charcoal);
-    font-size: 0.8rem;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    font-weight: 500;
+    color: var(--olmi-charcoal);
+    font-family: var(--font-ovo);
+    font-size: 0.95rem;
+    position: relative;
+    padding-bottom: 2px;
   }
-  .nav-bar a:hover {
-    color: var(--color-red);
+  .nav-link::after {
+    content: '';
+    position: absolute;
+    width: 100%;
+    transform: scaleX(0);
+    height: 1px;
+    bottom: 0;
+    left: 0;
+    background-color: var(--olmi-burgundy);
+    transform-origin: bottom right;
+    transition: transform 0.4s cubic-bezier(0.86, 0, 0.07, 1);
+  }
+  .nav-link:hover::after {
+    transform: scaleX(1);
+    transform-origin: bottom left;
+  }
+  .italic-link {
+    font-family: var(--font-seasons);
+    font-style: italic;
+    color: rgba(42, 42, 40, 0.5);
   }
 </style>
