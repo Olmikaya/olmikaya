@@ -17,7 +17,7 @@ try {
     return parseTime(b.data.pubDate) - parseTime(a.data.pubDate);
   });
 } catch (e) {
-  console.error("Error loading collection:", e);
+  console.error("Collection error:", e);
 }
 
 const featuredStory = stories.length > 0 ? stories[0] : null;
@@ -29,7 +29,7 @@ const secondaryStories = stories.length > 1 ? stories.slice(1, 4) : [];
   <head>
     <BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION} />
   </head>
-  <body>
+  <body style="background-color: #FFF9F2; color: #2A2A28;">
     <Header />
 
     <main class="main-wrapper">
@@ -53,7 +53,8 @@ const secondaryStories = stories.length > 1 ? stories.slice(1, 4) : [];
             <div class="hero-content">
               <span class="category-tag">{featuredStory.data.category || "People"}</span>
               <h3 class="hero-title">{featuredStory.data.title}</h3>
-              {featuredStory.data.description && <p>{featuredStory.data.description}</p>}
+              {featuredStory.data.description && <p class="hero-desc">{featuredStory.data.description}</p>}
+              <span class="read-btn">Read Story &rarr;</span>
             </div>
           </a>
         </section>
@@ -66,7 +67,7 @@ const secondaryStories = stories.length > 1 ? stories.slice(1, 4) : [];
             <div class="hero-content">
               <span class="category-tag">People &mdash; Nairobi</span>
               <h3 class="hero-title">The People Making Things Well</h3>
-              <p>Inside the studios of three contemporary ceramicists redefining everyday Kenyan design...</p>
+              <p class="hero-desc">Inside the studios of three contemporary ceramicists redefining everyday Kenyan design...</p>
             </div>
           </div>
         </section>
@@ -82,7 +83,7 @@ const secondaryStories = stories.length > 1 ? stories.slice(1, 4) : [];
                   <div class="img-wrap aspect">
                     <img src={story.data.heroImage || "https://images.unsplash.com/photo-1542361345-89e58247f2d5?q=80&w=1200&auto=format&fit=crop"} alt={story.data.title} />
                   </div>
-                  <span class="category-tag">{story.data.category}</span>
+                  <span class="category-tag">{story.data.category || "General"}</span>
                   <h3 class="card-heading">{story.data.title}</h3>
                 </a>
               </article>
@@ -107,18 +108,20 @@ const secondaryStories = stories.length > 1 ? stories.slice(1, 4) : [];
 <style>
   .main-wrapper { max-width: 1200px; margin: 0 auto; padding: 2rem 1.5rem 6rem; }
   .hero-statement { text-align: center; padding: 3rem 0; }
-  .mantra-title { font-family: var(--font-seasons, serif); font-size: 2.25rem; line-height: 1.3; display: flex; flex-direction: column; gap: 0.25rem; }
+  .mantra-title { font-family: var(--font-seasons, serif); font-size: 2.25rem; line-height: 1.3; display: flex; flex-direction: column; gap: 0.25rem; color: #2A2A28; }
   .line-italic { font-style: italic; }
   .featured-story { margin-bottom: 4rem; }
-  .story-card-hero { display: block; text-decoration: none; color: inherit; }
-  .img-wrap { width: 100%; overflow: hidden; background: #f0f0f0; }
+  .story-card-hero { display: block; text-decoration: none; color: #2A2A28; }
+  .img-wrap { width: 100%; overflow: hidden; background: #EFE8DE; border-radius: 4px; }
   .img-wrap img { width: 100%; height: 450px; object-fit: cover; display: block; }
   .aspect img { height: 260px; }
   .hero-content { padding: 1.5rem 0; }
-  .category-tag { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.15em; color: #8b263e; font-weight: 600; }
-  .hero-title { font-family: var(--font-seasons, serif); font-size: 2rem; margin: 0.5rem 0; }
-  .section-heading { font-family: var(--font-seasons, serif); font-size: 1.5rem; margin-bottom: 2rem; border-bottom: 1px solid #eee; padding-bottom: 0.5rem; }
+  .category-tag { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.15em; color: #8B263E; font-weight: 700; display: block; margin-bottom: 0.5rem; }
+  .hero-title { font-family: var(--font-seasons, serif); font-size: 2.5rem; color: #2A2A28 !important; margin: 0.5rem 0; font-weight: normal; }
+  .hero-desc { font-family: var(--font-ovo, serif); font-size: 1.1rem; color: #4A4A46; line-height: 1.6; margin-bottom: 1rem; }
+  .read-btn { font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.1em; color: #8B263E; font-weight: bold; }
+  .section-heading { font-family: var(--font-seasons, serif); font-size: 1.75rem; color: #2A2A28; margin-bottom: 2rem; border-bottom: 1px solid #E0D8CC; padding-bottom: 0.5rem; }
   .grid-container { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 2rem; }
-  .grid-card a { text-decoration: none; color: inherit; }
-  .card-heading { font-family: var(--font-seasons, serif); font-size: 1.25rem; margin-top: 0.5rem; }
+  .grid-card a { text-decoration: none; color: #2A2A28; }
+  .card-heading { font-family: var(--font-seasons, serif); font-size: 1.35rem; color: #2A2A28 !important; margin-top: 0.5rem; }
 </style>
