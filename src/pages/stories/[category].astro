@@ -1,82 +1,47 @@
 ---
 import { getCollection } from "astro:content";
-import Header from "../../components/Header.astro";
-import BaseHead from "../../components/BaseHead.astro";
-import Footer from "../../components/Footer.astro";
+import Layout from "../../layouts/BlogPost.astro";
+import FormattedDate from "../../components/FormattedDate.astro";
 
 export async function getStaticPaths() {
-  const categories = ["people", "spaces", "objects", "table", "culture", "field-notes"];
-  const allPosts = await getCollection("stories");
+  const allStories = await getCollection("stories");
+  
+  if (!allStories || allStories.length === 0) {
+    return [];
+  }
 
-  return categories.map((cat) => {
-    const filtered = allPosts.filter((post) => {
-      const rawCat = (post.data.category || "").toLowerCase().trim();
-      const targetCat = cat.replace("-", " ");
-      return rawCat.includes(cat) || rawCat.includes(targetCat);
-    });
+  const categories = [...new Set(allStories.map((post) => (post.data.category || "General").toLowerCase()))];
+
+  return categories.map((category) => {
+    const filteredPosts = allStories.filter(
+      (post) => (post.data.category || "General").toLowerCase() === category
+    );
     return {
-      params: { category: cat },
-      props: { posts: filtered, categoryName: cat },
+      params: { category },
+      props: { posts: filteredPosts, categoryName: category },
     };
   });
 }
 
-const { categoryName, posts } = Astro.props;
-const formattedTitle = categoryName.replace("-", " ").toUpperCase();
+const { posts, categoryName } = Astro.props;
 ---
 
-<!html>
-<html lang="en">
-  <head>
-    <BaseHead title={`${formattedTitle} | Olmikaya`} description={`Explore stories under ${formattedTitle}`} />
-  </head>
-  <body>
-    <Header />
-
-    <main class="category-container">
-      <header class="category-header">
-        <span class="category-subtitle">Category</span>
-        <h1 class="category-title">{formattedTitle}</h1>
-      </header>
-
-      {posts.length > 0 ? (
-        <div class="stories-grid">
-          {posts.map((story) => (
-            <article class="story-card">
-              <a href={`/stories/${story.slug}`}>
-                <div class="img-wrap aspect-4-3">
-                  <img src={story.data.heroImage || "https://images.unsplash.com/photo-1610701596007-11502861dcfa?q=80&w=1200&auto=format&fit=crop"} alt={story.data.title} />
-                </div>
-                <div class="card-content">
-                  <h2 class="card-title">{story.data.title}</h2>
-                  {story.data.description && <p class="card-desc">{story.data.description}</p>}
-                </div>
-              </a>
-            </article>
-          ))}
-        </div>
-      ) : (
-        <div class="empty-state">
-          <p>No stories published under {formattedTitle} yet.</p>
-          <a href="/admin" class="admin-link">Publish a story in Decap CMS &rarr;</a>
-        </div>
-      )}
-    </main>
-
-    <Footer />
-  </body>
-</html>
-
-<style>
-  .category-container { max-width: 1200px; margin: 0 auto; padding: 4rem 1.5rem; }
-  .category-header { text-align: center; margin-bottom: 4rem; }
-  .category-subtitle { font-family: var(--font-seasons); font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.25em; color: #8b263e; display: block; margin-bottom: 0.5rem; }
-  .category-title { font-family: var(--font-seasons); font-size: 3rem; color: #2a2a28; }
-  .stories-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 2.5rem; }
-  .story-card a { text-decoration: none; color: inherit; }
-  .aspect-4-3 img { width: 100%; height: 240px; object-fit: cover; }
-  .card-title { font-family: var(--font-seasons); font-size: 1.5rem; margin: 0.75rem 0 0.5rem; color: #2a2a28; }
-  .card-desc { font-family: var(--font-ovo); font-size: 0.95rem; line-height: 1.6; color: rgba(42, 42, 40, 0.75); }
-  .empty-state { text-align: center; padding: 6rem 0; font-family: var(--font-ovo); }
-  .admin-link { color: #8b263e; text-decoration: underline; }
-</style>
+<Layout title={`Category: ${categoryName}`} description={`Stories tagged in ${categoryName}`}>
+  <main>
+    <section>
+      <h1 style="text-transform: capitalize;">{categoryName}</h1>
+      <ul>
+        {posts && posts.map((post) => (
+          <li>
+            <a href={`/stories/${post.id}/`}>
+              <h4 class="title">{post.data.title}</h4>
+              <p class="date">
+                <FormattedDate date={post.data.pubDate} />
+              </p>
+            </a>
+          </li>
+        ))}
+      </ul>
+    </section>
+  </main>
+</Layout>
