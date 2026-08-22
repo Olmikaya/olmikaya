@@ -13,6 +13,7 @@ collections:
     label: "Stories"
     folder: "src/content/stories"
     create: true
+    delete: true
     slug: "{{slug}}"
     fields:
       - { label: "Title", name: "title", widget: "string" }
