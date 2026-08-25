@@ -5,21 +5,25 @@
 # field there, add it here too — the admin will silently drop anything it does
 # not know about when it saves.
 #
-# Before this works you must set `repo` below to your GitHub repository.
+# Signing in on the live site goes through our own OAuth worker; see the note
+# on the backend below. Editing from localhost needs no login at all.
 # ---------------------------------------------------------------------------
 
 backend:
   name: github
-  repo: Olmikaya/olmikaya   # <-- change this
+  repo: Olmikaya/olmikaya
   branch: main
 
-  # Signing in needs a server to swap the GitHub code for a token; that
-  # cannot be done safely in the browser. Netlify used to provide this
-  # for free. On GitHub Pages or Cloudflare Pages you host it yourself,
-  # which is a one-file Cloudflare Worker (sveltia-cms-auth). Deploy it,
-  # then uncomment the line below and point it at your worker.
+  # Signing in needs a server to swap the GitHub code for a token; that cannot
+  # be done safely in the browser, so it runs on our own Cloudflare Worker
+  # (github.com/sveltia/sveltia-cms-auth). Sveltia opens <base_url>/auth to
+  # start the flow, and GitHub returns to <base_url>/callback — which is the
+  # exact string registered as the callback URL on the OAuth app.
   #
-  # base_url: https://YOUR-WORKER.workers.dev
+  # The worker holds the GitHub client ID and secret, and ALLOWED_DOMAINS
+  # restricts which sites may use it. Those live in the Cloudflare dashboard,
+  # never in this repository.
+  base_url: https://sveltia-cms-auth.ordinarylivingmadeintentional.workers.dev
 
 # Work against the local folder instead of GitHub when the site is served
 # from localhost. Lets you write and save articles with no login and no
@@ -28,10 +32,15 @@ backend:
 # on any non-localhost host.
 local_backend: true
 
-# Editors can preview a draft on a deploy preview before it goes live.
-publish_mode: editorial_workflow
+# There is deliberately no `publish_mode: editorial_workflow` here. It opens a
+# pull request for every save, which with a one-person masthead means reviewing
+# your own work before it can reach the site. Publish commits straight to the
+# branch above instead, and the `draft` switch on each entry is the only thing
+# that decides whether it appears. Add the line back if writers are hired.
 
-# Where uploaded photographs land. `public_folder` is the path the site uses.
+# Where uploaded photographs land. `media_folder` is relative to the repository
+# root — the site lives in site/, so the path carries that prefix. The folder is
+# kept in git with a .gitkeep so a fresh clone has somewhere to write to.
 media_folder: "site/public/assets/img"
 public_folder: "/assets/img"
 
@@ -85,7 +94,14 @@ collections:
           - { name: tone, label: Plate tone, widget: select, default: sky, options: [sky, cream, green, ink, terracotta, maroon] }
           - { name: ratio, label: Shape, widget: select, default: landscape, options: [portrait, square, landscape, wide, cinema] }
       - { name: featured, label: Featured as the lead story, widget: boolean, default: false }
-      - { name: draft, label: Draft, widget: boolean, default: true }
+      - name: draft
+        label: Draft — hidden from the site
+        widget: boolean
+        default: true
+        hint: >-
+          Leave this on while you are still writing. The article is saved and
+          committed either way; it does not appear anywhere on the site until
+          this is switched OFF. This is the only switch that publishes it.
       - name: body
         label: Article
         widget: markdown
@@ -118,7 +134,11 @@ collections:
         display_fields: [title]
       - { name: visits, label: Times visited, widget: number, default: 1, value_type: int, min: 1, hint: Nothing is listed on a single visit. }
       - { name: order, label: Order, widget: number, default: 999, value_type: int }
-      - { name: draft, label: Draft, widget: boolean, default: true }
+      - name: draft
+        label: Draft — hidden from the site
+        widget: boolean
+        default: true
+        hint: Saved either way; it appears on the site only when this is OFF.
 
   # -------------------------------------------------------------------------
   - name: letters
@@ -143,7 +163,11 @@ collections:
         widget: text
         hint: One or two sentences describing the issue, shown in the archive.
       - { name: date, label: Sent, widget: datetime, format: "YYYY-MM-DD", date_format: "DD/MM/YYYY", time_format: false }
-      - { name: draft, label: Draft, widget: boolean, default: true }
+      - name: draft
+        label: Draft — hidden from the site
+        widget: boolean
+        default: true
+        hint: Saved either way; it appears on the site only when this is OFF.
       - name: body
         label: The letter
         widget: markdown
@@ -193,7 +217,11 @@ collections:
           - { name: tone, label: Plate tone, widget: select, default: cream, options: [sky, cream, green, ink, terracotta, maroon] }
           - { name: ratio, label: Shape, widget: select, default: landscape, options: [portrait, square, landscape, wide, cinema] }
       - { name: order, label: Order, widget: number, default: 999, value_type: int }
-      - { name: draft, label: Draft, widget: boolean, default: true }
+      - name: draft
+        label: Draft — hidden from the site
+        widget: boolean
+        default: true
+        hint: Saved either way; it appears on the site only when this is OFF.
 
   # -------------------------------------------------------------------------
   - name: seasons
