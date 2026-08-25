@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="OLMIKAYA">
+  <title>OLMIKAYA</title>
+
+  <!--
+    OLMI in four quadrants, one palette colour each: cream, sage green,
+    clay and sky. At 16px the letters stop resolving and it reads as a
+    four-colour quilt, which is the point — the block pattern is the mark.
+
+    Letterforms are set in a serif stack rather than Ovo. An SVG favicon
+    cannot rely on a webfont loading, and Georgia is the fallback the
+    stylesheet already names for Ovo, so it matches what the site shows
+    before the webfont lands.
+  -->
+
+  <!-- Grounds -->
+  <rect x="0"  y="0"  width="32" height="32" fill="#F8E9C8"/>
+  <rect x="32" y="0"  width="32" height="32" fill="#2B3B2E"/>
+  <rect x="0"  y="32" width="32" height="32" fill="#8C4227"/>
+  <rect x="32" y="32" width="32" height="32" fill="#A8C7DC"/>
+
+  <!-- Letters. Ink on the light grounds, cream on the dark ones. -->
+  <g font-family="Georgia, 'Times New Roman', Times, serif"
+     font-size="23"
+     text-anchor="middle"
+     dominant-baseline="central">
+    <text x="16" y="16.25" fill="#221F18">O</text>
+    <text x="48" y="16.25" fill="#F8E9C8">L</text>
+    <text x="16" y="48.25" fill="#F8E9C8">M</text>
+    <text x="48" y="48.25" fill="#221F18">I</text>
+  </g>
+</svg>
