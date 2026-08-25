@@ -1,0 +1,182 @@
+---
+import Base from "../layouts/Base.astro";
+import Subscribe from "../components/Subscribe.astro";
+
+const MASTHEAD = [
+  { role: "Founder & Editor", name: "[ Name ]" },
+  { role: "Creative Director", name: "[ Name ]" },
+  { role: "Photography Editor", name: "[ Name ]" },
+  { role: "Contributing Writers", name: "[ Names ]" },
+  { role: "Directory", name: "[ Name ]" },
+];
+---
+
+<Base
+  title="About — OLMIKAYA"
+  description="OLMIKAYA is an independent East African editorial and lifestyle company. Ordinary Living Made Intentional."
+  current="about"
+>
+  <section class="hero">
+    <div class="wrap">
+      <p class="eyebrow reveal">About</p>
+      <h1 class="display-xl hero__title reveal">
+        Ordinary Living Made Intentional.
+      </h1>
+
+      <div class="hero__foot">
+        <p class="lead reveal">
+          OLMIKAYA is an independent East African editorial and lifestyle
+          company. We publish a journal, keep a directory of people and places,
+          and make a small number of objects with the people we write about.
+        </p>
+        <p class="small muted reveal">
+          The name is the argument. Most of life is ordinary, and the ordinary
+          parts are the ones worth doing on purpose.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section class="ground-ink on-dark">
+    <div class="wrap">
+      <div class="chapter reveal">
+        <div class="chapter__mark" aria-hidden="true"></div>
+        <p class="chapter__line">
+          Ordinary life is worth experiencing intentionally.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <h2 class="h2">What we make</h2>
+      </div>
+
+      <div class="row row--3">
+        <div class="stack reveal">
+          <p class="eyebrow eyebrow--muted">One</p>
+          <h3 class="h3">The journal</h3>
+          <p class="card__dek">
+            Reporting on people, places, objects, food, style, design,
+            architecture, travel, work and everyday ritual. Published when a
+            piece is ready, which is not often.
+          </p>
+          <a class="more" href="/journal/">Read</a>
+        </div>
+
+        <div class="stack reveal">
+          <p class="eyebrow eyebrow--muted">Two</p>
+          <h3 class="h3">The directory</h3>
+          <p class="card__dek">
+            A standing record of the makers and rooms worth crossing a city for.
+            Nothing is listed because it paid to be.
+          </p>
+          <a class="more" href="/directory/">Browse</a>
+        </div>
+
+        <div class="stack reveal">
+          <p class="eyebrow eyebrow--muted">Three</p>
+          <h3 class="h3">The objects</h3>
+          <p class="card__dek">
+            A small number of things, made slowly, with the people we cover.
+            Never many, and never in a hurry.
+          </p>
+          <a class="more" href="/objects/">See</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section ground-cream">
+    <div class="wrap">
+      <div class="grid">
+        <div class="col-4 stack reveal">
+          <p class="eyebrow">Principles</p>
+          <h2 class="h2">How we work</h2>
+        </div>
+
+        <div class="col-7 start-6 reveal">
+          <div class="prose">
+            <p>
+              We go more than once. A single visit produces a description; a
+              second produces an understanding. Nothing enters the directory on
+              one visit, and nothing is written up from a phone call.
+            </p>
+            <p>
+              We do not take payment for coverage. Not for a story, not for a
+              directory entry, not for a mention. If that ever changes it will be
+              stated on this page before it is done anywhere else.
+            </p>
+            <p>
+              We name the people who made the thing. Photographers, writers,
+              tailors, cooks and carvers get credited by name, in the piece, not
+              in a caption nobody reads.
+            </p>
+            <p>
+              We publish slowly. The work takes as long as it takes, and a thin
+              month is better than a padded one.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="masthead">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <h2 class="h2">Masthead</h2>
+        <p class="small muted">Nairobi</p>
+      </div>
+
+      <div class="grid">
+        <div class="col-8 reveal">
+          <div class="masthead-list">
+            {
+              MASTHEAD.map((row) => (
+                <div class="masthead-list__row">
+                  <p class="masthead-list__role">{row.role}</p>
+                  <p class="masthead-list__name">{row.name}</p>
+                </div>
+              ))
+            }
+          </div>
+
+          <p class="note hang">
+            <strong>Names withheld.</strong> The masthead is left bracketed rather
+            than filled with invented people. Real names, and only real names, go
+            here.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section ground-green on-dark">
+    <div class="wrap">
+      <div class="grid">
+        <div class="col-4 stack reveal">
+          <p class="eyebrow">Colophon</p>
+          <h2 class="h2">How the site is made</h2>
+        </div>
+
+        <div class="col-7 start-6 stack reveal">
+          <p class="lead">
+            Set in Ovo, which has a single weight and no italic, and Inter, which
+            carries everything you actually read. Seven colours, no gradients,
+            and as little JavaScript as the pages can get away with.
+          </p>
+          <p class="small">
+            The whole system — palette, contrast rules, type scale and components
+            — is documented and visible.
+          </p>
+          <a class="more" href="/styleguide/">The design system</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <Subscribe />
+</Base>

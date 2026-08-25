@@ -1,0 +1,168 @@
+# ---------------------------------------------------------------------------
+# OLMIKAYA — CMS configuration (Sveltia CMS, Decap-compatible)
+#
+# These fields MIRROR the Zod schemas in src/content.config.ts. If you add a
+# field there, add it here too — the admin will silently drop anything it does
+# not know about when it saves.
+#
+# Before this works you must set `repo` below to your GitHub repository.
+# ---------------------------------------------------------------------------
+
+backend:
+  name: github
+  repo: Olmikaya/olmikaya   # <-- change this
+  branch: main
+
+  # Signing in needs a server to swap the GitHub code for a token; that
+  # cannot be done safely in the browser. Netlify used to provide this
+  # for free. On GitHub Pages or Cloudflare Pages you host it yourself,
+  # which is a one-file Cloudflare Worker (sveltia-cms-auth). Deploy it,
+  # then uncomment the line below and point it at your worker.
+  #
+  # base_url: https://YOUR-WORKER.workers.dev
+
+# Editors can preview a draft on a deploy preview before it goes live.
+publish_mode: editorial_workflow
+
+# Where uploaded photographs land. `public_folder` is the path the site uses.
+media_folder: "site/public/assets/img"
+public_folder: "/assets/img"
+
+collections:
+  # -------------------------------------------------------------------------
+  - name: articles
+    label: Articles
+    label_singular: Article
+    folder: "site/src/content/articles"
+    create: true
+    slug: "{{slug}}"
+    preview_path: "journal/{{slug}}"
+    summary: "{{title}} — {{author}}, {{place}}"
+    sortable_fields: [date, title, category]
+    fields:
+      - { name: title, label: Title, widget: string }
+      - name: dek
+        label: Standfirst
+        widget: text
+        hint: The one or two sentences under the headline. Keep it to about 30 words.
+      - name: category
+        label: Category
+        widget: select
+        options: [People, Places, Objects, Food, Style, Design, Architecture, Travel, Culture, Work, Ritual]
+      - name: secondaryCategory
+        label: Second category
+        widget: select
+        required: false
+        options: [People, Places, Objects, Food, Style, Design, Architecture, Travel, Culture, Work, Ritual]
+      - { name: author, label: Words by, widget: string }
+      - { name: photographer, label: Photographs by, widget: string, required: false }
+      - { name: place, label: Place, widget: string, hint: "City or town, e.g. Nairobi" }
+      - { name: date, label: Date, widget: datetime, format: "YYYY-MM-DD", date_format: "DD/MM/YYYY", time_format: false }
+      - { name: readingTime, label: Reading time (minutes), widget: number, required: false, value_type: int, min: 1 }
+      - { name: season, label: Season, widget: string, required: false }
+      - name: cover
+        label: Cover image
+        widget: object
+        hint: Leave the image empty and a palette plate holds the space until a photograph exists.
+        fields:
+          - { name: src, label: Image, widget: image, required: false }
+          - { name: alt, label: Alt text, widget: string, required: false, hint: Describe the photograph for screen readers. }
+          - { name: caption, label: Caption, widget: string, required: false }
+          - { name: credit, label: Credit, widget: string, required: false, default: "Photograph to come" }
+          - { name: tone, label: Plate tone, widget: select, default: sky, options: [sky, cream, green, ink, terracotta, maroon] }
+          - { name: ratio, label: Shape, widget: select, default: landscape, options: [portrait, square, landscape, wide, cinema] }
+      - { name: featured, label: Featured as the lead story, widget: boolean, default: false }
+      - { name: draft, label: Draft, widget: boolean, default: true }
+      - name: body
+        label: Article
+        widget: markdown
+        hint: >-
+          Use ## for section headings. A `>` blockquote becomes an OLMIKAYA
+          pull-quote — to add an attribution, put it after a blank quote line
+          so it renders as the small credit rather than part of the quote.
+
+  # -------------------------------------------------------------------------
+  - name: directory
+    label: Directory
+    label_singular: Entry
+    folder: "site/src/content/directory"
+    create: true
+    slug: "{{slug}}"
+    summary: "{{name}} — {{city}}"
+    sortable_fields: [order, name, city]
+    fields:
+      - { name: name, label: Name, widget: string }
+      - { name: dek, label: Description, widget: text }
+      - { name: city, label: City, widget: string }
+      - { name: neighbourhood, label: Neighbourhood, widget: string, required: false }
+      - name: relatedArticle
+        label: Related article
+        widget: relation
+        required: false
+        collection: articles
+        search_fields: [title]
+        value_field: "{{slug}}"
+        display_fields: [title]
+      - { name: visits, label: Times visited, widget: number, default: 1, value_type: int, min: 1, hint: Nothing is listed on a single visit. }
+      - { name: order, label: Order, widget: number, default: 999, value_type: int }
+      - { name: draft, label: Draft, widget: boolean, default: true }
+
+  # -------------------------------------------------------------------------
+  - name: objects
+    label: Objects
+    label_singular: Object
+    folder: "site/src/content/objects"
+    create: true
+    slug: "{{slug}}"
+    summary: "{{name}} — {{availability}}"
+    sortable_fields: [order, name]
+    fields:
+      - { name: name, label: Name, widget: string }
+      - { name: note, label: Note, widget: text }
+      - { name: maker, label: Made with, widget: string, required: false }
+      - name: availability
+        label: Availability
+        widget: string
+        default: "Not yet released"
+        hint: Free text, not a price. Nothing is for sale on this site yet.
+      - name: relatedArticle
+        label: Related article
+        widget: relation
+        required: false
+        collection: articles
+        search_fields: [title]
+        value_field: "{{slug}}"
+        display_fields: [title]
+      - name: cover
+        label: Image
+        widget: object
+        fields:
+          - { name: src, label: Image, widget: image, required: false }
+          - { name: alt, label: Alt text, widget: string, required: false }
+          - { name: caption, label: Caption, widget: string, required: false }
+          - { name: credit, label: Credit, widget: string, required: false, default: "Photograph to come" }
+          - { name: tone, label: Plate tone, widget: select, default: cream, options: [sky, cream, green, ink, terracotta, maroon] }
+          - { name: ratio, label: Shape, widget: select, default: landscape, options: [portrait, square, landscape, wide, cinema] }
+      - { name: order, label: Order, widget: number, default: 999, value_type: int }
+      - { name: draft, label: Draft, widget: boolean, default: true }
+
+  # -------------------------------------------------------------------------
+  - name: seasons
+    label: Seasons
+    label_singular: Season
+    folder: "site/src/content/seasons"
+    create: true
+    slug: "{{slug}}"
+    summary: "{{index}} — {{title}}"
+    sortable_fields: [index]
+    fields:
+      - { name: index, label: Number, widget: number, value_type: int, min: 1 }
+      - { name: title, label: Title, widget: string }
+      - { name: question, label: The question, widget: text, hint: The single question everything in this season answers to. }
+      - { name: dates, label: Running dates, widget: string, required: false }
+      - name: scaffold
+        label: Still a placeholder
+        widget: boolean
+        default: true
+        hint: Untick once this holds the real framework. The scaffold notice disappears when no season is ticked.
+      - { name: draft, label: Draft, widget: boolean, default: false }

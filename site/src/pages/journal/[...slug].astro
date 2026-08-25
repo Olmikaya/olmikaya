@@ -1,0 +1,114 @@
+---
+import { getCollection, render } from "astro:content";
+import Base from "../../layouts/Base.astro";
+import Plate from "../../components/Plate.astro";
+import Subscribe from "../../components/Subscribe.astro";
+
+export async function getStaticPaths() {
+  const articles = await getCollection("articles", ({ data }) => !data.draft);
+  return articles.map((article) => ({
+    params: { slug: article.id },
+    props: { article },
+  }));
+}
+
+const { article } = Astro.props;
+const { Content } = await render(article);
+const a = article.data;
+
+const dateLabel = a.date.toLocaleDateString("en-GB", {
+  month: "long",
+  year: "numeric",
+});
+
+/* Read next: three other pieces, newest first. */
+const others = (await getCollection("articles", ({ data }) => !data.draft))
+  .filter((x) => x.id !== article.id)
+  .sort((x, y) => y.data.date.valueOf() - x.data.date.valueOf())
+  .slice(0, 3);
+---
+
+<Base title={`${a.title} — OLMIKAYA`} description={a.dek} current="journal">
+  <article>
+    <header class="section">
+      <div class="wrap">
+        <div class="grid">
+          <div class="col-8 start-3 article-head reveal">
+            <p class="eyebrow">
+              {a.category}{a.secondaryCategory && ` · ${a.secondaryCategory}`}
+            </p>
+            <h1 class="display-l article-head__title">{a.title}</h1>
+            <p class="lead">{a.dek}</p>
+            <p class="meta">
+              <span>Words by {a.author}</span>
+              <span>{a.photographer || "Photographs to come"}</span>
+              <span>{a.place}</span>
+              <span>{dateLabel}</span>
+              {a.readingTime && <span>{a.readingTime} min read</span>}
+            </p>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <div class="wrap">
+      <div class="reveal">
+        <Plate
+          src={a.cover.src}
+          alt={a.cover.alt}
+          tone={a.cover.tone}
+          ratio={a.cover.ratio}
+          caption={a.cover.caption}
+          credit={a.cover.credit}
+        />
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="wrap">
+        <div class="grid">
+          <div class="col-8 start-3">
+            <div class="prose reveal">
+              <Content />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </article>
+
+  {
+    others.length > 0 && (
+      <section class="section ground-cream">
+        <div class="wrap">
+          <div class="section-head reveal">
+            <h2 class="h2">Read next</h2>
+            <a class="more" href="/journal/">The journal</a>
+          </div>
+
+          <div class="row row--3">
+            {others.map((o) => (
+              <article class="card reveal">
+                <a class="card__link" href={`/journal/${o.id}/`}>
+                  <Plate
+                    bare
+                    src={o.data.cover.src}
+                    alt={o.data.cover.alt}
+                    tone={o.data.cover.tone}
+                    ratio="landscape"
+                  />
+                  <div class="stack-sm">
+                    <p class="eyebrow eyebrow--muted">{o.data.category}</p>
+                    <h3 class="card__title">{o.data.title}</h3>
+                  </div>
+                </a>
+              </article>
+            ))}
+          </div>
+        </div>
+      </section>
+    )
+  }
+
+  <Subscribe />
+</Base>

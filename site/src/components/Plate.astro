@@ -1,0 +1,56 @@
+---
+/**
+ * A photograph, or a plate standing in for one.
+ *
+ * Pass an image with a `src` and it renders a real <img>. Leave `src` empty
+ * and it renders the palette colour field at the correct aspect ratio, so a
+ * layout is fully resolved before the photography exists. Nothing around it
+ * changes when the photograph arrives.
+ */
+interface Props {
+  src?: string;
+  alt?: string;
+  tone?: string;
+  ratio?: string;
+  caption?: string;
+  credit?: string;
+  /** Render bare, without the surrounding <figure>/<figcaption>. */
+  bare?: boolean;
+}
+
+const {
+  src,
+  alt = "",
+  tone = "sky",
+  ratio = "landscape",
+  caption,
+  credit,
+  bare = false,
+} = Astro.props;
+
+const hasCaption = Boolean(caption || credit);
+---
+
+{
+  bare ? (
+    src ? (
+      <img src={src} alt={alt} class={`plate-img plate--${ratio}`} />
+    ) : (
+      <div class={`plate plate--${ratio} plate--${tone}`} />
+    )
+  ) : (
+    <figure>
+      {src ? (
+        <img src={src} alt={alt} class={`plate-img plate--${ratio}`} />
+      ) : (
+        <div class={`plate plate--${ratio} plate--${tone}`} />
+      )}
+      {hasCaption && (
+        <figcaption>
+          {caption && <span>{caption}</span>}
+          <span class="credit">{credit ?? "Photograph to come"}</span>
+        </figcaption>
+      )}
+    </figure>
+  )
+}

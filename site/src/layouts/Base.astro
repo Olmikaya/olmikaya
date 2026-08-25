@@ -1,0 +1,52 @@
+---
+import Masthead from "../components/Masthead.astro";
+import Footer from "../components/Footer.astro";
+import "../styles/olmikaya.css";
+
+interface Props {
+  title: string;
+  description: string;
+  /** Which nav item is current. */
+  current?: string;
+}
+
+const { title, description, current } = Astro.props;
+const canonical = new URL(Astro.url.pathname, Astro.site).href;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <meta name="theme-color" content="#FFF8F0" />
+    <link rel="canonical" href={canonical} />
+
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="OLMIKAYA" />
+    <meta property="og:url" content={canonical} />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Ovo&family=Inter:ital,wght@0,400;0,500;0,600;1,400&display=swap"
+    />
+  </head>
+
+  <body>
+    <Masthead current={current} />
+
+    <main id="main">
+      <slot />
+    </main>
+
+    <Footer />
+
+    <script is:inline src="/assets/js/olmikaya.js"></script>
+  </body>
+</html>

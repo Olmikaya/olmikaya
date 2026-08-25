@@ -1,0 +1,76 @@
+---
+/**
+ * Site masthead. Defined once here, rendered on every page — this is the
+ * thing the static build had to duplicate across eight files.
+ */
+interface Props {
+  /** Which nav item is the current page. */
+  current?: string;
+}
+
+const { current } = Astro.props;
+
+const NAV = [
+  { key: "journal", label: "Journal", href: "/journal/" },
+  { key: "seasons", label: "Seasons", href: "/seasons/" },
+  { key: "directory", label: "Directory", href: "/directory/" },
+  { key: "objects", label: "Objects", href: "/objects/" },
+  { key: "about", label: "About", href: "/about/" },
+];
+---
+
+<a class="skip-link" href="#main">Skip to content</a>
+
+<header class="masthead">
+  <div class="wrap">
+    <div class="masthead__inner">
+      <a class="wordmark" href="/">OLMIKAYA</a>
+
+      <nav class="nav" aria-label="Primary">
+        {
+          NAV.map((item) => (
+            <a
+              class="nav__link"
+              href={item.href}
+              aria-current={item.key === current ? "page" : undefined}
+            >
+              {item.label}
+            </a>
+          ))
+        }
+      </nav>
+
+      <button
+        class="nav-toggle"
+        type="button"
+        data-nav-toggle
+        aria-expanded="false"
+        aria-controls="nav-panel"
+      >
+        <span data-nav-label>Menu</span>
+      </button>
+    </div>
+  </div>
+
+  <div class="nav-panel" id="nav-panel" data-open="false">
+    <div class="wrap">
+      <nav aria-label="Primary, mobile">
+        <ul class="nav-panel__list">
+          {
+            NAV.map((item) => (
+              <li>
+                <a
+                  class="nav-panel__link"
+                  href={item.href}
+                  aria-current={item.key === current ? "page" : undefined}
+                >
+                  {item.label}
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </nav>
+    </div>
+  </div>
+</header>

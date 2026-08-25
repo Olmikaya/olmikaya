@@ -1,0 +1,299 @@
+---
+import Base from "../layouts/Base.astro";
+
+const SWATCHES = [
+  { name: "Sky", hex: "#A8C7DC", cls: "bg-sky", role: "Cool relief, section grounds" },
+  { name: "Off-white", hex: "#FFF8F0", cls: "bg-offwhite", role: "Default page ground" },
+  { name: "Cream", hex: "#F8E9C8", cls: "bg-cream", role: "Warm secondary ground" },
+  { name: "Ink", hex: "#221F18", cls: "bg-ink", role: "Primary text, dark grounds" },
+  { name: "Deep green", hex: "#2B3B2E", cls: "bg-green", role: "Dark ground, secondary brand" },
+  { name: "Maroon", hex: "#5C2020", cls: "bg-maroon", role: "The wordmark colour. Primary brand." },
+  { name: "Terracotta", hex: "#8C4227", cls: "bg-terracotta", role: "Warm accent. Light grounds only." },
+];
+
+/* Measured with the WCAG 2.1 relative-luminance formula against the exact
+   values extracted from color-palette.jpeg. */
+const CONTRAST = [
+  ["Ink", "Off-white", "15.61", "AAA"],
+  ["Ink", "Cream", "13.69", "AAA"],
+  ["Ink", "Sky", "9.29", "AAA"],
+  ["Maroon", "Off-white", "11.85", "AAA"],
+  ["Maroon", "Cream", "10.39", "AAA"],
+  ["Maroon", "Sky", "7.05", "AAA"],
+  ["Green", "Off-white", "11.28", "AAA"],
+  ["Green", "Cream", "9.89", "AAA"],
+  ["Green", "Sky", "6.71", "AA"],
+  ["Terracotta", "Off-white", "6.82", "AA"],
+  ["Terracotta", "Cream", "5.98", "AA"],
+  ["Terracotta", "Ink", "2.29", "Fail"],
+  ["Terracotta", "Green", "1.65", "Fail"],
+];
+
+const TONES = ["sky", "cream", "terracotta", "maroon", "green", "ink"];
+---
+
+<Base
+  title="Design system — OLMIKAYA"
+  description="The OLMIKAYA design system: palette, measured contrast, type scale and components."
+>
+  <section class="section">
+    <div class="wrap">
+      <div class="grid">
+        <div class="col-7 stack reveal">
+          <p class="eyebrow">Design system</p>
+          <h1 class="display-l">The rules, written down.</h1>
+          <p class="lead">
+            Everything the site is built from, in one place, so it survives the
+            next person who touches it. Values here are extracted from the
+            supplied brand assets, not chosen.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <h2 class="h2">Palette</h2>
+        <p class="small muted">Extracted from color-palette.jpeg</p>
+      </div>
+
+      <p class="lead measure reveal hang">
+        Each swatch in the source file is a uniform block, so these are exact
+        source values rather than approximations.
+      </p>
+
+      <div class="row row--4 hang">
+        {
+          SWATCHES.map((s) => (
+            <div class="swatch reveal">
+              <div class={`swatch__chip ${s.cls}`} />
+              <div class="swatch__meta">
+                <p class="h3">{s.name}</p>
+                <p class="swatch__hex">{s.hex}</p>
+                <p class="small muted">{s.role}</p>
+              </div>
+            </div>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <section class="section ground-cream">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <h2 class="h2">Measured contrast</h2>
+        <p class="small muted">WCAG 2.1</p>
+      </div>
+
+      <div class="grid">
+        <div class="col-5 stack reveal">
+          <p class="statement">
+            The palette is unusually well behaved. Nearly every text pairing
+            clears AAA, which is what lets the site carry long-form reading
+            without compromise.
+          </p>
+          <p class="note">
+            <strong>One binding rule.</strong> Terracotta is a light-ground accent
+            only. It must never be used as text or a meaningful mark on ink or
+            green. On dark grounds use cream, off-white or sky.
+          </p>
+        </div>
+
+        <div class="col-6 start-7 reveal">
+          <div class="scroll-x">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th scope="col">Foreground</th>
+                  <th scope="col">Ground</th>
+                  <th scope="col">Ratio</th>
+                  <th scope="col">Body text</th>
+                </tr>
+              </thead>
+              <tbody>
+                {
+                  CONTRAST.map(([fg, bg, ratio, verdict]) => (
+                    <tr>
+                      <td>{fg}</td>
+                      <td>{bg}</td>
+                      <td>{ratio}</td>
+                      <td class={verdict === "Fail" ? "fail" : "pass"}>{verdict}</td>
+                    </tr>
+                  ))
+                }
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <h2 class="h2">Typography</h2>
+        <p class="small muted">Ovo and Inter</p>
+      </div>
+
+      <div class="grid">
+        <div class="col-5 stack reveal">
+          <p class="statement">
+            Ovo ships exactly one style: weight 400, no bold, no italic.
+          </p>
+          <div class="prose">
+            <p>
+              That single fact shapes the whole system. Ovo is a display face
+              only — hierarchy comes from size, letterspacing, case and colour,
+              never from weight. Putting a bold or italic tag inside Ovo-set text
+              would make the browser synthesise a weight the typeface does not
+              have, which reads as broken at editorial scale, so Ovo is scoped to
+              headings, the wordmark and pull-quotes.
+            </p>
+            <p>
+              Inter carries everything you actually read: body copy, captions,
+              metadata, navigation and UI. It has a real weight range and a true
+              italic.
+            </p>
+          </div>
+        </div>
+
+        <div class="col-6 start-7 stack-lg reveal">
+          <div>
+            <p class="eyebrow eyebrow--muted">Display XL &middot; Ovo</p>
+            <p class="display-xl">Intentional</p>
+          </div>
+          <div>
+            <p class="eyebrow eyebrow--muted">Display L &middot; Ovo</p>
+            <p class="display-l">Ordinary living</p>
+          </div>
+          <div>
+            <p class="eyebrow eyebrow--muted">Heading &middot; Ovo</p>
+            <p class="h2">The long table</p>
+          </div>
+          <div>
+            <p class="eyebrow eyebrow--muted">Eyebrow &middot; Inter 500</p>
+            <p class="eyebrow">Food &middot; Ritual</p>
+          </div>
+          <div>
+            <p class="eyebrow eyebrow--muted">Body &middot; Inter 400</p>
+            <p class="measure">
+              The table is not remarkable. It is three tables, actually, pushed
+              end to end and covered with a cloth that does not quite reach the
+              corners.
+            </p>
+          </div>
+          <div>
+            <p class="eyebrow eyebrow--muted">Small &middot; Inter 400</p>
+            <p class="small muted">
+              Photograph to come &middot; Nairobi, March 2026
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section ground-sky">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <h2 class="h2">Plates</h2>
+        <p class="small muted">Placeholder imagery</p>
+      </div>
+
+      <p class="lead measure reveal">
+        Every plate stands in for a photograph, holding the correct aspect ratio
+        and a palette colour field. Add a photograph in the CMS and it takes the
+        same slot — nothing around it changes.
+      </p>
+
+      <div class="row row--4 hang">
+        {
+          TONES.map((tone) => (
+            <div class="stack-sm reveal">
+              <div class={`plate plate--square plate--${tone}`} />
+              <p class="small muted">
+                {tone.charAt(0).toUpperCase() + tone.slice(1)}
+              </p>
+            </div>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <h2 class="h2">Components</h2>
+      </div>
+
+      <div class="row row--2">
+        <div class="stack reveal">
+          <p class="eyebrow eyebrow--muted">Pull-quote</p>
+          <blockquote class="pullquote">
+            Nobody was invited, so nobody can be uninvited.
+            <span class="pullquote__attr">A regular, on the rules</span>
+          </blockquote>
+        </div>
+
+        <div class="stack reveal">
+          <p class="eyebrow eyebrow--muted">Directory entry</p>
+          <div class="entry">
+            <p class="entry__no">001</p>
+            <div class="stack-sm">
+              <h3 class="entry__name">A roastery in a garage</h3>
+              <p class="card__dek">Single origin, one bag at a time.</p>
+            </div>
+            <p class="entry__place">Nairobi</p>
+          </div>
+        </div>
+
+        <div class="stack reveal">
+          <p class="eyebrow eyebrow--muted">Buttons and links</p>
+          <div class="subscribe__form">
+            <a class="button" href="/journal/">Primary</a>
+            <a class="button button--ghost" href="/journal/">Ghost</a>
+          </div>
+          <a class="more" href="/journal/">Inline more link</a>
+        </div>
+
+        <div class="stack reveal">
+          <p class="eyebrow eyebrow--muted">Scaffold note</p>
+          <p class="note">
+            <strong>Scaffold.</strong> Used anywhere a surface is structure rather
+            than finished content, so placeholder work can never be mistaken for
+            the real thing.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section ground-green on-dark">
+    <div class="wrap">
+      <div class="grid">
+        <div class="col-4 stack reveal">
+          <p class="eyebrow">Motion</p>
+          <h2 class="h2">Almost none</h2>
+        </div>
+
+        <div class="col-7 start-6 stack reveal">
+          <p class="lead">
+            Elements fade and rise a few pixels once, on entry. There is no
+            parallax and nothing moves on its own.
+          </p>
+          <p class="small">
+            The hidden state is scoped to a class the script adds, so with
+            JavaScript disabled nothing is ever stranded invisible. Readers who
+            ask for reduced motion get the finished state immediately, with
+            transitions and the scroll observer both switched off.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+</Base>

@@ -1,0 +1,253 @@
+---
+import { getCollection } from "astro:content";
+import Base from "../layouts/Base.astro";
+import Plate from "../components/Plate.astro";
+import Subscribe from "../components/Subscribe.astro";
+
+const articles = (
+  await getCollection("articles", ({ data }) => !data.draft)
+).sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+
+const lead = articles.find((a) => a.data.featured) ?? articles[0];
+const recent = articles.filter((a) => a.id !== lead?.id).slice(0, 3);
+
+const seasons = (await getCollection("seasons", ({ data }) => !data.draft)).sort(
+  (a, b) => a.data.index - b.data.index,
+);
+const anyScaffold = seasons.some((s) => s.data.scaffold);
+
+const entries = (await getCollection("directory", ({ data }) => !data.draft))
+  .sort((a, b) => a.data.order - b.data.order)
+  .slice(0, 3);
+---
+
+<Base
+  title="OLMIKAYA — Ordinary Living Made Intentional"
+  description="An independent East African editorial and lifestyle company. People, places, objects, food, style, design, architecture, travel, work and everyday ritual."
+>
+  <section class="hero">
+    <div class="wrap">
+      <p class="eyebrow reveal">Ordinary Living Made Intentional</p>
+
+      <h1 class="display-xl hero__title reveal">
+        Ordinary life is worth experiencing intentionally.
+      </h1>
+
+      <div class="hero__foot">
+        <p class="lead reveal">
+          OLMIKAYA is an independent East African editorial and lifestyle
+          company. We pay close attention to the things that are not supposed to
+          be remarkable — a Sunday table, a well-made door, the route a rider
+          takes before the city wakes.
+        </p>
+
+        <div class="stack reveal">
+          <p class="small muted">
+            A journal, a directory of people and places, and — in time — a small
+            number of objects. Published from Nairobi.
+          </p>
+          <a class="more" href="/journal/">Start reading</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <div class="reveal">
+        <Plate
+          tone="sky"
+          ratio="cinema"
+          caption="Ngong Road before six, when the light is still blue."
+        />
+      </div>
+    </div>
+  </section>
+
+  {
+    lead && (
+      <section class="section">
+        <div class="wrap">
+          <div class="section-head reveal">
+            <h2 class="h2">The lead</h2>
+            <a class="more" href="/journal/">All stories</a>
+          </div>
+
+          <div class="feature reveal">
+            <Plate
+              src={lead.data.cover.src}
+              alt={lead.data.cover.alt}
+              tone={lead.data.cover.tone}
+              ratio="landscape"
+              caption={lead.data.place}
+              credit={lead.data.cover.credit}
+            />
+
+            <div class="feature__body">
+              <p class="eyebrow">
+                {lead.data.category}
+                {lead.data.secondaryCategory && ` · ${lead.data.secondaryCategory}`}
+              </p>
+              <h3 class="display-l">
+                <a class="card__link" href={`/journal/${lead.id}/`}>
+                  {lead.data.title}
+                </a>
+              </h3>
+              <p class="lead">{lead.data.dek}</p>
+              <p class="meta">
+                <span>Words by {lead.data.author}</span>
+                {lead.data.readingTime && <span>{lead.data.readingTime} min read</span>}
+              </p>
+              <a class="more" href={`/journal/${lead.id}/`}>Read the story</a>
+            </div>
+          </div>
+        </div>
+      </section>
+    )
+  }
+
+  <section class="ground-green on-dark">
+    <div class="wrap">
+      <div class="chapter reveal">
+        <div class="chapter__mark" aria-hidden="true"></div>
+        <p class="chapter__line">
+          We are not documenting a region. We are paying attention to a life
+          already being lived well.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <h2 class="h2">From the journal</h2>
+        <a class="more" href="/journal/">Everything</a>
+      </div>
+
+      <div class="row row--3">
+        {
+          recent.map((a) => (
+            <article class="card reveal">
+              <a class="card__link" href={`/journal/${a.id}/`}>
+                <Plate
+                  bare
+                  src={a.data.cover.src}
+                  alt={a.data.cover.alt}
+                  tone={a.data.cover.tone}
+                  ratio="portrait"
+                />
+                <div class="stack-sm">
+                  <p class="eyebrow eyebrow--muted">
+                    {a.data.category}
+                    {a.data.secondaryCategory && ` · ${a.data.secondaryCategory}`}
+                  </p>
+                  <h3 class="card__title">{a.data.title}</h3>
+                  <p class="card__dek">{a.data.dek}</p>
+                </div>
+              </a>
+            </article>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <section class="section ground-cream">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <h2 class="h2">The seasons</h2>
+        <a class="more" href="/seasons/">How seasons work</a>
+      </div>
+
+      <div class="stack-lg">
+        <p class="statement reveal">
+          OLMIKAYA publishes in seasons. Each one sets a question, and everything
+          made under it — stories, people, objects — answers to that question.
+        </p>
+
+        <div class="row row--4">
+          {
+            seasons.map((s) => (
+              <div class="season reveal">
+                <p class="season__index">{String(s.data.index).padStart(2, "0")}</p>
+                <h3 class="season__title">{s.data.title}</h3>
+                <p class="card__dek">
+                  {s.data.scaffold ? "Awaiting the supplied framework." : s.data.question}
+                </p>
+              </div>
+            ))
+          }
+        </div>
+
+        {
+          anyScaffold && (
+            <p class="note reveal">
+              <strong>Scaffold.</strong> These slots are structural placeholders,
+              not proposed seasons. The OLMIKAYA seasonal framework was not
+              included with the brand assets and has not been invented here.
+              Supply it and this section fills in without redesign.
+            </p>
+          )
+        }
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <h2 class="h2">People &amp; places</h2>
+        <a class="more" href="/directory/">The directory</a>
+      </div>
+
+      <div class="grid">
+        <div class="col-5 stack reveal">
+          <p class="statement">
+            A standing record of the people making things worth crossing a city
+            for, and the rooms worth sitting in.
+          </p>
+          <p class="small muted">
+            Nothing is listed because it paid to be. Entries are added when we
+            have been, more than once.
+          </p>
+          <a class="more" href="/directory/">Browse all entries</a>
+        </div>
+
+        <div class="col-6 start-7 reveal">
+          {
+            entries.map((e, i) => (
+              <div class="entry">
+                <p class="entry__no">{String(i + 1).padStart(3, "0")}</p>
+                <div class="stack-sm">
+                  <h3 class="entry__name">{e.data.name}</h3>
+                  <p class="card__dek">{e.data.dek}</p>
+                </div>
+                <p class="entry__place">{e.data.city}</p>
+              </div>
+            ))
+          }
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section ground-sky">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <h2 class="h2">Objects</h2>
+        <a class="more" href="/objects/">See the first objects</a>
+      </div>
+
+      <div class="stack-lg">
+        <p class="statement reveal">
+          A small number of things, made slowly, with the people we write about.
+          Never many. Never in a hurry.
+        </p>
+        <a class="more reveal" href="/objects/">What we are making</a>
+      </div>
+    </div>
+  </section>
+
+  <Subscribe />
+</Base>

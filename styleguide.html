@@ -1,0 +1,447 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Design system — OLMIKAYA</title>
+<meta name="description" content="The OLMIKAYA design system: palette, measured contrast, type scale and components.">
+<meta name="theme-color" content="#FFF8F0">
+
+<meta property="og:title" content="Design system — OLMIKAYA">
+<meta property="og:description" content="The OLMIKAYA design system: palette, measured contrast, type scale and components.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="OLMIKAYA">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Ovo&family=Inter:ital,wght@0,400;0,500;0,600;1,400&display=swap">
+<link rel="stylesheet" href="assets/css/olmikaya.css">
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <header class="masthead">
+    <div class="wrap">
+      <div class="masthead__inner">
+        <a class="wordmark" href="index.html">OLMIKAYA</a>
+
+        <nav class="nav" aria-label="Primary">
+          <a class="nav__link" href="journal.html">Journal</a>
+          <a class="nav__link" href="seasons.html">Seasons</a>
+          <a class="nav__link" href="directory.html">Directory</a>
+          <a class="nav__link" href="shop.html">Objects</a>
+          <a class="nav__link" href="about.html">About</a>
+        </nav>
+
+        <button class="nav-toggle" type="button" data-nav-toggle
+                aria-expanded="false" aria-controls="nav-panel">
+          <span data-nav-label>Menu</span>
+        </button>
+      </div>
+    </div>
+
+    <div class="nav-panel" id="nav-panel" data-open="false">
+      <div class="wrap">
+        <nav aria-label="Primary, mobile">
+          <ul class="nav-panel__list">
+            <li><a class="nav-panel__link" href="journal.html">Journal</a></li>
+            <li><a class="nav-panel__link" href="seasons.html">Seasons</a></li>
+            <li><a class="nav-panel__link" href="directory.html">Directory</a></li>
+            <li><a class="nav-panel__link" href="shop.html">Objects</a></li>
+            <li><a class="nav-panel__link" href="about.html">About</a></li>
+          </ul>
+        </nav>
+      </div>
+    </div>
+  </header>
+
+  <main id="main">
+    <section class="section">
+      <div class="wrap">
+        <div class="grid">
+          <div class="col-7 stack reveal">
+            <p class="eyebrow">Design system</p>
+            <h1 class="display-l">The rules, written down.</h1>
+            <p class="lead">
+              Everything the site is built from, in one place, so it survives
+              the next person who touches it. Values here are extracted from the
+              supplied brand assets, not chosen.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================================================================
+         PALETTE
+         ================================================================ -->
+    <section class="section">
+      <div class="wrap">
+        <div class="section-head reveal">
+          <h2 class="h2">Palette</h2>
+          <p class="small muted">Extracted from color-palette.jpeg</p>
+        </div>
+
+        <p class="lead measure reveal hang">
+          Each swatch in the source file is a uniform block, so these are exact
+          source values rather than approximations.
+        </p>
+
+        <div class="row row--4 hang">
+          <div class="swatch reveal">
+            <div class="swatch__chip bg-sky"></div>
+            <div class="swatch__meta">
+              <p class="h3">Sky</p>
+              <p class="swatch__hex">#A8C7DC</p>
+              <p class="small muted">Cool relief, section grounds</p>
+            </div>
+          </div>
+
+          <div class="swatch reveal">
+            <div class="swatch__chip bg-offwhite"></div>
+            <div class="swatch__meta">
+              <p class="h3">Off-white</p>
+              <p class="swatch__hex">#FFF8F0</p>
+              <p class="small muted">Default page ground</p>
+            </div>
+          </div>
+
+          <div class="swatch reveal">
+            <div class="swatch__chip bg-cream"></div>
+            <div class="swatch__meta">
+              <p class="h3">Cream</p>
+              <p class="swatch__hex">#F8E9C8</p>
+              <p class="small muted">Warm secondary ground</p>
+            </div>
+          </div>
+
+          <div class="swatch reveal">
+            <div class="swatch__chip bg-ink"></div>
+            <div class="swatch__meta">
+              <p class="h3">Ink</p>
+              <p class="swatch__hex">#221F18</p>
+              <p class="small muted">Primary text, dark grounds</p>
+            </div>
+          </div>
+
+          <div class="swatch reveal">
+            <div class="swatch__chip bg-green"></div>
+            <div class="swatch__meta">
+              <p class="h3">Deep green</p>
+              <p class="swatch__hex">#2B3B2E</p>
+              <p class="small muted">Dark ground, secondary brand</p>
+            </div>
+          </div>
+
+          <div class="swatch reveal">
+            <div class="swatch__chip bg-maroon"></div>
+            <div class="swatch__meta">
+              <p class="h3">Maroon</p>
+              <p class="swatch__hex">#5C2020</p>
+              <p class="small muted">The wordmark colour. Primary brand.</p>
+            </div>
+          </div>
+
+          <div class="swatch reveal">
+            <div class="swatch__chip bg-terracotta"></div>
+            <div class="swatch__meta">
+              <p class="h3">Terracotta</p>
+              <p class="swatch__hex">#8C4227</p>
+              <p class="small muted">Warm accent. Light grounds only.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================================================================
+         CONTRAST
+         ================================================================ -->
+    <section class="section ground-cream">
+      <div class="wrap">
+        <div class="section-head reveal">
+          <h2 class="h2">Measured contrast</h2>
+          <p class="small muted">WCAG 2.1</p>
+        </div>
+
+        <div class="grid">
+          <div class="col-5 stack reveal">
+            <p class="statement">
+              The palette is unusually well behaved. Nearly every text pairing
+              clears AAA, which is what lets the site carry long-form reading
+              without compromise.
+            </p>
+            <p class="note">
+              <strong>One binding rule.</strong> Terracotta is a light-ground
+              accent only. It must never be used as text or a meaningful mark on
+              ink or green. On dark grounds use cream, off-white or sky.
+            </p>
+          </div>
+
+          <div class="col-6 start-7 reveal">
+            <div class="scroll-x">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th scope="col">Foreground</th>
+                    <th scope="col">Ground</th>
+                    <th scope="col">Ratio</th>
+                    <th scope="col">Body text</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr><td>Ink</td><td>Off-white</td><td>15.61</td><td class="pass">AAA</td></tr>
+                  <tr><td>Ink</td><td>Cream</td><td>13.69</td><td class="pass">AAA</td></tr>
+                  <tr><td>Ink</td><td>Sky</td><td>9.29</td><td class="pass">AAA</td></tr>
+                  <tr><td>Maroon</td><td>Off-white</td><td>11.85</td><td class="pass">AAA</td></tr>
+                  <tr><td>Maroon</td><td>Cream</td><td>10.39</td><td class="pass">AAA</td></tr>
+                  <tr><td>Maroon</td><td>Sky</td><td>7.05</td><td class="pass">AAA</td></tr>
+                  <tr><td>Green</td><td>Off-white</td><td>11.28</td><td class="pass">AAA</td></tr>
+                  <tr><td>Green</td><td>Cream</td><td>9.89</td><td class="pass">AAA</td></tr>
+                  <tr><td>Green</td><td>Sky</td><td>6.71</td><td class="pass">AA</td></tr>
+                  <tr><td>Terracotta</td><td>Off-white</td><td>6.82</td><td class="pass">AA</td></tr>
+                  <tr><td>Terracotta</td><td>Cream</td><td>5.98</td><td class="pass">AA</td></tr>
+                  <tr><td>Terracotta</td><td>Ink</td><td>2.29</td><td class="fail">Fail</td></tr>
+                  <tr><td>Terracotta</td><td>Green</td><td>1.65</td><td class="fail">Fail</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================================================================
+         TYPE
+         ================================================================ -->
+    <section class="section">
+      <div class="wrap">
+        <div class="section-head reveal">
+          <h2 class="h2">Typography</h2>
+          <p class="small muted">Ovo and Inter</p>
+        </div>
+
+        <div class="grid">
+          <div class="col-5 stack reveal">
+            <p class="statement">
+              Ovo ships exactly one style: weight 400, no bold, no italic.
+            </p>
+            <div class="prose">
+              <p>
+                That single fact shapes the whole system. Ovo is a display face
+                only — hierarchy comes from size, letterspacing, case and
+                colour, never from weight. Putting a bold or italic tag inside
+                Ovo-set text would make the browser synthesise a weight the
+                typeface does not have, which reads as broken at editorial
+                scale, so Ovo is scoped to headings, the wordmark and
+                pull-quotes.
+              </p>
+              <p>
+                Inter carries everything you actually read: body copy, captions,
+                metadata, navigation and UI. It has a real weight range and a
+                true italic.
+              </p>
+            </div>
+          </div>
+
+          <div class="col-6 start-7 stack-lg reveal">
+            <div>
+              <p class="eyebrow eyebrow--muted">Display XL &middot; Ovo</p>
+              <p class="display-xl">Intentional</p>
+            </div>
+            <div>
+              <p class="eyebrow eyebrow--muted">Display L &middot; Ovo</p>
+              <p class="display-l">Ordinary living</p>
+            </div>
+            <div>
+              <p class="eyebrow eyebrow--muted">Heading &middot; Ovo</p>
+              <p class="h2">The long table</p>
+            </div>
+            <div>
+              <p class="eyebrow eyebrow--muted">Eyebrow &middot; Inter 500</p>
+              <p class="eyebrow">Food &middot; Ritual</p>
+            </div>
+            <div>
+              <p class="eyebrow eyebrow--muted">Body &middot; Inter 400</p>
+              <p class="measure">
+                The table is not remarkable. It is three tables, actually,
+                pushed end to end and covered with a cloth that does not quite
+                reach the corners.
+              </p>
+            </div>
+            <div>
+              <p class="eyebrow eyebrow--muted">Small &middot; Inter 400</p>
+              <p class="small muted">Photograph to come &middot; Nairobi, March 2026</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================================================================
+         PLATES
+         ================================================================ -->
+    <section class="section ground-sky">
+      <div class="wrap">
+        <div class="section-head reveal">
+          <h2 class="h2">Plates</h2>
+          <p class="small muted">Placeholder imagery</p>
+        </div>
+
+        <p class="lead measure reveal">
+          Every plate stands in for a photograph, holding the correct aspect
+          ratio and a palette colour field. Swap the plate element for an image
+          and the surrounding markup does not change.
+        </p>
+
+        <div class="row row--4 hang">
+          <div class="stack-sm reveal">
+            <div class="plate plate--square plate--sky"></div>
+            <p class="small muted">Sky</p>
+          </div>
+          <div class="stack-sm reveal">
+            <div class="plate plate--square plate--cream"></div>
+            <p class="small muted">Cream</p>
+          </div>
+          <div class="stack-sm reveal">
+            <div class="plate plate--square plate--terracotta"></div>
+            <p class="small muted">Terracotta</p>
+          </div>
+          <div class="stack-sm reveal">
+            <div class="plate plate--square plate--maroon"></div>
+            <p class="small muted">Maroon</p>
+          </div>
+          <div class="stack-sm reveal">
+            <div class="plate plate--square plate--green"></div>
+            <p class="small muted">Green</p>
+          </div>
+          <div class="stack-sm reveal">
+            <div class="plate plate--square plate--ink"></div>
+            <p class="small muted">Ink</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================================================================
+         COMPONENTS
+         ================================================================ -->
+    <section class="section">
+      <div class="wrap">
+        <div class="section-head reveal">
+          <h2 class="h2">Components</h2>
+        </div>
+
+        <div class="row row--2">
+          <div class="stack reveal">
+            <p class="eyebrow eyebrow--muted">Pull-quote</p>
+            <blockquote class="pullquote">
+              Nobody was invited, so nobody can be uninvited.
+              <span class="pullquote__attr">A regular, on the rules</span>
+            </blockquote>
+          </div>
+
+          <div class="stack reveal">
+            <p class="eyebrow eyebrow--muted">Directory entry</p>
+            <div class="entry">
+              <p class="entry__no">001</p>
+              <div class="stack-sm">
+                <h3 class="entry__name">A roastery in a garage</h3>
+                <p class="card__dek">Single origin, one bag at a time.</p>
+              </div>
+              <p class="entry__place">Nairobi</p>
+            </div>
+          </div>
+
+          <div class="stack reveal">
+            <p class="eyebrow eyebrow--muted">Buttons and links</p>
+            <div class="subscribe__form">
+              <a class="button" href="journal.html">Primary</a>
+              <a class="button button--ghost" href="journal.html">Ghost</a>
+            </div>
+            <a class="more" href="journal.html">Inline more link</a>
+          </div>
+
+          <div class="stack reveal">
+            <p class="eyebrow eyebrow--muted">Scaffold note</p>
+            <p class="note">
+              <strong>Scaffold.</strong> Used anywhere a surface is structure
+              rather than finished content, so placeholder work can never be
+              mistaken for the real thing.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================================================================
+         MOTION
+         ================================================================ -->
+    <section class="section ground-green on-dark">
+      <div class="wrap">
+        <div class="grid">
+          <div class="col-4 stack reveal">
+            <p class="eyebrow">Motion</p>
+            <h2 class="h2">Almost none</h2>
+          </div>
+
+          <div class="col-7 start-6 stack reveal">
+            <p class="lead">
+              Elements fade and rise a few pixels once, on entry. There is no
+              parallax and nothing moves on its own.
+            </p>
+            <p class="small">
+              The hidden state is scoped to a class the script adds, so with
+              JavaScript disabled nothing is ever stranded invisible. Readers who
+              ask for reduced motion get the finished state immediately, with
+              transitions and the scroll observer both switched off.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer on-dark">
+    <div class="wrap">
+      <div class="footer__grid">
+        <div>
+          <a class="wordmark" href="index.html">OLMIKAYA</a>
+          <p class="small muted footer__blurb">
+            Ordinary Living Made Intentional. An independent East African
+            editorial and lifestyle company.
+          </p>
+        </div>
+
+        <div>
+          <h2 class="footer__heading">Read</h2>
+          <ul class="footer__list">
+            <li><a class="footer__link" href="journal.html">Journal</a></li>
+            <li><a class="footer__link" href="seasons.html">Seasons</a></li>
+            <li><a class="footer__link" href="directory.html">Directory</a></li>
+            <li><a class="footer__link" href="shop.html">Objects</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h2 class="footer__heading">Company</h2>
+          <ul class="footer__list">
+            <li><a class="footer__link" href="about.html">About</a></li>
+            <li><a class="footer__link" href="about.html#masthead">Masthead</a></li>
+            <li><a class="footer__link" href="styleguide.html">Design system</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="colophon">
+        <span>&copy; <span data-year>2026</span> OLMIKAYA</span>
+        <span>Nairobi &middot; Kampala &middot; Dar es Salaam &middot; Kigali</span>
+        <span class="credit">Set in Ovo and Inter</span>
+      </div>
+    </div>
+  </footer>
+
+<script src="assets/js/olmikaya.js"></script>
+</body>
+</html>

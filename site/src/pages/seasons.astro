@@ -1,0 +1,143 @@
+---
+import { getCollection } from "astro:content";
+import Base from "../layouts/Base.astro";
+import Subscribe from "../components/Subscribe.astro";
+
+const seasons = (await getCollection("seasons", ({ data }) => !data.draft)).sort(
+  (a, b) => a.data.index - b.data.index,
+);
+const anyScaffold = seasons.some((s) => s.data.scaffold);
+
+const STRUCTURE = [
+  {
+    name: "The question",
+    dek: "A single line, set large in Ovo, that the whole season answers to.",
+    where: "Opening",
+  },
+  {
+    name: "The stories",
+    dek: "Everything commissioned under the season, in the order it was published.",
+    where: "Journal",
+  },
+  {
+    name: "The people and places",
+    dek: "Directory entries added while the season ran.",
+    where: "Directory",
+  },
+  {
+    name: "The objects",
+    dek: "Anything made with the people the season covered. Often nothing.",
+    where: "Objects",
+  },
+  {
+    name: "The closing note",
+    dek: "What we found, and what we got wrong. Written when the season ends.",
+    where: "Closing",
+  },
+];
+---
+
+<Base
+  title="Seasons — OLMIKAYA"
+  description="OLMIKAYA publishes in seasons. Each one sets a question, and everything made under it answers to that question."
+  current="seasons"
+>
+  <section class="section">
+    <div class="wrap">
+      <div class="grid">
+        <div class="col-7 stack reveal">
+          <p class="eyebrow">Seasons</p>
+          <h1 class="display-l">Everything we make answers to a season.</h1>
+          <p class="lead">
+            A season sets a question. For as long as it runs, the stories we
+            commission, the people we add to the directory and the objects we
+            make are all answers to it. When the question is exhausted, the
+            season closes.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  {
+    anyScaffold && (
+      <section class="section--tight">
+        <div class="wrap">
+          <div class="grid">
+            <div class="col-8 reveal">
+              <p class="note">
+                <strong>This page is a scaffold.</strong>
+                The OLMIKAYA seasonal framework was listed among the brand assets
+                but did not arrive, and nothing here invents one. The slots below
+                are structural placeholders only — they are not proposed seasons,
+                and their titles are deliberately bracketed so they cannot be
+                mistaken for real ones. Fill them in from the CMS and the
+                brackets and this notice both disappear.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+    )
+  }
+
+  <section class="section">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <h2 class="h2">The seasons</h2>
+        <p class="small muted">
+          {seasons.length} {seasons.length === 1 ? "season" : "seasons"}
+        </p>
+      </div>
+
+      <div class="row row--2">
+        {
+          seasons.map((s) => (
+            <article class="season reveal">
+              <p class="season__index">{String(s.data.index).padStart(2, "0")}</p>
+              <h3 class="season__title">{s.data.title}</h3>
+              <p class="card__dek">{s.data.question}</p>
+              {s.data.dates && (
+                <p class="meta">
+                  <span>{s.data.dates}</span>
+                </p>
+              )}
+            </article>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <section class="section ground-cream">
+    <div class="wrap">
+      <div class="grid">
+        <div class="col-5 stack reveal">
+          <p class="eyebrow">Structure</p>
+          <h2 class="h2">What each season will carry</h2>
+          <p class="small muted">
+            The architecture below is designed and ready. Only the writing is
+            outstanding.
+          </p>
+        </div>
+
+        <div class="col-6 start-7 reveal">
+          {
+            STRUCTURE.map((row, i) => (
+              <div class="entry">
+                <p class="entry__no">{String(i + 1).padStart(2, "0")}</p>
+                <div class="stack-sm">
+                  <h3 class="entry__name">{row.name}</h3>
+                  <p class="card__dek">{row.dek}</p>
+                </div>
+                <p class="entry__place">{row.where}</p>
+              </div>
+            ))
+          }
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <Subscribe />
+</Base>

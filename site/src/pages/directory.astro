@@ -1,0 +1,112 @@
+---
+import { getCollection } from "astro:content";
+import Base from "../layouts/Base.astro";
+import Subscribe from "../components/Subscribe.astro";
+
+const entries = (await getCollection("directory", ({ data }) => !data.draft)).sort(
+  (a, b) => a.data.order - b.data.order,
+);
+
+/* Group by city, preserving the order entries were sorted into. */
+const cities: { city: string; items: typeof entries }[] = [];
+for (const entry of entries) {
+  const found = cities.find((c) => c.city === entry.data.city);
+  if (found) found.items.push(entry);
+  else cities.push({ city: entry.data.city, items: [entry] });
+}
+
+let counter = 0;
+---
+
+<Base
+  title="Directory — OLMIKAYA"
+  description="A standing record of the people making things worth crossing a city for, and the rooms worth sitting in, across East Africa."
+  current="directory"
+>
+  <section class="section">
+    <div class="wrap">
+      <div class="grid">
+        <div class="col-7 stack reveal">
+          <p class="eyebrow">The directory</p>
+          <h1 class="display-l">People and places, kept on the record.</h1>
+          <p class="lead">
+            Makers, cooks, tailors, roasters, carvers and the rooms they work in.
+            Nothing appears here because it paid to. Entries are added when we
+            have been, more than once, and taken down when they stop being true.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section--tight">
+    <div class="wrap">
+      <div class="grid">
+        <div class="col-8 reveal">
+          <p class="note">
+            <strong>Placeholder entries.</strong> Every entry below is invented to
+            prove the layout. No real business, address or person is described,
+            and nothing here has been visited or verified. Replace the whole list
+            before publishing — a directory that carries our name has to be
+            earned, entry by entry.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  {
+    cities.map(({ city, items }) => (
+      <section class="section--tight">
+        <div class="wrap">
+          <div class="section-head reveal">
+            <h2 class="h2">{city}</h2>
+            <p class="small muted">
+              {items.length} {items.length === 1 ? "entry" : "entries"}
+            </p>
+          </div>
+
+          <div class="reveal">
+            {items.map((e) => (
+              <div class="entry">
+                <p class="entry__no">{String(++counter).padStart(3, "0")}</p>
+                <div class="stack-sm">
+                  <h3 class="entry__name">{e.data.name}</h3>
+                  <p class="card__dek">{e.data.dek}</p>
+                  {e.data.relatedArticle && (
+                    <a class="more" href={`/journal/${e.data.relatedArticle}/`}>
+                      Read the story
+                    </a>
+                  )}
+                </div>
+                <p class="entry__place">
+                  {e.data.neighbourhood ?? e.data.city}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+    ))
+  }
+
+  <section class="section ground-sky">
+    <div class="wrap">
+      <div class="grid">
+        <div class="col-6 stack reveal">
+          <p class="eyebrow">Suggestions</p>
+          <h2 class="h2">Know somewhere we should have been?</h2>
+          <p class="lead">
+            Tell us who, where, and why it matters. We visit before we list, and
+            we visit more than once.
+          </p>
+          <p class="small muted">
+            Contact details go here once an address is set up.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <Subscribe />
+</Base>

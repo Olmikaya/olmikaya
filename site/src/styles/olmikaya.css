@@ -1,0 +1,1106 @@
+@charset "utf-8";
+/* ==========================================================================
+   OLMIKAYA — Ordinary Living Made Intentional
+   Design system stylesheet. No build step; edit directly.
+
+   CONTENTS
+     01  Tokens
+     02  Reset
+     03  Typography
+     04  Layout & grid
+     05  Chrome — masthead, nav, footer
+     06  Plates (placeholder imagery)
+     07  Components
+     08  Editorial (article body)
+     09  Utilities
+     10  Motion & reduced motion
+   ========================================================================== */
+
+/* ==========================================================================
+   01  TOKENS
+   ========================================================================== */
+
+:root {
+  /* Committed light identity. The dark grounds below are compositional
+     passages, not a theme — do not add a dark-mode variant. */
+  color-scheme: light;
+
+  /* --- Palette -----------------------------------------------------------
+     Extracted exactly from color-palette.jpeg. Every swatch in the source
+     is a uniform block, so these are source-of-truth values.
+
+     !! ACCESSIBILITY RULE — BINDING !!
+     Terracotta is a LIGHT-GROUND ACCENT ONLY.
+        terracotta on ink   = 2.29:1  FAIL
+        terracotta on green = 1.65:1  FAIL
+     Never set terracotta as text or a meaningful mark on ink or green.
+     On dark grounds use cream, off-white or sky instead.
+     --------------------------------------------------------------------- */
+  --olmi-sky:        #A8C7DC;
+  --olmi-offwhite:   #FFF8F0;
+  --olmi-cream:      #F8E9C8;
+  --olmi-ink:        #221F18;
+  --olmi-green:      #2B3B2E;
+  --olmi-maroon:     #5C2020;  /* the wordmark colour — primary brand */
+  --olmi-terracotta: #8C4227;
+
+  /* --- Semantic roles --------------------------------------------------- */
+  --ground:        var(--olmi-offwhite);
+  --text:          var(--olmi-ink);
+  --text-muted:    rgba(34, 31, 24, 0.60);
+  --text-faint:    rgba(34, 31, 24, 0.42);
+  --brand:         var(--olmi-maroon);
+  --rule:          rgba(34, 31, 24, 0.16);
+  --rule-strong:   rgba(34, 31, 24, 0.30);
+
+  /* On dark grounds */
+  --text-on-dark:       var(--olmi-offwhite);
+  --text-on-dark-muted: rgba(255, 248, 240, 0.62);
+  --rule-on-dark:       rgba(255, 248, 240, 0.22);
+
+  /* --- Type -------------------------------------------------------------
+     Ovo ships ONE style: weight 400, no bold, no italic. It is a display
+     face only — hierarchy comes from size, tracking, case and colour.
+     Never put <strong>/<em> inside Ovo-set text; the browser would
+     synthesise faux bold/oblique. Inter carries all reading text and UI.
+     --------------------------------------------------------------------- */
+  --font-display: "Ovo", Georgia, "Times New Roman", Times, serif;
+  --font-text:    "Inter", system-ui, -apple-system, "Segoe UI", Helvetica, Arial, sans-serif;
+
+  --step-display-xl: clamp(2.75rem, 1.45rem + 5.4vw, 6rem);
+  --step-display-l:  clamp(2.125rem, 1.5rem + 2.9vw, 3.75rem);
+  --step-h2:         clamp(1.625rem, 1.3rem + 1.5vw, 2.5rem);
+  --step-h3:         clamp(1.1875rem, 1.1rem + 0.5vw, 1.5rem);
+  --step-lead:       clamp(1.125rem, 1.05rem + 0.45vw, 1.375rem);
+  --step-body:       1.0625rem;
+  --step-small:      0.875rem;
+  --step-eyebrow:    0.75rem;
+
+  --leading-tight:  1.08;
+  --leading-snug:   1.25;
+  --leading-body:   1.7;
+
+  /* --- Space ------------------------------------------------------------ */
+  --sp-2xs: 0.25rem;
+  --sp-xs:  0.5rem;
+  --sp-sm:  0.75rem;
+  --sp-md:  1.25rem;
+  --sp-lg:  2rem;
+  --sp-xl:  3rem;
+  --sp-2xl: clamp(3.5rem, 7vw, 7rem);
+  --sp-3xl: clamp(5rem, 11vw, 11rem);
+
+  /* --- Layout ----------------------------------------------------------- */
+  --page-max: 90rem;                        /* 1440px */
+  --gutter:   clamp(1.25rem, 5vw, 5rem);
+  --measure:  34rem;                        /* ~62–68 characters */
+  --masthead-h: 4.25rem;
+
+  /* --- Motion ----------------------------------------------------------- */
+  --ease: cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+
+/* ==========================================================================
+   02  RESET
+   ========================================================================== */
+
+*, *::before, *::after { box-sizing: border-box; }
+
+html {
+  -webkit-text-size-adjust: 100%;
+  scroll-behavior: smooth;
+  scroll-padding-top: calc(var(--masthead-h) + 1rem);
+}
+
+body {
+  margin: 0;
+  background: var(--ground);
+  color: var(--text);
+  font-family: var(--font-text);
+  font-size: var(--step-body);
+  line-height: var(--leading-body);
+  font-synthesis-weight: none;   /* never fake a weight Ovo does not have */
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  overflow-x: hidden;            /* body never scrolls sideways */
+}
+
+img, picture, video, svg { display: block; max-width: 100%; height: auto; }
+
+button, input, select, textarea { font: inherit; color: inherit; }
+
+h1, h2, h3, h4, p, figure, blockquote, ul, ol, dl, dd { margin: 0; }
+ul, ol { padding: 0; list-style: none; }
+
+a { color: inherit; }
+
+hr { border: 0; border-top: 1px solid var(--rule); margin: 0; }
+
+/* Focus: always visible, brand-coloured, never removed. */
+:focus-visible {
+  outline: 2px solid var(--brand);
+  outline-offset: 3px;
+  border-radius: 1px;
+}
+.on-dark :focus-visible { outline-color: var(--olmi-cream); }
+
+::selection { background: var(--olmi-cream); color: var(--olmi-ink); }
+
+/* ==========================================================================
+   03  TYPOGRAPHY
+   ========================================================================== */
+
+/* Display — Ovo. Headings, wordmark, pull-quotes. Nothing else. */
+.display-xl, .display-l, h1, h2, h3, .h2, .h3 {
+  font-family: var(--font-display);
+  font-weight: 400;
+  color: var(--text);
+}
+
+.display-xl {
+  font-size: var(--step-display-xl);
+  line-height: var(--leading-tight);
+  letter-spacing: -0.015em;
+}
+
+.display-l, h1 {
+  font-size: var(--step-display-l);
+  line-height: 1.12;
+  letter-spacing: -0.012em;
+}
+
+h2, .h2 {
+  font-size: var(--step-h2);
+  line-height: var(--leading-snug);
+  letter-spacing: -0.008em;
+}
+
+h3, .h3 {
+  font-size: var(--step-h3);
+  line-height: 1.3;
+}
+
+/* Eyebrow / kicker — the small uppercase label doing structural work. */
+.eyebrow {
+  font-family: var(--font-text);
+  font-size: var(--step-eyebrow);
+  font-weight: 500;
+  line-height: 1.2;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--brand);
+}
+.eyebrow--muted { color: var(--text-muted); }
+.on-dark .eyebrow { color: var(--olmi-cream); }
+
+.lead {
+  font-size: var(--step-lead);
+  line-height: 1.55;
+  color: var(--text-muted);
+}
+
+.small { font-size: var(--step-small); line-height: 1.55; }
+.muted { color: var(--text-muted); }
+.faint { color: var(--text-faint); }
+
+/* Metadata line — byline, date, place. */
+.meta {
+  font-size: var(--step-small);
+  color: var(--text-muted);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0 var(--sp-sm);
+}
+.meta > * + *::before {
+  content: "—";
+  margin-right: var(--sp-sm);
+  color: var(--text-faint);
+}
+
+/* Links in running text: maroon, underlined on a considered offset. */
+.prose a,
+.link {
+  color: var(--brand);
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.18em;
+  text-decoration-color: rgba(92, 32, 32, 0.4);
+  transition: text-decoration-color 0.25s var(--ease);
+}
+.prose a:hover,
+.link:hover { text-decoration-color: currentColor; }
+
+/* ==========================================================================
+   04  LAYOUT & GRID
+   ========================================================================== */
+
+.wrap {
+  width: 100%;
+  max-width: var(--page-max);
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+
+.wrap--narrow { max-width: 64rem; }
+
+/* 12-column editorial grid. */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: var(--sp-lg) clamp(1rem, 2.2vw, 2rem);
+}
+
+/* Column spans — mobile first, all full width, then placed at 48rem. */
+.col-3, .col-4, .col-5, .col-6, .col-7, .col-8, .col-9, .col-12 {
+  grid-column: 1 / -1;
+}
+
+/* Spans are written as `auto / span N`, NOT the `span N` shorthand.
+   `grid-column: span N` sets grid-column-START to `span N` and END to auto;
+   a following `.start-M` then overrode that start and left the end at auto,
+   collapsing the element to a single track. Splitting start from end keeps
+   .col-N and .start-M composable. */
+@media (min-width: 48rem) {
+  .col-3  { grid-column: auto / span 3; }
+  .col-4  { grid-column: auto / span 4; }
+  .col-5  { grid-column: auto / span 5; }
+  .col-6  { grid-column: auto / span 6; }
+  .col-7  { grid-column: auto / span 7; }
+  .col-8  { grid-column: auto / span 8; }
+  .col-9  { grid-column: auto / span 9; }
+  .start-2  { grid-column-start: 2; }
+  .start-3  { grid-column-start: 3; }
+  .start-4  { grid-column-start: 4; }
+  .start-6  { grid-column-start: 6; }
+  .start-7  { grid-column-start: 7; }
+  .start-8  { grid-column-start: 8; }
+}
+
+/* Section rhythm. */
+.section { padding-block: var(--sp-2xl); }
+.section--tight { padding-block: var(--sp-xl); }
+.section--tall  { padding-block: var(--sp-3xl); }
+
+/* Grounds. Cream and sky mark a change of movement. */
+.ground-cream { background: var(--olmi-cream); }
+.ground-sky   { background: var(--olmi-sky); }
+.ground-off   { background: var(--olmi-offwhite); }
+
+/* Dark passages. Always pair with class="on-dark" for correct text roles. */
+.ground-ink   { background: var(--olmi-ink); }
+.ground-green { background: var(--olmi-green); }
+
+.on-dark { color: var(--text-on-dark); }
+.on-dark h1, .on-dark h2, .on-dark h3,
+.on-dark .display-xl, .on-dark .display-l { color: var(--text-on-dark); }
+.on-dark .muted, .on-dark .lead, .on-dark .meta { color: var(--text-on-dark-muted); }
+.on-dark hr { border-top-color: var(--rule-on-dark); }
+
+/* Section head — eyebrow, rule, title. Used across every page. */
+.section-head {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-sm);
+  padding-bottom: var(--sp-md);
+  border-bottom: 1px solid var(--rule);
+  margin-bottom: var(--sp-xl);
+}
+.on-dark .section-head { border-bottom-color: var(--rule-on-dark); }
+
+@media (min-width: 48rem) {
+  .section-head {
+    flex-direction: row;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--sp-lg);
+  }
+}
+
+.stack   { display: flex; flex-direction: column; gap: var(--sp-md); }
+.stack-sm { display: flex; flex-direction: column; gap: var(--sp-xs); }
+.stack-lg { display: flex; flex-direction: column; gap: var(--sp-lg); }
+
+/* ==========================================================================
+   05  CHROME — masthead, nav, footer
+   ========================================================================== */
+
+.skip-link {
+  position: absolute;
+  left: var(--sp-md);
+  top: var(--sp-md);
+  z-index: 200;
+  transform: translateY(-200%);
+  background: var(--olmi-maroon);
+  color: var(--olmi-offwhite);
+  padding: var(--sp-sm) var(--sp-md);
+  font-size: var(--step-small);
+  text-decoration: none;
+  transition: transform 0.2s var(--ease);
+}
+.skip-link:focus { transform: translateY(0); }
+
+.masthead {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: color-mix(in srgb, var(--olmi-offwhite) 88%, transparent);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--rule);
+}
+
+.masthead__inner {
+  min-height: var(--masthead-h);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-md);
+}
+
+/* Wordmark — Ovo, maroon, widely tracked. The single most important mark. */
+.wordmark {
+  font-family: var(--font-display);
+  font-size: 1.0625rem;
+  line-height: 1;
+  letter-spacing: 0.34em;
+  text-indent: 0.34em;      /* optically re-centre the trailing letterspace */
+  color: var(--brand);
+  text-decoration: none;
+  white-space: nowrap;
+}
+.wordmark--lg { font-size: clamp(1.5rem, 4.5vw, 2.75rem); }
+.on-dark .wordmark { color: var(--olmi-cream); }
+
+.nav { display: none; }
+
+@media (min-width: 60rem) {
+  .nav {
+    display: flex;
+    align-items: center;
+    gap: clamp(1.25rem, 2.4vw, 2.25rem);
+  }
+}
+
+.nav__link {
+  font-size: var(--step-eyebrow);
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  text-decoration: none;
+  color: var(--text-muted);
+  padding-block: var(--sp-xs);
+  position: relative;
+  transition: color 0.25s var(--ease);
+}
+.nav__link:hover { color: var(--text); }
+
+.nav__link[aria-current="page"] { color: var(--brand); }
+.nav__link[aria-current="page"]::after {
+  content: "";
+  position: absolute;
+  left: 0; right: 0; bottom: 0;
+  height: 1px;
+  background: var(--brand);
+}
+
+/* Mobile nav toggle. Hidden at desktop where the full nav shows. */
+.nav-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-xs);
+  background: none;
+  border: 1px solid var(--rule-strong);
+  color: var(--text);
+  font-size: var(--step-eyebrow);
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  padding: var(--sp-xs) var(--sp-sm);
+  cursor: pointer;
+  transition: border-color 0.25s var(--ease), color 0.25s var(--ease);
+}
+.nav-toggle:hover { border-color: var(--brand); color: var(--brand); }
+
+@media (min-width: 60rem) { .nav-toggle { display: none; } }
+
+.nav-panel {
+  display: none;
+  border-top: 1px solid var(--rule);
+  background: var(--olmi-offwhite);
+}
+.nav-panel[data-open="true"] { display: block; }
+@media (min-width: 60rem) { .nav-panel { display: none !important; } }
+
+.nav-panel__list { padding-block: var(--sp-md); }
+.nav-panel__link {
+  display: block;
+  padding: var(--sp-sm) 0;
+  font-family: var(--font-display);
+  font-size: 1.375rem;
+  text-decoration: none;
+  color: var(--text);
+  border-bottom: 1px solid var(--rule);
+}
+.nav-panel__link[aria-current="page"] { color: var(--brand); }
+
+/* --- Footer ------------------------------------------------------------- */
+
+.footer {
+  background: var(--olmi-ink);
+  color: var(--text-on-dark);
+  padding-block: var(--sp-2xl) var(--sp-xl);
+}
+
+.footer__grid {
+  display: grid;
+  gap: var(--sp-xl) clamp(1rem, 3vw, 3rem);
+  grid-template-columns: 1fr;
+}
+@media (min-width: 48rem) {
+  .footer__grid { grid-template-columns: 1.4fr 1fr 1fr; }
+}
+
+.footer__heading {
+  font-size: var(--step-eyebrow);
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--olmi-cream);
+  margin-bottom: var(--sp-md);
+}
+
+.footer__list li + li { margin-top: var(--sp-xs); }
+
+.footer__link {
+  font-size: var(--step-small);
+  color: var(--text-on-dark-muted);
+  text-decoration: none;
+  transition: color 0.25s var(--ease);
+}
+.footer__link:hover { color: var(--text-on-dark); }
+
+.colophon {
+  margin-top: var(--sp-2xl);
+  padding-top: var(--sp-md);
+  border-top: 1px solid var(--rule-on-dark);
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-sm) var(--sp-lg);
+  justify-content: space-between;
+  font-size: var(--step-small);
+  color: var(--text-on-dark-muted);
+}
+
+/* ==========================================================================
+   06  PLATES — placeholder imagery
+   --------------------------------------------------------------------------
+   Every .plate is a stand-in for a photograph. It holds the correct aspect
+   ratio and a palette colour field so layouts are fully resolved before the
+   photography exists. To swap in a real image, replace the .plate element
+   with <img> and keep the surrounding <figure>/<figcaption> markup.
+   ========================================================================== */
+
+.plate {
+  position: relative;
+  aspect-ratio: var(--plate-ratio, 4 / 5);
+  background: var(--plate-tone, var(--olmi-sky));
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+}
+
+/* Hairline inset frame — reads as a considered plate, not a broken image. */
+.plate::before {
+  content: "";
+  position: absolute;
+  inset: clamp(0.5rem, 1.4vw, 1rem);
+  border: 1px solid var(--plate-mark, rgba(34, 31, 24, 0.18));
+  pointer-events: none;
+}
+
+.plate::after {
+  content: "OLMIKAYA";
+  font-family: var(--font-display);
+  font-size: clamp(0.625rem, 1.1vw, 0.8125rem);
+  letter-spacing: 0.5em;
+  text-indent: 0.5em;
+  color: var(--plate-mark, rgba(34, 31, 24, 0.28));
+}
+
+/* Ratio modifiers */
+.plate--portrait  { --plate-ratio: 4 / 5; }
+.plate--square    { --plate-ratio: 1 / 1; }
+.plate--landscape { --plate-ratio: 3 / 2; }
+.plate--wide      { --plate-ratio: 16 / 9; }
+.plate--cinema    { --plate-ratio: 21 / 9; }
+
+/* Tone modifiers. Marks stay legible on every ground. */
+.plate--sky   { --plate-tone: var(--olmi-sky); }
+.plate--cream { --plate-tone: var(--olmi-cream); }
+.plate--green { --plate-tone: var(--olmi-green); --plate-mark: rgba(255, 248, 240, 0.34); }
+.plate--ink   { --plate-tone: var(--olmi-ink);   --plate-mark: rgba(255, 248, 240, 0.30); }
+/* Terracotta plate: decorative field only, and its mark is off-white —
+   never ink or green text on this tone. See the binding rule in §01. */
+.plate--terracotta { --plate-tone: var(--olmi-terracotta); --plate-mark: rgba(255, 248, 240, 0.38); }
+.plate--maroon     { --plate-tone: var(--olmi-maroon);     --plate-mark: rgba(255, 248, 240, 0.34); }
+
+figure { display: flex; flex-direction: column; gap: var(--sp-sm); }
+
+figcaption {
+  font-size: var(--step-small);
+  line-height: 1.5;
+  color: var(--text-muted);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 var(--sp-xs);
+}
+.on-dark figcaption { color: var(--text-on-dark-muted); }
+
+.credit { color: var(--text-faint); }
+.on-dark .credit { color: rgba(255, 248, 240, 0.45); }
+
+/* ==========================================================================
+   07  COMPONENTS
+   ========================================================================== */
+
+/* --- Article card ------------------------------------------------------- */
+
+.card { display: flex; flex-direction: column; gap: var(--sp-md); }
+
+.card__link {
+  text-decoration: none;
+  color: inherit;
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-md);
+}
+.card__link .plate { transition: opacity 0.4s var(--ease); }
+.card__link:hover .plate { opacity: 0.88; }
+.card__link:hover .card__title { color: var(--brand); }
+
+.card__title {
+  font-family: var(--font-display);
+  font-size: var(--step-h3);
+  line-height: 1.25;
+  transition: color 0.25s var(--ease);
+}
+.card__title--lg { font-size: var(--step-h2); }
+
+.card__dek { color: var(--text-muted); font-size: var(--step-small); }
+
+/* --- Chapter break ------------------------------------------------------
+   Full-bleed dark passage carrying one line of Ovo. Segments the homepage
+   into movements. Deliberately sparse. */
+
+.chapter {
+  padding-block: var(--sp-3xl);
+  text-align: center;
+}
+.chapter__line {
+  font-family: var(--font-display);
+  font-size: clamp(1.5rem, 3.4vw, 2.75rem);
+  line-height: 1.35;
+  max-width: 26ch;
+  margin-inline: auto;
+  text-wrap: balance;
+}
+.chapter__mark {
+  width: 1px;
+  height: clamp(2.5rem, 6vw, 4.5rem);
+  background: var(--rule-on-dark);
+  margin: 0 auto var(--sp-lg);
+}
+
+/* --- Pull-quote ---------------------------------------------------------
+   Ovo, maroon, hanging into the margin at wide viewports. */
+
+.pullquote {
+  font-family: var(--font-display);
+  font-size: clamp(1.375rem, 2.6vw, 2rem);
+  line-height: 1.35;
+  color: var(--brand);
+  padding-left: var(--sp-md);
+  border-left: 2px solid var(--brand);
+  margin-block: var(--sp-xl);
+  text-wrap: pretty;
+}
+.on-dark .pullquote { color: var(--olmi-cream); border-left-color: var(--olmi-cream); }
+
+@media (min-width: 64rem) {
+  .pullquote { margin-left: calc(-1 * var(--sp-xl)); }
+}
+
+.pullquote__attr {
+  display: block;
+  margin-top: var(--sp-sm);
+  font-family: var(--font-text);
+  font-size: var(--step-small);
+  letter-spacing: 0.04em;
+  color: var(--text-muted);
+}
+
+/* --- Seasonal band ------------------------------------------------------ */
+
+.season {
+  display: grid;
+  gap: var(--sp-md);
+  padding: var(--sp-lg);
+  border: 1px solid var(--rule);
+  background: var(--olmi-offwhite);
+  height: 100%;
+  align-content: start;
+}
+.season__index {
+  font-family: var(--font-display);
+  font-size: 2.5rem;
+  line-height: 1;
+  color: var(--olmi-terracotta);   /* light ground only — see the rule in 01 */
+}
+.season__title { font-family: var(--font-display); font-size: var(--step-h3); }
+
+/* --- Directory entry ---------------------------------------------------- */
+
+.entry {
+  display: grid;
+  gap: var(--sp-sm) var(--sp-lg);
+  padding-block: var(--sp-lg);
+  border-bottom: 1px solid var(--rule);
+  align-items: start;
+}
+/* minmax(0, ...) on both flexible tracks: a bare 1fr refuses to shrink below
+   its content, which overflowed when an .entry sat inside a half-width
+   column at tablet widths. */
+@media (min-width: 48rem) {
+  .entry { grid-template-columns: 3.5rem minmax(0, 1fr) minmax(0, 11rem); }
+}
+.entry__no {
+  font-size: var(--step-eyebrow);
+  letter-spacing: 0.12em;
+  color: var(--text-faint);
+  padding-top: 0.45rem;
+}
+.entry__name { font-family: var(--font-display); font-size: var(--step-h3); }
+.entry__place {
+  font-size: var(--step-small);
+  color: var(--text-muted);
+  display: flex;
+  align-items: baseline;
+  gap: var(--sp-xs);
+}
+.entry__place::before {
+  content: "";
+  width: 1.5rem;
+  height: 1px;
+  background: var(--rule-strong);
+  flex: none;
+  transform: translateY(-0.3em);
+}
+
+/* --- Object (product) card ---------------------------------------------- */
+
+.object { display: flex; flex-direction: column; gap: var(--sp-md); }
+.object__head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: var(--sp-md);
+  padding-bottom: var(--sp-xs);
+  border-bottom: 1px solid var(--rule);
+}
+.object__name { font-family: var(--font-display); font-size: var(--step-h3); }
+.object__price {
+  font-size: var(--step-small);
+  color: var(--text-muted);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.object__note { font-size: var(--step-small); color: var(--text-muted); }
+
+/* --- Newsletter ---------------------------------------------------------
+   NOT WIRED. Submission is inert and shows no success state. See README
+   for the exact integration point. */
+
+.subscribe { display: flex; flex-direction: column; gap: var(--sp-md); }
+
+.subscribe__form {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-sm);
+  align-items: stretch;
+}
+
+.field {
+  flex: 1 1 16rem;
+  min-width: 0;
+  background: transparent;
+  border: 1px solid var(--rule-strong);
+  padding: var(--sp-sm) var(--sp-md);
+  font-size: var(--step-small);
+  color: var(--text);
+}
+.field::placeholder { color: var(--text-faint); }
+.field:focus-visible { border-color: var(--brand); }
+.on-dark .field { border-color: var(--rule-on-dark); color: var(--text-on-dark); }
+.on-dark .field::placeholder { color: rgba(255, 248, 240, 0.45); }
+
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--sp-xs);
+  background: var(--olmi-maroon);
+  color: var(--olmi-offwhite);
+  border: 1px solid var(--olmi-maroon);
+  padding: var(--sp-sm) var(--sp-lg);
+  font-size: var(--step-eyebrow);
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background 0.25s var(--ease), color 0.25s var(--ease);
+}
+.button:hover { background: transparent; color: var(--brand); }
+.on-dark .button {
+  background: var(--olmi-cream);
+  border-color: var(--olmi-cream);
+  color: var(--olmi-ink);
+}
+.on-dark .button:hover { background: transparent; color: var(--olmi-cream); }
+
+.button--ghost { background: transparent; color: var(--brand); }
+.button--ghost:hover { background: var(--olmi-maroon); color: var(--olmi-offwhite); }
+
+/* Standing note used wherever a surface is a scaffold, not finished content. */
+.note {
+  border-left: 2px solid var(--olmi-terracotta);
+  padding: var(--sp-sm) 0 var(--sp-sm) var(--sp-md);
+  font-size: var(--step-small);
+  line-height: 1.6;
+  color: var(--text-muted);
+  background: rgba(140, 66, 39, 0.05);
+}
+.note strong { color: var(--olmi-terracotta); font-weight: 600; }
+
+/* --- Inline "more" link ------------------------------------------------- */
+
+.more {
+  display: inline-flex;
+  align-items: baseline;
+  gap: var(--sp-xs);
+  font-size: var(--step-eyebrow);
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--brand);
+  text-decoration: none;
+  white-space: nowrap;
+}
+.more::after { content: "\2192"; transition: transform 0.25s var(--ease); }
+.more:hover::after { transform: translateX(0.25rem); }
+.on-dark .more { color: var(--olmi-cream); }
+
+/* ==========================================================================
+   08  EDITORIAL — article body
+   ========================================================================== */
+
+.prose {
+  max-width: var(--measure);
+  font-size: var(--step-body);
+  line-height: var(--leading-body);
+}
+.prose > * + * { margin-top: var(--sp-md); }
+.prose h2 { margin-top: var(--sp-xl); }
+.prose h3 { margin-top: var(--sp-lg); }
+.prose > figure, .prose > .pullquote { margin-block: var(--sp-xl); }
+
+/* Drop the first paragraph a size up — the entry into the piece. */
+.prose > p:first-of-type { font-size: var(--step-lead); line-height: 1.55; }
+
+.prose ul { list-style: none; padding-left: 0; }
+.prose ul li {
+  position: relative;
+  padding-left: var(--sp-md);
+  margin-top: var(--sp-xs);
+}
+.prose ul li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.85em;
+  width: 0.5rem;
+  height: 1px;
+  background: var(--olmi-terracotta);   /* light ground only */
+}
+
+/* Figures inside prose break the measure deliberately. */
+@media (min-width: 64rem) {
+  .prose > figure.bleed-right { width: calc(100% + 12rem); }
+}
+
+/* Article header block */
+.article-head { display: flex; flex-direction: column; gap: var(--sp-md); }
+.article-head__title { max-width: 20ch; text-wrap: balance; }
+
+/* ==========================================================================
+   09  UTILITIES
+   ========================================================================== */
+
+.visually-hidden {
+  position: absolute;
+  width: 1px; height: 1px;
+  padding: 0; margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+.full-bleed { width: 100%; }
+.balance { text-wrap: balance; }
+.measure { max-width: var(--measure); }
+.hang { margin-top: var(--sp-lg); }
+
+.rule { border-top: 1px solid var(--rule); }
+.on-dark .rule { border-top-color: var(--rule-on-dark); }
+
+/* Two- and three-up card rows that collapse cleanly. */
+.row {
+  display: grid;
+  gap: var(--sp-xl) clamp(1rem, 2.2vw, 2rem);
+  grid-template-columns: 1fr;
+}
+@media (min-width: 40rem) { .row--2 { grid-template-columns: repeat(2, 1fr); } }
+@media (min-width: 48rem) { .row--3 { grid-template-columns: repeat(3, 1fr); } }
+@media (min-width: 40rem) { .row--4 { grid-template-columns: repeat(2, 1fr); } }
+@media (min-width: 64rem) { .row--4 { grid-template-columns: repeat(4, 1fr); } }
+
+/* Wide content must scroll inside itself, never widen the page. */
+.scroll-x { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+
+/* ==========================================================================
+   10  MOTION
+   --------------------------------------------------------------------------
+   The hidden state is scoped to html.js, which the script sets immediately.
+   With JavaScript disabled the class never lands, so content is always
+   visible and can never be stranded at opacity 0.
+   ========================================================================== */
+
+.js .reveal {
+  opacity: 0;
+  transform: translateY(0.75rem);
+  transition: opacity 0.7s var(--ease), transform 0.7s var(--ease);
+}
+.js .reveal.is-visible { opacity: 1; transform: none; }
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .js .reveal,
+  .js .reveal.is-visible {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Print: strip chrome, let the writing stand. */
+@media print {
+  .masthead, .nav-panel, .footer, .subscribe { display: none !important; }
+  body { background: #fff; color: #000; }
+  .plate { border: 1px solid #999; }
+}
+
+/* ==========================================================================
+   11  COMPOSITION — page-level blocks
+   ========================================================================== */
+
+/* --- Hero --------------------------------------------------------------- */
+
+.hero { padding-block: var(--sp-3xl) var(--sp-2xl); }
+
+.hero__title {
+  max-width: 15ch;
+  margin-top: var(--sp-md);
+  text-wrap: balance;
+}
+
+.hero__foot {
+  display: grid;
+  gap: var(--sp-lg);
+  margin-top: var(--sp-2xl);
+  padding-top: var(--sp-md);
+  border-top: 1px solid var(--rule);
+}
+@media (min-width: 48rem) {
+  .hero__foot { grid-template-columns: 1fr 1fr; gap: var(--sp-xl); }
+}
+
+/* --- Statement ---------------------------------------------------------- */
+
+.statement {
+  font-family: var(--font-display);
+  font-size: clamp(1.375rem, 2.4vw, 2rem);
+  line-height: 1.4;
+  max-width: 30ch;
+  text-wrap: pretty;
+}
+
+/* --- Feature ------------------------------------------------------------
+   The lead story. Plate on one side, text on the other, flipping to stacked
+   below 56rem. */
+
+.feature { display: grid; gap: var(--sp-lg); align-items: center; }
+
+@media (min-width: 56rem) {
+  .feature {
+    grid-template-columns: 1.15fr 1fr;
+    gap: clamp(2rem, 5vw, 5rem);
+  }
+  .feature--flip > :first-child { order: 2; }
+}
+
+.feature__body { display: flex; flex-direction: column; gap: var(--sp-md); }
+
+/* --- Masthead list (about page) ----------------------------------------- */
+
+.masthead-list { display: grid; gap: 0; }
+.masthead-list__row {
+  display: grid;
+  gap: var(--sp-2xs) var(--sp-lg);
+  padding-block: var(--sp-md);
+  border-bottom: 1px solid var(--rule);
+}
+@media (min-width: 40rem) {
+  .masthead-list__row { grid-template-columns: 14rem 1fr; align-items: baseline; }
+}
+.masthead-list__role {
+  font-size: var(--step-eyebrow);
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--text-muted);
+}
+.masthead-list__name { font-family: var(--font-display); font-size: 1.1875rem; }
+
+/* --- Swatch (styleguide) ------------------------------------------------ */
+
+.swatch { display: flex; flex-direction: column; gap: var(--sp-sm); }
+.swatch__chip {
+  aspect-ratio: 3 / 2;
+  border: 1px solid var(--rule);
+}
+.swatch__meta { display: flex; flex-direction: column; gap: 2px; }
+.swatch__hex {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: var(--step-small);
+  color: var(--text-muted);
+}
+
+/* --- Data table (styleguide) -------------------------------------------- */
+
+.table { width: 100%; border-collapse: collapse; font-size: var(--step-small); }
+.table th, .table td {
+  text-align: left;
+  padding: var(--sp-sm) var(--sp-md) var(--sp-sm) 0;
+  border-bottom: 1px solid var(--rule);
+  vertical-align: top;
+}
+.table th {
+  font-size: var(--step-eyebrow);
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  font-weight: 500;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+.table code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 0.8125rem;
+}
+.pass { color: var(--olmi-green); font-weight: 600; }
+.fail { color: var(--olmi-maroon); font-weight: 600; }
+
+/* ==========================================================================
+   12  SMALL PIECES
+   ========================================================================== */
+
+/* End matter — the credit block that closes an article. */
+.endmatter {
+  margin-top: var(--sp-2xl);
+  padding-top: var(--sp-md);
+  border-top: 1px solid var(--rule);
+}
+
+.footer__blurb { margin-top: var(--sp-md); max-width: 32ch; }
+
+/* Ground utilities, for swatches and demos. */
+.bg-sky        { background: var(--olmi-sky); }
+.bg-offwhite   { background: var(--olmi-offwhite); }
+.bg-cream      { background: var(--olmi-cream); }
+.bg-ink        { background: var(--olmi-ink); }
+.bg-green      { background: var(--olmi-green); }
+.bg-maroon     { background: var(--olmi-maroon); }
+.bg-terracotta { background: var(--olmi-terracotta); }
+
+/* ==========================================================================
+   13  MARKDOWN
+   --------------------------------------------------------------------------
+   Editors write plain Markdown. These rules map what they can type onto the
+   house components, so a `>` blockquote comes out as the OLMIKAYA pull-quote
+   without anyone needing to know a class name.
+   ========================================================================== */
+
+.prose blockquote {
+  font-family: var(--font-display);
+  font-size: clamp(1.375rem, 2.6vw, 2rem);
+  line-height: 1.35;
+  color: var(--brand);
+  padding-left: var(--sp-md);
+  border-left: 2px solid var(--brand);
+  margin-block: var(--sp-xl);
+  text-wrap: pretty;
+}
+
+@media (min-width: 64rem) {
+  .prose blockquote { margin-left: calc(-1 * var(--sp-xl)); }
+}
+
+.prose blockquote p { margin: 0; font-size: inherit; line-height: inherit; }
+.prose blockquote p + p {
+  margin-top: var(--sp-sm);
+  font-family: var(--font-text);
+  font-size: var(--step-small);
+  letter-spacing: 0.04em;
+  color: var(--text-muted);
+}
+
+/* A real photograph, once one exists, occupies the same slot as a plate. */
+.plate-img { width: 100%; object-fit: cover; }
+.plate-img.plate--portrait  { aspect-ratio: 4 / 5; }
+.plate-img.plate--square    { aspect-ratio: 1 / 1; }
+.plate-img.plate--landscape { aspect-ratio: 3 / 2; }
+.plate-img.plate--wide      { aspect-ratio: 16 / 9; }
+.plate-img.plate--cinema    { aspect-ratio: 21 / 9; }
+
+.prose img { width: 100%; margin-block: var(--sp-xl); }
+.prose hr { margin-block: var(--sp-xl); }
+.prose ol { counter-reset: n; padding-left: 0; list-style: none; }
+.prose ol li {
+  counter-increment: n;
+  position: relative;
+  padding-left: var(--sp-lg);
+  margin-top: var(--sp-xs);
+}
+.prose ol li::before {
+  content: counter(n) ".";
+  position: absolute;
+  left: 0;
+  color: var(--olmi-terracotta);   /* light ground only */
+  font-variant-numeric: tabular-nums;
+}

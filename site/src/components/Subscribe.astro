@@ -1,0 +1,42 @@
+---
+/**
+ * The newsletter module.
+ *
+ * The form is intentionally inert — no mailing provider is connected, so
+ * submission is stopped in JS and says so rather than faking success.
+ * See README for the integration point.
+ */
+---
+
+<section class="section ground-ink on-dark">
+  <div class="wrap">
+    <div class="grid">
+      <div class="col-6 subscribe reveal">
+        <p class="eyebrow">The letter</p>
+        <h2 class="h2">One letter, at the end of each month.</h2>
+        <p class="lead">
+          What we published, what we found, and where we are going next.
+          No more than twelve a year.
+        </p>
+
+        <form class="subscribe__form" data-subscribe novalidate>
+          <label class="visually-hidden" for="email">Email address</label>
+          <input
+            class="field"
+            id="email"
+            name="email"
+            type="email"
+            placeholder="you@example.com"
+            autocomplete="email"
+            required
+          />
+          <button class="button" type="submit">Subscribe</button>
+        </form>
+
+        <p class="small credit" data-subscribe-status role="status" aria-live="polite">
+          Not yet connected to a mailing provider.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
