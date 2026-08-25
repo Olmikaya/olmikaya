@@ -4,251 +4,215 @@ import Base from "../layouts/Base.astro";
 import Plate from "../components/Plate.astro";
 import Subscribe from "../components/Subscribe.astro";
 import { readingTime } from "../lib/reading-time";
+import { publishedArticles, sections, categoriesOf } from "../lib/sections";
 
-const articles = (
-  await getCollection("articles", ({ data }) => !data.draft)
-).sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
-
+const articles = await publishedArticles();
 const lead = articles.find((a) => a.data.featured) ?? articles[0];
-const recent = articles.filter((a) => a.id !== lead?.id).slice(0, 3);
+const secondaries = articles.filter((a) => a.id !== lead?.id);
+
+const allSections = await sections();
+
+const entries = (await getCollection("directory", ({ data }) => !data.draft)).sort(
+  (a, b) => a.data.order - b.data.order,
+);
+
+const objects = (await getCollection("objects", ({ data }) => !data.draft)).sort(
+  (a, b) => a.data.order - b.data.order,
+);
 
 const seasons = (await getCollection("seasons", ({ data }) => !data.draft)).sort(
   (a, b) => a.data.index - b.data.index,
 );
 const anyScaffold = seasons.some((s) => s.data.scaffold);
 
-const entries = (await getCollection("directory", ({ data }) => !data.draft))
-  .sort((a, b) => a.data.order - b.data.order)
-  .slice(0, 3);
+const dateOf = (d: Date) =>
+  d.toLocaleDateString("en-GB", { month: "short", year: "numeric" });
+const mins = (a: (typeof articles)[number]) =>
+  a.data.readingTime ?? readingTime(a.body ?? "");
 ---
 
 <Base
   title="OLMIKAYA — Ordinary Living Made Intentional"
   description="An independent East African editorial and lifestyle company. People, places, objects, food, style, design, architecture, travel, work and everyday ritual."
 >
-  <section class="hero">
-    <div class="wrap">
-      <p class="eyebrow reveal">Ordinary Living Made Intentional</p>
-
-      <h1 class="display-xl hero__title reveal">
+  <div class="wrap">
+    <!-- ================================================================
+         THE BELIEF
+         Compressed to a single band. The worldview still opens the page,
+         but it no longer occupies a whole screen before any journalism.
+         ================================================================ -->
+    <section class="module module--first module--tight">
+      <h1 class="statement">
         Ordinary life is worth experiencing intentionally.
       </h1>
+    </section>
 
-      <div class="hero__foot">
-        <p class="lead reveal">
-          OLMIKAYA is an independent East African editorial and lifestyle
-          company. We pay close attention to the things that are not supposed to
-          be remarkable — a Sunday table, a well-made door, the route a rider
-          takes before the city wakes.
-        </p>
-
-        <div class="stack reveal">
-          <p class="small muted">
-            A journal, a directory of people and places, and — in time — a small
-            number of objects. Published from Nairobi.
-          </p>
-          <a class="more" href="/journal/">Start reading</a>
-        </div>
+    <!-- ================================================================
+         LEAD
+         ================================================================ -->
+    <section class="module">
+      <div class="module-head">
+        <h2 class="module-head__title">The lead</h2>
+        <a class="more" href="/journal/">All stories</a>
       </div>
-    </div>
-  </section>
 
-  <section>
-    <div class="wrap">
-      <div class="reveal">
-        <Plate
-          tone="sky"
-          ratio="cinema"
-          caption="Ngong Road before six, when the light is still blue."
-        />
-      </div>
-    </div>
-  </section>
-
-  {
-    lead && (
-      <section class="section">
-        <div class="wrap">
-          <div class="section-head reveal">
-            <h2 class="h2">The lead</h2>
-            <a class="more" href="/journal/">All stories</a>
-          </div>
-
-          <div class="feature reveal">
-            <Plate
-              src={lead.data.cover.src}
-              alt={lead.data.cover.alt}
-              tone={lead.data.cover.tone}
-              ratio="landscape"
-              caption={lead.data.place}
-              credit={lead.data.cover.credit}
-            />
-
-            <div class="feature__body">
-              <p class="eyebrow">
-                {lead.data.category}
-                {lead.data.secondaryCategory && ` · ${lead.data.secondaryCategory}`}
-              </p>
-              <h3 class="display-l">
-                <a class="card__link" href={`/journal/${lead.id}/`}>
-                  {lead.data.title}
-                </a>
-              </h3>
+      {
+        lead && (
+          <div class="lead-block">
+            <a class="tile__link reveal" href={`/journal/${lead.id}/`}>
+              <Plate
+                bare
+                src={lead.data.cover.src}
+                alt={lead.data.cover.alt}
+                tone={lead.data.cover.tone}
+                ratio="landscape"
+              />
+              <p class="tile__kicker">{categoriesOf(lead).join(" · ")}</p>
+              <h3 class="lead-block__title">{lead.data.title}</h3>
               <p class="lead">{lead.data.dek}</p>
-              <p class="meta">
-                <span>Words by {lead.data.author}</span>
-                <span>{lead.data.readingTime ?? readingTime(lead.body ?? "")} min read</span>
+              <p class="tile__meta">
+                <span>{lead.data.author}</span>
+                <span>{lead.data.place}</span>
+                <span>{dateOf(lead.data.date)}</span>
+                <span>{mins(lead)} min</span>
               </p>
-              <a class="more" href={`/journal/${lead.id}/`}>Read the story</a>
+            </a>
+
+            <div class="lead-block__aside briefs reveal">
+              {secondaries.map((a) => (
+                <a class="brief" href={`/journal/${a.id}/`}>
+                  <div class="stack-sm">
+                    <p class="tile__kicker">{categoriesOf(a).join(" · ")}</p>
+                    <h3 class="brief__title">{a.data.title}</h3>
+                    <p class="brief__meta">
+                      <span>{a.data.author}</span>
+                      <span>{a.data.place}</span>
+                      <span>{mins(a)} min</span>
+                    </p>
+                  </div>
+                </a>
+              ))}
             </div>
           </div>
-        </div>
-      </section>
-    )
-  }
+        )
+      }
+    </section>
 
-  <section class="ground-green on-dark">
-    <div class="wrap">
-      <div class="chapter reveal">
-        <div class="chapter__mark" aria-hidden="true"></div>
-        <p class="chapter__line">
-          We are not documenting a region. We are paying attention to a life
-          already being lived well.
-        </p>
-      </div>
-    </div>
-  </section>
-
-  <section class="section">
-    <div class="wrap">
-      <div class="section-head reveal">
-        <h2 class="h2">From the journal</h2>
-        <a class="more" href="/journal/">Everything</a>
+    <!-- ================================================================
+         SECTIONS
+         ================================================================ -->
+    <section class="module module--tight">
+      <div class="module-head">
+        <h2 class="module-head__title">Sections</h2>
+        <a class="more" href="/sections/">All sections</a>
       </div>
 
-      <div class="row row--3">
+      <div class="grid-dense grid-dense--4 grid-dense--ruled reveal">
         {
-          recent.map((a) => (
-            <article class="card reveal">
-              <a class="card__link" href={`/journal/${a.id}/`}>
-                <Plate
-                  bare
-                  src={a.data.cover.src}
-                  alt={a.data.cover.alt}
-                  tone={a.data.cover.tone}
-                  ratio="portrait"
-                />
-                <div class="stack-sm">
-                  <p class="eyebrow eyebrow--muted">
-                    {a.data.category}
-                    {a.data.secondaryCategory && ` · ${a.data.secondaryCategory}`}
-                  </p>
-                  <h3 class="card__title">{a.data.title}</h3>
-                  <p class="card__dek">{a.data.dek}</p>
-                </div>
-              </a>
-            </article>
+          allSections.map((s) => (
+            <a class="tile__link" href={`/sections/${s.slug}/`}>
+              <p class="tile__kicker">
+                {s.count} {s.count === 1 ? "piece" : "pieces"}
+              </p>
+              <h3 class="tile__title">{s.name}</h3>
+            </a>
           ))
         }
       </div>
-    </div>
-  </section>
+    </section>
 
-  <section class="section ground-cream">
-    <div class="wrap">
-      <div class="section-head reveal">
-        <h2 class="h2">The seasons</h2>
-        <a class="more" href="/seasons/">How seasons work</a>
-      </div>
-
-      <div class="stack-lg">
-        <p class="statement reveal">
-          OLMIKAYA publishes in seasons. Each one sets a question, and everything
-          made under it — stories, people, objects — answers to that question.
-        </p>
-
-        <div class="row row--4">
-          {
-            seasons.map((s) => (
-              <div class="season reveal">
-                <p class="season__index">{String(s.data.index).padStart(2, "0")}</p>
-                <h3 class="season__title">{s.data.title}</h3>
-                <p class="card__dek">
-                  {s.data.scaffold ? "Awaiting the supplied framework." : s.data.question}
-                </p>
-              </div>
-            ))
-          }
-        </div>
-
-        {
-          anyScaffold && (
-            <p class="note reveal">
-              <strong>Scaffold.</strong> These slots are structural placeholders,
-              not proposed seasons. The OLMIKAYA seasonal framework was not
-              included with the brand assets and has not been invented here.
-              Supply it and this section fills in without redesign.
-            </p>
-          )
-        }
-      </div>
-    </div>
-  </section>
-
-  <section class="section">
-    <div class="wrap">
-      <div class="section-head reveal">
-        <h2 class="h2">People &amp; places</h2>
+    <!-- ================================================================
+         DIRECTORY
+         ================================================================ -->
+    <section class="module">
+      <div class="module-head">
+        <h2 class="module-head__title">People &amp; places</h2>
         <a class="more" href="/directory/">The directory</a>
       </div>
 
-      <div class="grid">
-        <div class="col-5 stack reveal">
-          <p class="statement">
-            A standing record of the people making things worth crossing a city
-            for, and the rooms worth sitting in.
-          </p>
-          <p class="small muted">
-            Nothing is listed because it paid to be. Entries are added when we
-            have been, more than once.
-          </p>
-          <a class="more" href="/directory/">Browse all entries</a>
-        </div>
-
-        <div class="col-6 start-7 reveal">
-          {
-            entries.map((e, i) => (
-              <div class="entry">
-                <p class="entry__no">{String(i + 1).padStart(3, "0")}</p>
-                <div class="stack-sm">
-                  <h3 class="entry__name">{e.data.name}</h3>
-                  <p class="card__dek">{e.data.dek}</p>
-                </div>
-                <p class="entry__place">{e.data.city}</p>
+      <div class="grid-dense grid-dense--3 reveal">
+        {
+          entries.map((e, i) => (
+            <div class="brief brief--top">
+              <div class="stack-sm">
+                <p class="tile__kicker">
+                  {String(i + 1).padStart(3, "0")} · {e.data.city}
+                </p>
+                <h3 class="brief__title">{e.data.name}</h3>
+                <p class="card__dek">{e.data.dek}</p>
               </div>
-            ))
-          }
-        </div>
+            </div>
+          ))
+        }
       </div>
-    </div>
-  </section>
+    </section>
 
-  <section class="section ground-sky">
-    <div class="wrap">
-      <div class="section-head reveal">
-        <h2 class="h2">Objects</h2>
-        <a class="more" href="/objects/">See the first objects</a>
+    <!-- ================================================================
+         OBJECTS
+         ================================================================ -->
+    <section class="module">
+      <div class="module-head">
+        <h2 class="module-head__title">Objects</h2>
+        <a class="more" href="/objects/">All objects</a>
       </div>
 
-      <div class="stack-lg">
-        <p class="statement reveal">
-          A small number of things, made slowly, with the people we write about.
-          Never many. Never in a hurry.
-        </p>
-        <a class="more reveal" href="/objects/">What we are making</a>
+      <div class="grid-dense grid-dense--4 grid-dense--ruled reveal">
+        {
+          objects.map((o) => (
+            <a class="tile__link" href="/objects/">
+              <Plate
+                bare
+                src={o.data.cover.src}
+                alt={o.data.cover.alt}
+                tone={o.data.cover.tone}
+                ratio="square"
+              />
+              <h3 class="tile__title">{o.data.name}</h3>
+              <p class="tile__meta">
+                <span>{o.data.availability}</span>
+              </p>
+            </a>
+          ))
+        }
       </div>
-    </div>
-  </section>
+    </section>
+
+    <!-- ================================================================
+         SEASONS
+         ================================================================ -->
+    <section class="module">
+      <div class="module-head">
+        <h2 class="module-head__title">The seasons</h2>
+        <a class="more" href="/seasons/">How seasons work</a>
+      </div>
+
+      <div class="grid-dense grid-dense--4 grid-dense--ruled reveal">
+        {
+          seasons.map((s) => (
+            <a class="tile__link" href="/seasons/">
+              <p class="season__index">{String(s.data.index).padStart(2, "0")}</p>
+              <h3 class="tile__title">{s.data.title}</h3>
+              <p class="tile__meta">
+                <span>
+                  {s.data.scaffold ? "Awaiting the framework" : s.data.dates}
+                </span>
+              </p>
+            </a>
+          ))
+        }
+      </div>
+
+      {
+        anyScaffold && (
+          <p class="note reveal hang">
+            <strong>Scaffold.</strong> These slots are structural placeholders,
+            not proposed seasons. The OLMIKAYA seasonal framework was not
+            included with the brand assets and has not been invented here.
+          </p>
+        )
+      }
+    </section>
+  </div>
 
   <Subscribe />
 </Base>

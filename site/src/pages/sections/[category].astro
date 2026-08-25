@@ -1,0 +1,102 @@
+---
+import Base from "../../layouts/Base.astro";
+import Plate from "../../components/Plate.astro";
+import Subscribe from "../../components/Subscribe.astro";
+import { sections, categoriesOf } from "../../lib/sections";
+import { readingTime } from "../../lib/reading-time";
+
+export async function getStaticPaths() {
+  const all = await sections();
+  return all.map((section) => ({
+    params: { category: section.slug },
+    props: { section, all },
+  }));
+}
+
+const { section, all } = Astro.props;
+const [lead, ...rest] = section.articles;
+
+const dateOf = (d: Date) =>
+  d.toLocaleDateString("en-GB", { month: "short", year: "numeric" });
+---
+
+<Base
+  title={`${section.name} — OLMIKAYA`}
+  description={`OLMIKAYA writing on ${section.name.toLowerCase()} across East Africa.`}
+  current="sections"
+  currentSection={section.slug}
+>
+  <div class="wrap">
+    <section class="module module--first module--tight">
+      <div class="module-head">
+        <h1 class="module-head__title">{section.name}</h1>
+        <p class="small muted">
+          {section.count} {section.count === 1 ? "piece" : "pieces"}
+        </p>
+      </div>
+
+      {
+        lead && (
+          <div class="lead-block">
+            <a class="tile__link" href={`/journal/${lead.id}/`}>
+              <Plate
+                bare
+                src={lead.data.cover.src}
+                alt={lead.data.cover.alt}
+                tone={lead.data.cover.tone}
+                ratio="landscape"
+              />
+              <p class="tile__kicker">{categoriesOf(lead).join(" · ")}</p>
+              <h2 class="lead-block__title">{lead.data.title}</h2>
+              <p class="card__dek">{lead.data.dek}</p>
+              <p class="tile__meta">
+                <span>{lead.data.author}</span>
+                <span>{lead.data.place}</span>
+                <span>{lead.data.readingTime ?? readingTime(lead.body ?? "")} min</span>
+              </p>
+            </a>
+
+            {rest.length > 0 && (
+              <div class="lead-block__aside briefs">
+                {rest.map((a) => (
+                  <a class="brief" href={`/journal/${a.id}/`}>
+                    <div class="stack-sm">
+                      <p class="tile__kicker">{a.data.category}</p>
+                      <h3 class="brief__title">{a.data.title}</h3>
+                      <p class="brief__meta">
+                        <span>{a.data.author}</span>
+                        <span>{dateOf(a.data.date)}</span>
+                      </p>
+                    </div>
+                  </a>
+                ))}
+              </div>
+            )}
+          </div>
+        )
+      }
+    </section>
+
+    <!-- Other sections, so a reader can move sideways rather than back. -->
+    <section class="module module--tight">
+      <div class="module-head">
+        <h2 class="module-head__title">Elsewhere in the journal</h2>
+        <a class="more" href="/sections/">All sections</a>
+      </div>
+
+      <div class="subnav__inner">
+        {
+          all
+            .filter((s) => s.slug !== section.slug)
+            .map((s) => (
+              <a class="subnav__link" href={`/sections/${s.slug}/`}>
+                {s.name} <span class="faint">{s.count}</span>
+              </a>
+            ))
+        }
+      </div>
+    </section>
+  </div>
+
+  <Subscribe />
+</Base>

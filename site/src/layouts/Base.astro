@@ -8,9 +8,13 @@ interface Props {
   description: string;
   /** Which nav item is current. */
   current?: string;
+  /** Which section slug is current, for the strip under the masthead. */
+  currentSection?: string;
+  /** Article pages hide the section strip; it is noise while reading. */
+  showSections?: boolean;
 }
 
-const { title, description, current } = Astro.props;
+const { title, description, current, currentSection, showSections } = Astro.props;
 const canonical = new URL(Astro.url.pathname, Astro.site).href;
 ---
 
@@ -39,7 +43,11 @@ const canonical = new URL(Astro.url.pathname, Astro.site).href;
   </head>
 
   <body>
-    <Masthead current={current} />
+    <Masthead
+      current={current}
+      currentSection={currentSection}
+      showSections={showSections}
+    />
 
     <main id="main">
       <slot />

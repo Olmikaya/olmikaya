@@ -1,25 +1,48 @@
 ---
+import { sections } from "../lib/sections";
+
 /**
- * Site masthead. Defined once here, rendered on every page — this is the
- * thing the static build had to duplicate across eight files.
+ * Site masthead: a thin utility strip, the wordmark and primary navigation,
+ * then a section strip built from the categories that actually have articles.
+ * Defined once here and rendered on every page.
  */
 interface Props {
-  /** Which nav item is the current page. */
+  /** Which primary nav item is the current page. */
   current?: string;
+  /** Which section slug is the current page, for the strip below. */
+  currentSection?: string;
+  /** Hide the section strip on pages where it is noise (article pages). */
+  showSections?: boolean;
 }
 
-const { current } = Astro.props;
+const { current, currentSection, showSections = true } = Astro.props;
 
 const NAV = [
   { key: "journal", label: "Journal", href: "/journal/" },
-  { key: "seasons", label: "Seasons", href: "/seasons/" },
+  { key: "sections", label: "Sections", href: "/sections/" },
   { key: "directory", label: "Directory", href: "/directory/" },
   { key: "objects", label: "Objects", href: "/objects/" },
+  { key: "seasons", label: "Seasons", href: "/seasons/" },
   { key: "about", label: "About", href: "/about/" },
 ];
+
+const allSections = await sections();
 ---
 
 <a class="skip-link" href="#main">Skip to content</a>
+
+<div class="utility">
+  <div class="wrap">
+    <div class="utility__inner">
+      <span class="utility__note">Ordinary Living Made Intentional</span>
+      <div class="utility__group">
+        <a class="utility__link" href="/seasons/">Seasons</a>
+        <a class="utility__link" href="/directory/">Directory</a>
+        <a class="utility__link" href="/#letter">The letter</a>
+      </div>
+    </div>
+  </div>
+</div>
 
 <header class="masthead">
   <div class="wrap">
@@ -74,3 +97,30 @@ const NAV = [
     </div>
   </div>
 </header>
+
+{
+  showSections && allSections.length > 0 && (
+    <div class="subnav">
+      <div class="wrap">
+        <nav class="subnav__inner" aria-label="Sections">
+          <a
+            class="subnav__link"
+            href="/journal/"
+            aria-current={current === "journal" && !currentSection ? "page" : undefined}
+          >
+            Latest
+          </a>
+          {allSections.map((s) => (
+            <a
+              class="subnav__link"
+              href={`/sections/${s.slug}/`}
+              aria-current={currentSection === s.slug ? "page" : undefined}
+            >
+              {s.name}
+            </a>
+          ))}
+        </nav>
+      </div>
+    </div>
+  )
+}

@@ -32,7 +32,9 @@ const others = (await getCollection("articles", ({ data }) => !data.draft))
   .slice(0, 3);
 ---
 
-<Base title={`${a.title} — OLMIKAYA`} description={a.dek} current="journal">
+<Base title={`${a.title} — OLMIKAYA`} description={a.dek} current="journal"
+  showSections={false}
+>
   <article>
     <header class="section">
       <div class="wrap">

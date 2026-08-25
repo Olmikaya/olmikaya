@@ -1,0 +1,69 @@
+---
+import Base from "../../layouts/Base.astro";
+import Plate from "../../components/Plate.astro";
+import Subscribe from "../../components/Subscribe.astro";
+import { sections } from "../../lib/sections";
+
+const all = await sections();
+const total = new Set(all.flatMap((s) => s.articles.map((a) => a.id))).size;
+---
+
+<Base
+  title="Sections — OLMIKAYA"
+  description="The subjects OLMIKAYA covers: people, places, objects, food, style, design, architecture, travel, culture, work and everyday ritual."
+  current="sections"
+>
+  <div class="wrap">
+    <section class="module module--first module--tight">
+      <div class="module-head">
+        <h1 class="module-head__title">Sections</h1>
+        <p class="small muted">
+          {total} {total === 1 ? "piece" : "pieces"} across {all.length} sections
+        </p>
+      </div>
+
+      <p class="statement measure hang">
+        We do not cover subjects because they are subjects. A section exists
+        once enough of the work has quietly gathered there.
+      </p>
+    </section>
+
+    {
+      all.map((section) => (
+        <section class="module module--tight">
+          <div class="module-head">
+            <h2 class="module-head__title">
+              <a class="link" href={`/sections/${section.slug}/`}>{section.name}</a>
+            </h2>
+            <a class="more" href={`/sections/${section.slug}/`}>
+              {section.count} {section.count === 1 ? "piece" : "pieces"}
+            </a>
+          </div>
+
+          <div class="grid-dense grid-dense--4 grid-dense--ruled">
+            {section.articles.slice(0, 4).map((a) => (
+              <article class="tile">
+                <a class="tile__link" href={`/journal/${a.id}/`}>
+                  <Plate
+                    bare
+                    src={a.data.cover.src}
+                    alt={a.data.cover.alt}
+                    tone={a.data.cover.tone}
+                    ratio="landscape"
+                  />
+                  <h3 class="tile__title">{a.data.title}</h3>
+                  <p class="tile__meta">
+                    <span>{a.data.author}</span>
+                    <span>{a.data.place}</span>
+                  </p>
+                </a>
+              </article>
+            ))}
+          </div>
+        </section>
+      ))
+    }
+  </div>
+
+  <Subscribe />
+</Base>

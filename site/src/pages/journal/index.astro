@@ -1,17 +1,21 @@
 ---
-import { getCollection } from "astro:content";
 import Base from "../../layouts/Base.astro";
 import Plate from "../../components/Plate.astro";
 import Subscribe from "../../components/Subscribe.astro";
 import { readingTime } from "../../lib/reading-time";
+import { publishedArticles, sections, categoriesOf } from "../../lib/sections";
 
-const all = (await getCollection("articles", ({ data }) => !data.draft)).sort(
-  (a, b) => b.data.date.valueOf() - a.data.date.valueOf(),
-);
+const all = await publishedArticles();
+const allSections = await sections();
 
 /* The lead is whatever is flagged featured, falling back to the newest. */
 const lead = all.find((a) => a.data.featured) ?? all[0];
 const rest = all.filter((a) => a.id !== lead?.id);
+
+const dateOf = (d: Date) =>
+  d.toLocaleDateString("en-GB", { month: "short", year: "numeric" });
+const mins = (a: (typeof all)[number]) =>
+  a.data.readingTime ?? readingTime(a.body ?? "");
 ---
 
 <Base
@@ -19,81 +23,71 @@ const rest = all.filter((a) => a.id !== lead?.id);
   description="Stories on people, places, objects, food, style, design, architecture, travel, work and everyday ritual across East Africa."
   current="journal"
 >
-  <section class="section">
-    <div class="wrap">
-      <div class="grid">
-        <div class="col-7 stack reveal">
-          <p class="eyebrow">The journal</p>
-          <h1 class="display-l">Close attention, published slowly.</h1>
-          <p class="lead">
-            Reporting on the ordinary parts of contemporary East African life —
-            the meal, the commute, the doorway, the cloth. We publish when a
-            piece is ready, which is not often.
-          </p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  {
-    lead && (
-      <section class="section--tight">
-        <div class="wrap">
-          <div class="feature feature--flip reveal">
-            <Plate
-              src={lead.data.cover.src}
-              alt={lead.data.cover.alt}
-              tone={lead.data.cover.tone}
-              ratio="landscape"
-              caption={lead.data.place}
-              credit={lead.data.cover.credit}
-            />
-
-            <div class="feature__body">
-              <p class="eyebrow">
-                {lead.data.category}
-                {lead.data.secondaryCategory && ` · ${lead.data.secondaryCategory}`}
-              </p>
-              <h2 class="display-l">
-                <a class="card__link" href={`/journal/${lead.id}/`}>
-                  {lead.data.title}
-                </a>
-              </h2>
-              <p class="lead">{lead.data.dek}</p>
-              <p class="meta">
-                <span>Words by {lead.data.author}</span>
-                <span>
-                  {lead.data.date.toLocaleDateString("en-GB", {
-                    month: "long",
-                    year: "numeric",
-                  })}
-                </span>
-                <span>{lead.data.readingTime ?? readingTime(lead.body ?? "")} min read</span>
-              </p>
-              <a class="more" href={`/journal/${lead.id}/`}>
-                Read the story
-              </a>
-            </div>
-          </div>
-        </div>
-      </section>
-    )
-  }
-
-  <section class="section">
-    <div class="wrap">
-      <div class="section-head reveal">
-        <h2 class="h2">Everything else</h2>
+  <div class="wrap">
+    <section class="module module--first module--tight">
+      <div class="module-head">
+        <h1 class="module-head__title">The journal</h1>
         <p class="small muted">
-          {rest.length} {rest.length === 1 ? "piece" : "pieces"}
+          {all.length} {all.length === 1 ? "piece" : "pieces"}
         </p>
       </div>
 
-      <div class="row row--3">
+      {
+        lead && (
+          <div class="lead-block">
+            <a class="tile__link reveal" href={`/journal/${lead.id}/`}>
+              <Plate
+                bare
+                src={lead.data.cover.src}
+                alt={lead.data.cover.alt}
+                tone={lead.data.cover.tone}
+                ratio="landscape"
+              />
+              <p class="tile__kicker">{categoriesOf(lead).join(" · ")}</p>
+              <h2 class="lead-block__title">{lead.data.title}</h2>
+              <p class="lead">{lead.data.dek}</p>
+              <p class="tile__meta">
+                <span>{lead.data.author}</span>
+                <span>{lead.data.place}</span>
+                <span>{dateOf(lead.data.date)}</span>
+                <span>{mins(lead)} min</span>
+              </p>
+            </a>
+
+            {rest.length > 0 && (
+              <div class="lead-block__aside briefs reveal">
+                {rest.map((a) => (
+                  <a class="brief" href={`/journal/${a.id}/`}>
+                    <div class="stack-sm">
+                      <p class="tile__kicker">{categoriesOf(a).join(" · ")}</p>
+                      <h3 class="brief__title">{a.data.title}</h3>
+                      <p class="brief__meta">
+                        <span>{a.data.author}</span>
+                        <span>{dateOf(a.data.date)}</span>
+                        <span>{mins(a)} min</span>
+                      </p>
+                    </div>
+                  </a>
+                ))}
+              </div>
+            )}
+          </div>
+        )
+      }
+    </section>
+
+    <!-- Everything, as a dense grid. -->
+    <section class="module">
+      <div class="module-head">
+        <h2 class="module-head__title">Everything</h2>
+        <a class="more" href="/sections/">By section</a>
+      </div>
+
+      <div class="grid-dense grid-dense--4 grid-dense--ruled">
         {
-          rest.map((a) => (
-            <article class="card reveal">
-              <a class="card__link" href={`/journal/${a.id}/`}>
+          all.map((a) => (
+            <article class="tile reveal">
+              <a class="tile__link" href={`/journal/${a.id}/`}>
                 <Plate
                   bare
                   src={a.data.cover.src}
@@ -101,18 +95,13 @@ const rest = all.filter((a) => a.id !== lead?.id);
                   tone={a.data.cover.tone}
                   ratio="portrait"
                 />
-                <div class="stack-sm">
-                  <p class="eyebrow eyebrow--muted">
-                    {a.data.category}
-                    {a.data.secondaryCategory && ` · ${a.data.secondaryCategory}`}
-                  </p>
-                  <h3 class="card__title">{a.data.title}</h3>
-                  <p class="card__dek">{a.data.dek}</p>
-                  <p class="meta">
-                    <span>{a.data.author}</span>
-                    <span>{a.data.readingTime ?? readingTime(a.body ?? "")} min</span>
-                  </p>
-                </div>
+                <p class="tile__kicker">{categoriesOf(a).join(" · ")}</p>
+                <h3 class="tile__title">{a.data.title}</h3>
+                <p class="card__dek">{a.data.dek}</p>
+                <p class="tile__meta">
+                  <span>{a.data.author}</span>
+                  <span>{mins(a)} min</span>
+                </p>
               </a>
             </article>
           ))
@@ -125,8 +114,26 @@ const rest = all.filter((a) => a.id !== lead?.id);
         bylines are invented. Replace them with commissioned work before this
         site goes anywhere public.
       </p>
-    </div>
-  </section>
+    </section>
+
+    <!-- Sections, as a way sideways. -->
+    <section class="module module--tight">
+      <div class="module-head">
+        <h2 class="module-head__title">By section</h2>
+        <a class="more" href="/sections/">All sections</a>
+      </div>
+
+      <div class="subnav__inner">
+        {
+          allSections.map((s) => (
+            <a class="subnav__link" href={`/sections/${s.slug}/`}>
+              {s.name} <span class="faint">{s.count}</span>
+            </a>
+          ))
+        }
+      </div>
+    </section>
+  </div>
 
   <Subscribe />
 </Base>

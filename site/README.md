@@ -192,6 +192,25 @@ editing forms.
 **If you add a field, add it in both places.** The CMS silently drops anything
 the config does not know about.
 
+### Sections
+
+Sections are **derived from the articles that exist**, never from a hardcoded
+list — see `src/lib/sections.ts`. A category with nothing published in it
+produces no nav item and no page, so the site can never link to an empty
+section. Both an article's primary and secondary category count, so a
+Food/Ritual piece appears under both.
+
+They live at `/sections/<name>/` rather than at the top level, because the
+`Objects` category would otherwise collide with the `/objects/` product page.
+
+### Density
+
+Index pages — home, journal, sections — use the dense component layer
+(`.module`, `.tile`, `.brief`, `.grid-dense`) documented in section 14 of the
+stylesheet. Article pages deliberately do not: reading stays at the ~65
+character measure. If you add an index page, use the dense components; if you
+add a reading page, use `.prose`.
+
 ### Relations
 
 Directory entries and objects can link to the article written about them
