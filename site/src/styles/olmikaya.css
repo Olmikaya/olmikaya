@@ -104,6 +104,12 @@
         terracotta on green = 1.65:1  FAIL
      Never set terracotta as text or a meaningful mark on ink or green.
      On dark grounds use cream, off-white or sky instead.
+
+     The muted and faint text roles below are MEASURED against the grounds
+     they are actually used on, not eyeballed. Both carry real content —
+     deks, bylines, dates, section labels — so both have to clear AA at
+     small sizes, and the alpha that looked right was not the alpha that
+     passed. Contrast ratios are noted on each.
      --------------------------------------------------------------------- */
   --olmi-sky:        #A8C7DC;
   --olmi-offwhite:   #FFF8F0;
@@ -116,8 +122,8 @@
   /* --- Semantic roles --------------------------------------------------- */
   --ground:        var(--olmi-offwhite);
   --text:          var(--olmi-ink);
-  --text-muted:    rgba(34, 31, 24, 0.60);
-  --text-faint:    rgba(34, 31, 24, 0.42);
+  --text-muted:    rgba(34, 31, 24, 0.70);  /* 5.9:1 off-white, 5.6:1 cream, 4.6:1 sky */
+  --text-faint:    rgba(34, 31, 24, 0.64);  /* 4.9:1 off-white, 4.6:1 cream */
   --brand:         var(--olmi-maroon);
   --rule:          rgba(34, 31, 24, 0.16);
   --rule-strong:   rgba(34, 31, 24, 0.30);
@@ -140,6 +146,10 @@
   --step-display-l:  clamp(2.125rem, 1.5rem + 2.9vw, 3.75rem);
   --step-h2:         clamp(1.625rem, 1.3rem + 1.5vw, 2.5rem);
   --step-h3:         clamp(1.1875rem, 1.1rem + 0.5vw, 1.5rem);
+  /* Subheads inside an article are a different job from the section titles
+     that head a page, and need their own step. See §08. */
+  --step-h2-prose:   clamp(1.375rem, 1.2rem + 0.7vw, 1.75rem);
+  --step-h3-prose:   1.1875rem;
   --step-lead:       clamp(1.125rem, 1.05rem + 0.45vw, 1.375rem);
   --step-body:       1.0625rem;
   --step-small:      0.875rem;
@@ -427,6 +437,33 @@ h3, .h3 {
   border-bottom: 1px solid var(--rule);
 }
 
+/* At rest the masthead is 88% opaque, which is right over the top of a page
+   where there is nothing behind it. Once the page is moving, editorial
+   photography and the dark passages run underneath it and 12% of them shows
+   through the wordmark. This walks it to near-opaque over the first 6rem of
+   scroll and lifts it off the page with a hairline shadow, so it reads as a
+   layer above the page rather than a strip cut out of it.
+
+   Scroll-driven, so there is no scroll listener and nothing to throttle. A
+   browser without scroll timelines keeps the resting state, which is the
+   design as it stood. */
+@supports (animation-timeline: scroll()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .masthead {
+      animation: masthead-settle linear both;
+      animation-timeline: scroll();
+      animation-range: 0 6rem;
+    }
+  }
+}
+
+@keyframes masthead-settle {
+  to {
+    background: color-mix(in srgb, var(--olmi-offwhite) 97%, transparent);
+    box-shadow: 0 1px 16px rgba(34, 31, 24, 0.08);
+  }
+}
+
 .masthead__inner {
   min-height: var(--masthead-h);
   display: flex;
@@ -445,6 +482,8 @@ h3, .h3 {
   color: var(--brand);
   text-decoration: none;
   white-space: nowrap;
+  display: inline-block;
+  padding-block: var(--sp-xs);   /* the most-tapped link on the site */
 }
 .wordmark--lg { font-size: clamp(1.5rem, 4.5vw, 2.75rem); }
 .on-dark .wordmark { color: var(--olmi-cream); }
@@ -526,6 +565,8 @@ h3, .h3 {
 
 /* The address is a real link and has to read as one on ink. */
 .footer__mail {
+  display: inline-block;
+  padding-block: 0.15rem;
   font-size: var(--step-small);
   color: var(--olmi-cream);
   text-decoration: underline;
@@ -543,7 +584,7 @@ h3, .h3 {
   font-size: var(--step-eyebrow);
   text-transform: uppercase;
   letter-spacing: 0.12em;
-  color: rgba(255, 248, 240, 0.45);
+  color: rgba(255, 248, 240, 0.55);   /* 5.6:1 on ink — 0.45 measured 4.2:1 */
 }
 
 /* --- Social link -------------------------------------------------------- */
@@ -554,6 +595,7 @@ h3, .h3 {
 .social-link {
   display: inline-flex;
   align-items: center;
+  padding-block: 0.15rem;
   gap: 0.5em;
   font-size: var(--step-small);
   color: inherit;
@@ -579,9 +621,14 @@ h3, .h3 {
   margin-bottom: var(--sp-md);
 }
 
-.footer__list li + li { margin-top: var(--sp-xs); }
+/* The gap moved from the list item to the link itself. Same rhythm on the
+   page, but the target is now the full 24px minimum rather than a 17px
+   line of text with dead space around it. */
+.footer__list li + li { margin-top: 0; }
 
 .footer__link {
+  display: inline-block;
+  padding-block: 0.3rem;
   font-size: var(--step-small);
   color: var(--text-on-dark-muted);
   text-decoration: none;
@@ -667,7 +714,7 @@ figcaption {
 .on-dark figcaption { color: var(--text-on-dark-muted); }
 
 .credit { color: var(--text-faint); }
-.on-dark .credit { color: rgba(255, 248, 240, 0.45); }
+.on-dark .credit { color: rgba(255, 248, 240, 0.55); }   /* 5.6:1 on ink */
 
 /* ==========================================================================
    07  COMPONENTS
@@ -810,6 +857,7 @@ figcaption {
    real destination, and plain text when it does not. */
 a.entry__place {
   text-decoration: none;
+  padding-block: 0.15rem;   /* plain text at this size measured 23.8px */
   transition: color 0.2s var(--ease);
 }
 a.entry__place:hover { color: var(--brand); }
@@ -860,7 +908,7 @@ a.entry__place:hover::before { background: var(--brand); }
 .field::placeholder { color: var(--text-faint); }
 .field:focus-visible { border-color: var(--brand); }
 .on-dark .field { border-color: var(--rule-on-dark); color: var(--text-on-dark); }
-.on-dark .field::placeholder { color: rgba(255, 248, 240, 0.45); }
+.on-dark .field::placeholder { color: rgba(255, 248, 240, 0.55); }
 
 .button {
   display: inline-flex;
@@ -901,16 +949,31 @@ a.entry__place:hover::before { background: var(--brand); }
 .subscribe__status--error { color: var(--olmi-sky); }
 
 /* The sign-up's three states. Only one is ever shown; the other two carry
-   [hidden], which must win over the flex layout above. */
-.subscribe__panel { display: flex; flex-direction: column; gap: var(--sp-md); }
-.subscribe__panel[hidden] { display: none; }
+   [hidden], which must win over the flex layout above.
+
+   The swap is a real change of message — the form becoming "check your
+   email" — so it fades rather than cutting, which reads as an answer to
+   what was just submitted instead of a page replacing itself. */
+.subscribe__panel {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-md);
+  opacity: 1;
+  transition: opacity 0.3s var(--ease), display 0.3s var(--ease);
+  transition-behavior: allow-discrete;
+}
+.subscribe__panel[hidden] { display: none; opacity: 0; }
+
+@starting-style {
+  .subscribe__panel:not([hidden]) { opacity: 0; }
+}
 
 /* A button that has to read as a link — clearing a remembered sign-up is an
    action, not navigation, so it cannot be an anchor. */
 .link-button {
   background: none;
   border: 0;
-  padding: 0;
+  padding: 0.15rem 0;   /* a control, so it clears the 24px target minimum */
   font: inherit;
   color: var(--brand);
   cursor: pointer;
@@ -951,6 +1014,7 @@ a.entry__place:hover::before { background: var(--brand); }
   color: var(--brand);
   text-decoration: none;
   white-space: nowrap;
+  padding-block: 0.25rem;
 }
 .more::after { content: "\2192"; transition: transform 0.25s var(--ease); }
 .more:hover::after { transform: translateX(0.25rem); }
@@ -966,9 +1030,34 @@ a.entry__place:hover::before { background: var(--brand); }
   line-height: var(--leading-body);
 }
 .prose > * + * { margin-top: var(--sp-md); }
-.prose h2 { margin-top: var(--sp-xl); }
-.prose h3 { margin-top: var(--sp-lg); }
 .prose > figure, .prose > .pullquote { margin-block: var(--sp-xl); }
+
+/* Headings inside the article are NOT the page's section titles.
+   --step-h2 tops out at 40px, which is what a section head wants when it
+   spans the full grid; set on a subhead in a 34rem column against 17px body
+   it is 2.35x the text it introduces and reads as a new article starting.
+   Sized against the body instead — about 1.6x — so a subhead marks a turn
+   in the piece without breaking the column. Space still belongs above a
+   heading, not below, so the top margins are unchanged. */
+.prose h2 {
+  font-size: var(--step-h2-prose);
+  line-height: 1.28;
+  letter-spacing: -0.006em;
+  margin-top: var(--sp-xl);
+  text-wrap: balance;
+}
+
+.prose h3 {
+  font-size: var(--step-h3-prose);
+  line-height: 1.35;
+  margin-top: var(--sp-lg);
+  text-wrap: balance;
+}
+
+/* Ragged-right at a 65-character measure strands a single word on the last
+   line often enough to notice. `pretty` reflows the closing lines to avoid
+   it; it costs nothing where it is unsupported. */
+.prose p { text-wrap: pretty; }
 
 /* Drop the first paragraph a size up — the entry into the piece. */
 .prose > p:first-of-type { font-size: var(--step-lead); line-height: 1.55; }
@@ -1063,6 +1152,12 @@ a.entry__place:hover::before { background: var(--brand); }
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
   }
+
+  /* The panels, the dialog and the shop grid all transition `display` with
+     allow-discrete. Zeroing the duration above already collapses them to an
+     instant swap, which is the correct reduced-motion behaviour: the toggle
+     still works, it simply stops moving. Nothing here may set opacity or
+     display itself — the open states must keep winning. */
 }
 
 /* Print: strip chrome, let the writing stand. */
@@ -1292,6 +1387,8 @@ a.entry__place:hover::before { background: var(--brand); }
 .utility__group { display: flex; align-items: center; gap: var(--sp-md); }
 
 .utility__link {
+  display: inline-block;
+  padding-block: 0.4rem;      /* 20px of text -> a 32px target in a 36px bar */
   color: var(--text-on-dark-muted);
   text-decoration: none;
   text-transform: uppercase;
@@ -1301,7 +1398,7 @@ a.entry__place:hover::before { background: var(--brand); }
 }
 .utility__link:hover { color: var(--olmi-cream); }
 
-.utility__note { color: rgba(255, 248, 240, 0.45); white-space: nowrap; }
+.utility__note { color: rgba(255, 248, 240, 0.55); white-space: nowrap; }
 
 @media (max-width: 40rem) {
   .utility__note { display: none; }
@@ -1454,7 +1551,7 @@ a.entry__place:hover::before { background: var(--brand); }
 .brief__meta > * + *::before { content: "·"; margin-right: var(--sp-xs); }
 
 .on-dark .brief { border-top-color: var(--rule-on-dark); }
-.on-dark .brief__meta { color: rgba(255, 248, 240, 0.5); }
+.on-dark .brief__meta { color: rgba(255, 248, 240, 0.55); }
 
 /* --- Dense grids --------------------------------------------------------
    Tighter gaps than .row, and more columns at width. */
@@ -1668,8 +1765,27 @@ a:hover > .lead-block__title, a:hover .lead-block__title { color: var(--brand); 
 }
 
 /* Filtered out by the script. Display, not visibility: the cell must leave
-   the grid so the remaining products close up. */
-.product.is-filtered-out { display: none; }
+   the grid so the remaining products close up — but it now fades on its way
+   out instead of blinking, and the grid reflows underneath it as it goes.
+   Same `allow-discrete` mechanism as the menu and the search dialog. */
+.product {
+  transition:
+    opacity 0.28s var(--ease),
+    transform 0.28s var(--ease),
+    display 0.28s var(--ease);
+  transition-behavior: allow-discrete;
+}
+
+.product.is-filtered-out {
+  display: none;
+  opacity: 0;
+  transform: scale(0.97);
+}
+
+/* Coming back into the grid, a product starts where it left off. */
+@starting-style {
+  .product:not(.is-filtered-out) { opacity: 0; transform: scale(0.97); }
+}
 
 .shop-empty {
   font-size: var(--step-small);
@@ -1758,29 +1874,53 @@ a:hover > .lead-block__title, a:hover .lead-block__title { color: var(--brand); 
 
 /* --- Menu panel ---------------------------------------------------------- */
 
-/* A plain display toggle, and the panel animates itself in.
+/* The panel animates both ways.
 
-   A 0fr-to-1fr grid-row height animation was tried first. It is the prettier
-   effect, but its open height depends on a transition actually running, and
-   anything that stalls that transition — a throttled background tab, a
-   browser that will not animate the property — leaves the menu open to
-   nothing. `display` cannot stall. The movement is an entry animation
-   instead, which is decoration on top of a panel that is already the right
-   size. */
+   It used to open with a keyframe and close on a bare `display: none`, so it
+   arrived gently and then vanished — the jarring half of a toggle is the
+   half that was missing. `display` is a discrete property, which is why it
+   could not be transitioned before; `allow-discrete` makes it hold its old
+   value for the duration and flip at the end, so the closing frame has
+   something to fade out on.
+
+   The safety property of the old approach is kept. The OPEN state sets
+   opacity and transform as ordinary declarations, so a browser that never
+   runs the transition — a throttled tab, or one without @starting-style —
+   lands on a fully-formed, fully-visible panel and simply skips the
+   movement. Nothing is ever left stranded at opacity 0. That is the same
+   guarantee the reveal system in §10 makes.
+
+   A 0fr-to-1fr height animation was tried before either of these and
+   rejected: its open height DEPENDS on the transition running, so a stall
+   leaves the menu open to nothing. Opacity cannot fail that way. */
 .nav-panel {
   display: none;
+  opacity: 0;
+  transform: translateY(-0.5rem);
   border-top: 1px solid var(--rule);
   background: var(--olmi-offwhite);
+  transition:
+    opacity 0.28s var(--ease),
+    transform 0.28s var(--ease),
+    display 0.28s var(--ease);
+  /* Longhand, and after the shorthand: `transition` resets this to normal. */
+  transition-behavior: allow-discrete;
 }
 
 .nav-panel[data-open="true"] {
   display: block;
-  animation: panel-in 0.32s var(--ease);
+  opacity: 1;
+  transform: none;
 }
 
-@keyframes panel-in {
-  from { opacity: 0; transform: translateY(-0.5rem); }
-  to   { opacity: 1; transform: none; }
+/* The frame the opening transition starts from. Without it the panel is
+   already display:block when these styles land and there is nothing to move
+   from, so the open would jump while the close still animated. */
+@starting-style {
+  .nav-panel[data-open="true"] {
+    opacity: 0;
+    transform: translateY(-0.5rem);
+  }
 }
 
 /* Keeping a collapsed panel out of the tab order is the script's job, via
@@ -1882,23 +2022,58 @@ a:hover > .lead-block__title, a:hover .lead-block__title { color: var(--brand); 
   color: var(--text);
   overflow: hidden;
 }
-.search[open] { display: flex; flex-direction: column; }
+/* Opening: the panel settles down, the backdrop washes in. Closing is the
+   same move reversed, which it was not before — the dialog used to be torn
+   off the screen in a single frame.
+
+   A dialog needs `overlay` in the transition as well as `display`. Both are
+   discrete, and `overlay` is what keeps the element painted in the top layer
+   while it fades; without it the panel leaves the top layer immediately on
+   close and the exit is invisible. As with the menu, the visible end state
+   is an ordinary declaration, so an unsupported browser gets the old instant
+   open and close rather than an empty dialog. */
+.search {
+  opacity: 0;
+  transform: translateY(-0.75rem) scale(0.985);
+  transition:
+    opacity 0.26s var(--ease),
+    transform 0.26s var(--ease),
+    display 0.26s var(--ease),
+    overlay 0.26s var(--ease);
+  transition-behavior: allow-discrete;
+}
+
+.search[open] {
+  display: flex;
+  flex-direction: column;
+  opacity: 1;
+  transform: none;
+}
+
+@starting-style {
+  .search[open] {
+    opacity: 0;
+    transform: translateY(-0.75rem) scale(0.985);
+  }
+}
 
 .search::backdrop {
   background: rgba(34, 31, 24, 0.42);
   -webkit-backdrop-filter: blur(3px);
   backdrop-filter: blur(3px);
+  opacity: 0;
+  transition:
+    opacity 0.26s var(--ease),
+    display 0.26s var(--ease),
+    overlay 0.26s var(--ease);
+  transition-behavior: allow-discrete;
 }
 
-/* Opening: the panel lifts, the backdrop washes in. */
-.search[open] { animation: search-in 0.28s var(--ease); }
-.search[open]::backdrop { animation: fade-in 0.28s var(--ease); }
+.search[open]::backdrop { opacity: 1; }
 
-@keyframes search-in {
-  from { opacity: 0; transform: translateY(-0.75rem) scale(0.985); }
-  to   { opacity: 1; transform: none; }
+@starting-style {
+  .search[open]::backdrop { opacity: 0; }
 }
-@keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
 
 .search__bar {
   display: flex;
@@ -2020,8 +2195,10 @@ a:hover > .lead-block__title, a:hover .lead-block__title { color: var(--brand); 
 
 @media (prefers-reduced-motion: reduce) {
   .nav-toggle__bars i { transition: none; }
-  .search[open],
-  .search[open]::backdrop,
-  .nav-panel[data-open="true"],
+
+  /* The staggered entrance is the one piece here that is pure decoration, so
+     it is dropped outright rather than shortened. The panel and the dialog
+     keep their (now instant) display swap from §10 — turning motion off must
+     not turn the toggles off. */
   .nav-panel[data-open="true"] .nav-panel__item { animation: none; }
 }
