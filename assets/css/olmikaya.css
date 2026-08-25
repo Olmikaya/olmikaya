@@ -461,6 +461,31 @@ h3, .h3 {
   .footer__grid { grid-template-columns: 1.4fr 1fr 1fr; }
 }
 
+/* --- Social link -------------------------------------------------------- */
+
+/* Glyph plus handle. Colour is inherited, so one rule serves the ink footer
+   and any light ground; only the underline is drawn from currentColor at 40%. */
+.social-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5em;
+  font-size: var(--step-small);
+  color: inherit;
+  text-decoration: none;
+}
+.social-link svg { flex: none; }
+/* Underline the words, not the glyph. */
+.social-link span {
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.18em;
+  text-decoration-color: color-mix(in srgb, currentColor 40%, transparent);
+  transition: text-decoration-color 0.25s var(--ease);
+}
+.social-link:hover span { text-decoration-color: currentColor; }
+
+.footer .social-link { color: var(--olmi-cream); margin-top: var(--sp-sm); }
+
 .footer__heading {
   font-size: var(--step-eyebrow);
   font-weight: 500;

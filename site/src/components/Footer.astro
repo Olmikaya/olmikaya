@@ -1,4 +1,5 @@
 ---
+import InstagramLink from "./InstagramLink.astro";
 import { CONTACT_EMAIL, PLACE } from "../lib/site";
 
 const year = new Date().getFullYear();
@@ -16,6 +17,7 @@ const year = new Date().getFullYear();
         <a class="footer__mail" href={`mailto:${CONTACT_EMAIL}`}>
           {CONTACT_EMAIL}
         </a>
+        <InstagramLink />
         <p class="footer__place">{PLACE}</p>
       </div>
 

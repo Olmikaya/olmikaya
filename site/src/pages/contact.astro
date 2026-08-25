@@ -1,5 +1,6 @@
 ---
 import Base from "../layouts/Base.astro";
+import InstagramLink from "../components/InstagramLink.astro";
 import { CONTACT_EMAIL, PLACE } from "../lib/site";
 ---
 
@@ -18,6 +19,7 @@ import { CONTACT_EMAIL, PLACE } from "../lib/site";
           <p class="contact-address">
             <a class="link" href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>
           </p>
+          <p class="contact-social"><InstagramLink /></p>
           <p class="small muted">{PLACE}</p>
         </div>
       </div>

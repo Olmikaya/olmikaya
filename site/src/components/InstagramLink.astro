@@ -1,0 +1,38 @@
+---
+import { INSTAGRAM_HANDLE, INSTAGRAM_URL } from "../lib/site";
+
+/**
+ * The Instagram profile, as a glyph and the handle.
+ *
+ * Colour is inherited, so the same component works on the ink footer and on
+ * the offwhite contact page without a variant.
+ *
+ * rel="me" is the identity claim: it says this site and that profile are the
+ * same OLMIKAYA. Instagram publishes the matching link back from the bio.
+ */
+interface Props {
+  /** Text beside the glyph. The handle unless a page needs something fuller. */
+  label?: string;
+}
+
+const { label = `@${INSTAGRAM_HANDLE}` } = Astro.props;
+---
+
+<a class="social-link" href={INSTAGRAM_URL} rel="me">
+  {/* Monoline at 1.6px — the weight of the hairlines elsewhere in the type. */}
+  <svg
+    viewBox="0 0 24 24"
+    width="16"
+    height="16"
+    fill="none"
+    stroke="currentColor"
+    stroke-width="1.6"
+    aria-hidden="true"
+    focusable="false"
+  >
+    <rect x="3" y="3" width="18" height="18" rx="5.4" />
+    <circle cx="12" cy="12" r="4.1" />
+    <circle cx="17.3" cy="6.7" r="1.15" fill="currentColor" stroke="none" />
+  </svg>
+  <span>{label}</span>
+</a>
