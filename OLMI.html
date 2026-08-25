@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OLMIKAYA</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Ovo, Cormorant Garamond, Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,400&family=Inter:wght@300;400;500;600&family=Ovo&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        clay: '#8B4226',
+                        'editorial-bg': '#EBE8E1',
+                        'editorial-dark': '#1C1B19',
+                    },
+                    fontFamily: {
+                        ovo: ['Ovo', 'serif'],
+                        serif: ['"Cormorant Garamond"', 'Georgia', 'serif'],
+                        sans: ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            background-color: #EBE8E1;
+            color: #1C1B19;
+            font-family: 'Inter', sans-serif;
+            -webkit-font-smoothing: antialiased;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-center items-center px-4 text-center">
+
+    <main class="space-y-6">
+        <!-- LARGE BRAND HEADER -->
+        <h1 class="font-ovo text-6xl sm:text-8xl md:text-9xl lg:text-[13vw] leading-none tracking-tight select-none uppercase">
+            <span class="text-clay">OLMI</span><span class="text-editorial-dark">KAYA</span>
+        </h1>
+
+        <!-- COMING SOON TEXT BELOW -->
+        <p class="font-serif italic text-2xl sm:text-3xl md:text-4xl text-editorial-dark font-light tracking-wide">
+            coming soon
+        </p>
+    </main>
+
+</body>
+</html>
