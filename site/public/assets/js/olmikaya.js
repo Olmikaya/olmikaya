@@ -206,9 +206,12 @@
             if (result.ok && result.data && result.data.ok) {
               say(result.data.message || "You are on the list.", "ok");
               form.reset();
-              /* Swaps this module to the pending panel, which says the same
-                 thing the status line just said. */
-              setLetterState("pending");
+              /* The endpoint says which it was: "subscribed" for someone
+                 already confirmed, "pending" for anyone who still has a
+                 confirmation email to open. Swaps to the matching panel. */
+              setLetterState(
+                result.data.state === "subscribed" ? "confirmed" : "pending",
+              );
             } else {
               say(
                 (result.data && result.data.message) ||

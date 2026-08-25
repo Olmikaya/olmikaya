@@ -369,6 +369,71 @@ panels say "remembered on this browser, not by us" and carry a control that
 clears it. A different browser, a cleared cache or private browsing all fall
 back to the form, which is correct rather than broken.
 
+### Signing up twice
+
+The endpoint looks a reader up before it writes anything, because signing up a
+second time is the ordinary case — the confirmation email got lost, or they
+forgot they had already done it. Three answers:
+
+| Kit knows them as | What happens | What they are told |
+|---|---|---|
+| nothing | created **inactive**, then added to the form | check your email |
+| `inactive` — never confirmed | added to the form again, which re-sends the confirmation | we have sent it again |
+| `active` — confirmed | nothing written at all | you are already on the list |
+| `cancelled` — unsubscribed | added to the form again | check your email |
+
+Nobody is ever turned away for having signed up before, and a confirmed reader
+is never sent looking for an email that is not coming.
+
+Two Kit behaviours this depends on, both easy to miss:
+
+- The subscriber list filter **defaults to `status=active`**. Without
+  `status=all` an unconfirmed person looks like a stranger and gets created
+  over and over.
+- Creating a subscriber **defaults to `state: "active"`**. Kit only emails, and
+  only bills for, *confirmed* subscribers — so creating people active is the
+  wrong side of the double opt-in the form is set up for. The endpoint creates
+  them `inactive` and lets the form's confirmation promote them. **Nobody
+  reaches the mailing list until they click the link.**
+
+One trade-off worth knowing: because the answers differ, someone can POST an
+address and learn whether it is on the list. For a newsletter that is a small
+exposure, and the alternative — one identical answer for every case — is what
+produces the confusing "nothing happened" that this replaces. Ask and it can
+be made uniform.
+
+### Staying out of spam
+
+Kit sends the email; almost everything that decides where it lands is
+configuration you own.
+
+**Verify your sending domain. This is the one that matters.** Gmail, Yahoo and
+Microsoft now require authentication for bulk mail, and unauthenticated
+newsletters go to spam or are rejected outright. In Kit: **Settings → Email →
+Verified Sending Domains**, then add the SPF, DKIM and DMARC records it gives
+you to your DNS. Needs the domain, so it is blocked until `olmikaya.com` is
+bought. DNS changes take 24–48 hours, and Kit's guidance is that open rates
+settle after two to three weeks of consistent sending.
+
+Kit supplies a default DMARC record at `p=none`, which is the safe starting
+point. Do not jump straight to `p=reject` — a misconfigured DMARC record sends
+legitimate mail to spam or bounces it.
+
+The rest:
+
+- **Send from your own domain**, `something@olmikaya.com`, never a Gmail or
+  Yahoo address. A free-mail from-address on bulk mail fails the new rules.
+- **Keep double opt-in on.** Only people who asked get mail, so complaint rates
+  stay low, and complaints are what wreck a sender reputation.
+- **The confirmation email is the one most likely to land in spam** — it is the
+  first thing you ever send that address. `/letter/thank-you/` already tells
+  readers to check the promotions folder and add you to their contacts.
+- **Do not buy or import a list.** Nothing recovers a reputation burned that
+  way, and imported subscribers skip confirmation entirely.
+- **Start small.** A first send to a handful of real readers, growing steadily,
+  reads as legitimate. Ten thousand cold addresses on day one does not.
+- Plain text and real links. No image-only emails, no link shorteners.
+
 ### Sending an issue
 
 Writing an issue here puts it in the **archive**. It does not send it — that
