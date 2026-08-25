@@ -795,6 +795,33 @@ figcaption {
 .subscribe__status--ok { color: var(--olmi-cream); }
 .subscribe__status--error { color: var(--olmi-sky); }
 
+/* The sign-up's three states. Only one is ever shown; the other two carry
+   [hidden], which must win over the flex layout above. */
+.subscribe__panel { display: flex; flex-direction: column; gap: var(--sp-md); }
+.subscribe__panel[hidden] { display: none; }
+
+/* A button that has to read as a link — clearing a remembered sign-up is an
+   action, not navigation, so it cannot be an anchor. */
+.link-button {
+  background: none;
+  border: 0;
+  padding: 0;
+  font: inherit;
+  color: var(--brand);
+  cursor: pointer;
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.18em;
+  text-decoration-color: rgba(248, 233, 200, 0.45);
+  transition: text-decoration-color 0.25s var(--ease);
+}
+.link-button:hover { text-decoration-color: currentColor; }
+
+/* It sits inside .credit, which is deliberately faint — fine for a photograph
+   credit, but this is a control, and inheriting 0.45 alpha lands at 4.15:1 on
+   ink. The muted-on-dark role clears AA. */
+.on-dark .link-button { color: var(--text-on-dark-muted); }
+
 /* Standing note used wherever a surface is a scaffold, not finished content. */
 .note {
   border-left: 2px solid var(--olmi-terracotta);

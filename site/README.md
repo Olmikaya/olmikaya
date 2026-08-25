@@ -350,6 +350,37 @@ Three pages back it:
 Both landing pages carry `noindex`. Nobody with JavaScript ever sees them —
 the script reports inline and the page never navigates.
 
+### What a returning reader sees
+
+The sign-up module has three states. Everyone gets the pitch and the form;
+that is the only one that exists without JavaScript. The other two appear when
+this browser remembers signing up:
+
+| State | Set when | Says |
+|---|---|---|
+| offer | default | the pitch and the form |
+| `pending` | a sign-up succeeds | Check your email |
+| `confirmed` | `/letter/confirmed/` is reached | You are on the list |
+
+It is a `localStorage` flag under `olmikaya.letter`, and nothing more — no
+address is stored, and nothing is sent anywhere. **The site cannot know who a
+visitor is and does not try.** It is a note the browser left itself, so the
+panels say "remembered on this browser, not by us" and carry a control that
+clears it. A different browser, a cleared cache or private browsing all fall
+back to the form, which is correct rather than broken.
+
+### Sending an issue
+
+Writing an issue here puts it in the **archive**. It does not send it — that
+happens in Kit, as a Broadcast:
+
+1. Write the issue in the CMS, publish it. It appears at `/letter/`.
+2. In Kit, **Broadcasts → + New Broadcast**, paste it in, and send.
+
+The two are not connected. Kit's v4 API has a broadcasts endpoint, so a script
+could turn a published letter into a Kit draft — write once here, review and
+send there. Not built.
+
 ---
 
 ## How the content is organised

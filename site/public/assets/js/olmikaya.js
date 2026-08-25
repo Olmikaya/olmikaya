@@ -80,6 +80,79 @@
   }
 
   /* ------------------------------------------------------------------------
+     3b. What this browser remembers about the letter.
+
+     Not identity, and not a claim about who the visitor is — the site has no
+     accounts and no way to know. It is a note this browser left itself, so a
+     reader who has already signed up is not pitched at forever. The panels
+     that use it say as much, and offer a way to clear it.
+
+     Two states: "pending" once an address is submitted, "confirmed" once the
+     link in Kit's confirmation email is followed to /letter/confirmed/.
+     --------------------------------------------------------------------- */
+  var LETTER_KEY = "olmikaya.letter";
+
+  /* Private browsing and blocked storage both throw. Everything here degrades
+     to the plain sign-up form, which is the correct fallback. */
+  function letterState() {
+    try {
+      return window.localStorage.getItem(LETTER_KEY);
+    } catch (e) {
+      return null;
+    }
+  }
+
+  function setLetterState(state) {
+    try {
+      if (state) window.localStorage.setItem(LETTER_KEY, state);
+      else window.localStorage.removeItem(LETTER_KEY);
+    } catch (e) {
+      /* Nothing to do. The form still works; it just will not be remembered. */
+    }
+    showLetterState();
+  }
+
+  function showLetterState() {
+    var state = letterState();
+    var blocks = document.querySelectorAll("[data-letter]");
+
+    Array.prototype.forEach.call(blocks, function (block) {
+      var offer = block.querySelector("[data-letter-offer]");
+      var known = block.querySelector('[data-letter-state="' + state + '"]');
+      var panels = block.querySelectorAll("[data-letter-state]");
+
+      Array.prototype.forEach.call(panels, function (p) { p.hidden = true; });
+
+      if (known) {
+        if (offer) offer.hidden = true;
+        known.hidden = false;
+      } else if (offer) {
+        offer.hidden = false;
+      }
+    });
+  }
+
+  function initLetterMemory() {
+    /* /letter/confirmed/ is only reachable by following the link in the
+       confirmation email, so arriving there is the confirmation. */
+    if (document.querySelector("[data-letter-confirmed]")) {
+      setLetterState("confirmed");
+      return;
+    }
+
+    showLetterState();
+
+    var forgets = document.querySelectorAll("[data-letter-forget]");
+    Array.prototype.forEach.call(forgets, function (button) {
+      button.addEventListener("click", function () {
+        setLetterState(null);
+        var field = document.querySelector("[data-subscribe] [name=email]");
+        if (field) field.focus();
+      });
+    });
+  }
+
+  /* ------------------------------------------------------------------------
      4. The letter sign-up.
 
      The form works without this function: it posts normally to
@@ -133,6 +206,9 @@
             if (result.ok && result.data && result.data.ok) {
               say(result.data.message || "You are on the list.", "ok");
               form.reset();
+              /* Swaps this module to the pending panel, which says the same
+                 thing the status line just said. */
+              setLetterState("pending");
             } else {
               say(
                 (result.data && result.data.message) ||
@@ -238,6 +314,7 @@
   function init() {
     initNav();
     initReveal();
+    initLetterMemory();
     initSubscribe();
     initYear();
     initShop();

@@ -17,6 +17,13 @@ import Base from "../../layouts/Base.astro";
   showSections={false}
   noindex
 >
+  {/*
+    Reachable only by following the link in Kit's confirmation email, so
+    arriving here IS the confirmation. The script picks this up and remembers
+    it, which is what stops the sign-up module pitching at this browser again.
+  */}
+  <div data-letter-confirmed hidden></div>
+
   <section class="section">
     <div class="wrap">
       <div class="grid">

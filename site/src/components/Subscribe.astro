@@ -2,9 +2,8 @@
 /**
  * The letter sign-up.
  *
- * Posts to /api/subscribe, a Cloudflare Pages Function in functions/ at the
- * repo root. That endpoint holds the provider key, so nothing secret is ever
- * in the page.
+ * Posts to /api/subscribe, a Cloudflare Pages Function in site/functions/.
+ * That endpoint holds the provider key, so nothing secret is ever in the page.
  *
  * Works both ways round:
  *   - with JavaScript, the script intercepts and reports inline
@@ -13,6 +12,12 @@
  *
  * Native validation is deliberately left on — no `novalidate` — so a
  * malformed address is caught by the browser in both cases.
+ *
+ * THREE STATES. The pitch is what everyone sees and the only one that exists
+ * without JavaScript. The other two are revealed by the script when this
+ * browser remembers signing up — pending until the address is confirmed,
+ * settled after. The site cannot know who a visitor is and does not try: this
+ * is a note this browser left itself, and it says so.
  */
 interface Props {
   /** Records which page a sign-up came from. */
@@ -29,72 +34,108 @@ const { source = "site", archiveLink = true, compact = false } = Astro.props;
 <section class="section ground-ink on-dark" id="letter">
   <div class="wrap">
     <div class="grid">
-      <div class="col-6 subscribe reveal">
-        {
-          !compact && (
-            <>
-              <p class="eyebrow">The letter</p>
-              <h2 class="h2">One letter, at the end of each month.</h2>
-              <p class="lead">
-                What we published, what we found, and where we are going next.
-                No more than twelve a year.
-              </p>
-            </>
-          )
-        }
+      <div class="col-6 subscribe reveal" data-letter>
+        {/* ---- The offer. The default, and the whole thing without JS ---- */}
+        <div class="subscribe__panel" data-letter-offer>
+          {
+            !compact && (
+              <>
+                <p class="eyebrow">The letter</p>
+                <h2 class="h2">One letter, at the end of each month.</h2>
+                <p class="lead">
+                  What we published, what we found, and where we are going next.
+                  No more than twelve a year.
+                </p>
+              </>
+            )
+          }
 
-        <form
-          class="subscribe__form"
-          action="/api/subscribe"
-          method="post"
-          data-subscribe
-        >
-          <label class="visually-hidden" for="email">Email address</label>
-          <input
-            class="field"
-            id="email"
-            name="email"
-            type="email"
-            placeholder="you@example.com"
-            autocomplete="email"
-            required
-          />
-
-          {/*
-            Honeypot. A person never sees this and never fills it; a bot fills
-            every field it finds. Submissions carrying it are accepted and
-            silently dropped, so the bot learns nothing from the response.
-          */}
-          <div class="visually-hidden" aria-hidden="true">
-            <label for="company">Company</label>
+          <form
+            class="subscribe__form"
+            action="/api/subscribe"
+            method="post"
+            data-subscribe
+          >
+            <label class="visually-hidden" for="email">Email address</label>
             <input
-              id="company"
-              name="company"
-              type="text"
-              tabindex="-1"
-              autocomplete="off"
+              class="field"
+              id="email"
+              name="email"
+              type="email"
+              placeholder="you@example.com"
+              autocomplete="email"
+              required
             />
-          </div>
 
-          <input type="hidden" name="source" value={source} />
+            {/*
+              Honeypot. A person never sees this and never fills it; a bot fills
+              every field it finds. Submissions carrying it are accepted and
+              silently dropped, so the bot learns nothing from the response.
+            */}
+            <div class="visually-hidden" aria-hidden="true">
+              <label for="company">Company</label>
+              <input
+                id="company"
+                name="company"
+                type="text"
+                tabindex="-1"
+                autocomplete="off"
+              />
+            </div>
 
-          <button class="button" type="submit" data-subscribe-submit>
-            Subscribe
-          </button>
-        </form>
+            <input type="hidden" name="source" value={source} />
 
-        <p
-          class="small credit subscribe__status"
-          data-subscribe-status
-          role="status"
-          aria-live="polite"
-        >
-        </p>
+            <button class="button" type="submit" data-subscribe-submit>
+              Subscribe
+            </button>
+          </form>
 
-        <p class="small credit">
-          One letter a month. Unsubscribe from the foot of any issue.
-          {archiveLink && <> <a class="link" href="/letter/">Read past letters</a>.</>}
-        </p>
+          <p
+            class="small credit subscribe__status"
+            data-subscribe-status
+            role="status"
+            aria-live="polite"
+          >
+          </p>
+
+          <p class="small credit">
+            One letter a month. Unsubscribe from the foot of any issue.
+            {archiveLink && <> <a class="link" href="/letter/">Read past letters</a>.</>}
+          </p>
+        </div>
+
+        {/* ---- Signed up here, not yet confirmed ---- */}
+        <div class="subscribe__panel" data-letter-state="pending" hidden>
+          <p class="eyebrow">The letter</p>
+          <h2 class="h2">Check your email.</h2>
+          <p class="lead">
+            You signed up from this browser. One click in the note we sent
+            confirms it, and nothing is sent until you do.
+          </p>
+          <p class="small credit">
+            Remembered on this browser, not by us.{" "}
+            <button class="link-button" type="button" data-letter-forget>
+              Use a different address
+            </button>
+          </p>
+        </div>
+
+        {/* ---- Confirmed ---- */}
+        <div class="subscribe__panel" data-letter-state="confirmed" hidden>
+          <p class="eyebrow">The letter</p>
+          <h2 class="h2">You are on the list.</h2>
+          <p class="lead">
+            The next letter reaches you at the end of the month. There is
+            nothing else to do.
+          </p>
+          <p class="small credit">
+            Remembered on this browser, not by us.{" "}
+            <button class="link-button" type="button" data-letter-forget>
+              Use a different address
+            </button>
+            {archiveLink && <> · <a class="link" href="/letter/">Past letters</a></>}
+          </p>
+        </div>
       </div>
     </div>
   </div>
