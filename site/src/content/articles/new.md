@@ -17,7 +17,7 @@ cover:
   tone: sky
   ratio: landscape
 featured: false
-draft: true
+draft: false
 ---
 
 why
