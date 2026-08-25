@@ -15,7 +15,10 @@ interface Props {
   label?: string;
 }
 
-const { label = `@${INSTAGRAM_HANDLE}` } = Astro.props;
+/* The handle is set bare, without the @. The glyph names the platform and the
+   whole thing is a link — the sigil was saying a third time what the other two
+   already said. */
+const { label = INSTAGRAM_HANDLE } = Astro.props;
 ---
 
 <a class="social-link" href={INSTAGRAM_URL} rel="me">
