@@ -4,3 +4,10 @@ dist/
 .DS_Store
 Thumbs.db
 *.log
+
+# Local Cloudflare secrets for `wrangler pages dev`. Never commit.
+.dev.vars
+.dev.vars.*
+
+# Wrangler's local state.
+.wrangler/

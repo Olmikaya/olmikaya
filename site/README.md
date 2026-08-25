@@ -291,12 +291,35 @@ node tests/subscribe.test.mjs
 
 `npm run dev` serves the pages but not the Function — Astro's dev server knows
 nothing about `functions/`, so submitting the form locally shows the failure
-state. To exercise the real endpoint end to end, either use a Cloudflare deploy
-preview, or build and serve it with Wrangler:
+state. To run the endpoint under the real Workers runtime:
 
 ```bash
 npx wrangler pages dev dist
 ```
+
+That verifies routing, validation, the honeypot, the redirects and the 503 you
+get before configuration. It does **not** currently verify a configured
+sign-up: since Wrangler 4.47 `.dev.vars` is listed at startup but not injected
+into a Pages Function's `context.env`, so the endpoint sees no key locally
+however you supply one. Nothing to fix here — dashboard variables reach
+`context.env` normally in production.
+
+**Checking a real deployment.** Once the variables are set and a fresh build
+has run, post at it directly:
+
+```bash
+curl -i -X POST https://YOUR-SITE/api/subscribe -H "Accept: application/json" --data-urlencode "email=you@example.com"
+```
+
+| Status | Meaning |
+|---|---|
+| `200` | Working. Check your inbox for the confirmation email. |
+| `503` | Variables missing, or set but not redeployed since. |
+| `502` | Variables present, Kit rejected them — wrong or expired key, or a V3 key. |
+| `403` | You sent an `Origin` header from another host. Drop it. |
+| `404` | `functions/` is in the wrong place for the project's root directory. |
+
+Use a real address you can read; a 200 sends a live confirmation email.
 
 **Swapping provider.** Everything Kit-specific is inside `subscribeToKit()`.
 Replace that one function and the two variable names; nothing else changes.
