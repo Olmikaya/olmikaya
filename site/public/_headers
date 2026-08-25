@@ -4,6 +4,31 @@
 /admin/*
   X-Robots-Tag: noindex
 
+# --- Caching --------------------------------------------------------------
+# Split by whether the filename changes when the contents do. Anything with a
+# content hash in its name can be cached forever, because a new build produces
+# a new name. Anything with a stable name must revalidate, or a returning
+# reader is served last week's file.
+
+# Astro fingerprints these — /_astro/Base.Ck82O6lc.css and friends.
+/_astro/*
+  Cache-Control: public, max-age=31536000, immutable
+
+# Two woff2 files, 64KB, and the single biggest render-blocking win on a
+# repeat visit. The names are stable but the files effectively never change;
+# if one is ever replaced, rename it.
+/assets/fonts/*
+  Cache-Control: public, max-age=31536000, immutable
+
+/assets/img/*
+  Cache-Control: public, max-age=604800
+
+# NOT immutable: this filename is stable and the file does change. An
+# immutable year here would strand readers on an old script with no way to
+# get the new one.
+/assets/js/*
+  Cache-Control: public, max-age=0, must-revalidate
+
 /*
   X-Content-Type-Options: nosniff
   Referrer-Policy: strict-origin-when-cross-origin

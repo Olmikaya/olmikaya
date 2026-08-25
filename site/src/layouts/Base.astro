@@ -1,6 +1,7 @@
 ---
 import Masthead from "../components/Masthead.astro";
 import Footer from "../components/Footer.astro";
+import { INSTAGRAM_URL, PLACE } from "../lib/site";
 import "../styles/olmikaya.css";
 
 interface Props {
@@ -14,11 +15,89 @@ interface Props {
   showSections?: boolean;
   /** Keep a page out of search results — form landings, not editorial. */
   noindex?: boolean;
+  /** Share image for this page, root-relative. Defaults to the brand card. */
+  image?: string;
+  /** An article gets richer sharing and its own structured data. */
+  article?: {
+    published: Date;
+    author: string;
+    section?: string;
+  };
 }
 
-const { title, description, current, currentSection, showSections, noindex } =
-  Astro.props;
+const {
+  title,
+  description,
+  current,
+  currentSection,
+  showSections,
+  noindex,
+  image,
+  article,
+} = Astro.props;
+
 const canonical = new URL(Astro.url.pathname, Astro.site).href;
+
+/* Social images must be absolute — a root-relative path renders as a broken
+   card everywhere. Every page falls back to the brand card so a shared link
+   is never a bare grey box. */
+const usingDefaultImage = !image;
+const ogImage = new URL(image ?? "/assets/img/og-default.png", Astro.site).href;
+
+const home = new URL("/", Astro.site).href;
+
+/* Structured data. Two graphs, both small and both honest about what this
+   site is: an Organization that publishes, and either a WebSite or the
+   Article being read. No SearchAction — the site's search is a client-side
+   dialog with no URL of its own, and a sitelinks searchbox that points at a
+   route which does not exist is worse than none.
+
+   Nothing here claims anything the page does not show — no invented ratings,
+   no fake author profiles. Google discounts a page whose markup and visible
+   content disagree, and there is nothing to gain by testing that. */
+const organisation = {
+  "@type": "Organization",
+  "@id": `${home}#organisation`,
+  name: "OLMIKAYA",
+  url: home,
+  description:
+    "An independent East African editorial and lifestyle company. Ordinary Living Made Intentional.",
+  logo: new URL("/icon-512.png", Astro.site).href,
+  sameAs: [INSTAGRAM_URL],
+  address: { "@type": "PostalAddress", addressLocality: PLACE },
+};
+
+const schema = article
+  ? {
+      "@context": "https://schema.org",
+      "@graph": [
+        organisation,
+        {
+          "@type": "Article",
+          headline: title.replace(/ — OLMIKAYA$/, ""),
+          description,
+          image: ogImage,
+          datePublished: article.published.toISOString(),
+          author: { "@type": "Person", name: article.author },
+          publisher: { "@id": `${home}#organisation` },
+          mainEntityOfPage: canonical,
+          ...(article.section ? { articleSection: article.section } : {}),
+        },
+      ],
+    }
+  : {
+      "@context": "https://schema.org",
+      "@graph": [
+        organisation,
+        {
+          "@type": "WebSite",
+          "@id": `${home}#website`,
+          name: "OLMIKAYA",
+          url: home,
+          publisher: { "@id": `${home}#organisation` },
+        },
+      ],
+    };
 ---
 
 <!doctype html>
@@ -30,6 +109,17 @@ const canonical = new URL(Astro.url.pathname, Astro.site).href;
     <meta name="description" content={description} />
     <meta name="theme-color" content="#FFF8F0" />
     <link rel="canonical" href={canonical} />
+    <meta name="author" content="OLMIKAYA" />
+    <meta name="generator" content={Astro.generator} />
+
+    {/* The journal as a feed. Declared here so a reader finds it from any
+        page, not only from one that links to it. */}
+    <link
+      rel="alternate"
+      type="application/rss+xml"
+      title="OLMIKAYA — the journal"
+      href="/rss.xml"
+    />
 
     {/*
       The O of the wordmark, cream on maroon. The .ico frames are regenerated
@@ -41,11 +131,61 @@ const canonical = new URL(Astro.url.pathname, Astro.site).href;
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     {noindex && <meta name="robots" content="noindex" />}
 
+    {/* Open Graph. og:image is what every platform crops its card from, and
+        the dimensions are declared so the card renders before the file has
+        finished downloading. */}
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
-    <meta property="og:type" content="website" />
+    <meta property="og:type" content={article ? "article" : "website"} />
     <meta property="og:site_name" content="OLMIKAYA" />
     <meta property="og:url" content={canonical} />
+    <meta property="og:locale" content="en_GB" />
+    <meta property="og:image" content={ogImage} />
+    {
+      /* Dimensions are declared only for the brand card, whose size is known
+         here. An article cover is whatever the editor uploaded, and stating
+         the wrong width is worse than stating none — the platform lays the
+         card out to the declared box and then paints a mismatched image. */
+      usingDefaultImage && (
+        <>
+          <meta property="og:image:width" content="1200" />
+          <meta property="og:image:height" content="630" />
+          <meta
+            property="og:image:alt"
+            content="OLMIKAYA — Ordinary Living Made Intentional"
+          />
+        </>
+      )
+    }
+
+    {
+      article && (
+        <>
+          <meta
+            property="article:published_time"
+            content={article.published.toISOString()}
+          />
+          <meta property="article:author" content={article.author} />
+          {article.section && (
+            <meta property="article:section" content={article.section} />
+          )}
+        </>
+      )
+    }
+
+    {/* X/Twitter reads its own tags before falling back to Open Graph.
+        summary_large_image is the full-width card; plain summary crops to a
+        small square and wastes the artwork. */}
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImage} />
+
+    <script
+      type="application/ld+json"
+      is:inline
+      set:html={JSON.stringify(schema)}
+    />
 
     {/*
       Fonts are same-origin and preloaded, so they are already in flight while
