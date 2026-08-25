@@ -780,6 +780,15 @@ figcaption {
   transform: translateY(-0.3em);
 }
 
+/* On the seasons page this slot is a link when the part of the season has a
+   real destination, and plain text when it does not. */
+a.entry__place {
+  text-decoration: none;
+  transition: color 0.2s var(--ease);
+}
+a.entry__place:hover { color: var(--brand); }
+a.entry__place:hover::before { background: var(--brand); }
+
 /* --- Object (product) card ---------------------------------------------- */
 
 .object { display: flex; flex-direction: column; gap: var(--sp-md); }

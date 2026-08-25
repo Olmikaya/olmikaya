@@ -7,30 +7,37 @@ const seasons = (await getCollection("seasons", ({ data }) => !data.draft)).sort
   (a, b) => a.data.index - b.data.index,
 );
 
+/* The five parts of a season, in the order a reader meets them. Reader-facing
+   copy: what each part IS, not how it is typeset or where it lives in the
+   build. `where` names the part of the site it surfaces in, and links there
+   when that is a real destination. */
 const STRUCTURE = [
   {
     name: "The question",
-    dek: "A single line, set large in Ovo, that the whole season answers to.",
+    dek: "One line the whole season answers to. It is set before anything is commissioned, and it does not change once the season is running.",
     where: "Opening",
   },
   {
     name: "The stories",
     dek: "Everything commissioned under the season, in the order it was published.",
     where: "Journal",
+    href: "/journal/",
   },
   {
     name: "The people and places",
-    dek: "Directory entries added while the season ran.",
+    dek: "Every directory entry added while the season ran, and what earned it a place.",
     where: "Directory",
+    href: "/directory/",
   },
   {
     name: "The objects",
-    dek: "Anything made with the people the season covered. Often nothing.",
-    where: "Objects",
+    dek: "Whatever was made with the people the season covered, in the cases where something was worth making.",
+    where: "Shop",
+    href: "/shop/",
   },
   {
     name: "The closing note",
-    dek: "What we found, and what we got wrong. Written when the season ends.",
+    dek: "What the question turned up, and where we were wrong about it. Written once the season has closed.",
     where: "Closing",
   },
 ];
@@ -91,10 +98,9 @@ const STRUCTURE = [
       <div class="grid">
         <div class="col-5 stack reveal">
           <p class="eyebrow">Structure</p>
-          <h2 class="h2">What each season will carry</h2>
+          <h2 class="h2">What a season carries</h2>
           <p class="small muted">
-            The architecture below is designed and ready, waiting on the
-            writing.
+            Five parts, in the order a reader meets them.
           </p>
         </div>
 
@@ -107,7 +113,11 @@ const STRUCTURE = [
                   <h3 class="entry__name">{row.name}</h3>
                   <p class="card__dek">{row.dek}</p>
                 </div>
-                <p class="entry__place">{row.where}</p>
+                {row.href ? (
+                  <a class="entry__place" href={row.href}>{row.where}</a>
+                ) : (
+                  <p class="entry__place">{row.where}</p>
+                )}
               </div>
             ))
           }
