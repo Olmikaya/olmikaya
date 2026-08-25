@@ -2,30 +2,23 @@
   <title>OLMIKAYA</title>
 
   <!--
-    OLMI in four quadrants, one palette colour each: cream, sage green,
-    clay and sky. At 16px the letters stop resolving and it reads as a
-    four-colour quilt, which is the point — the block pattern is the mark.
+    One letter, one colour pair: the O of OLMIKAYA, cream on the maroon the
+    wordmark is set in. The wordmark is the site's most important mark, so
+    the favicon is its first letter and nothing else.
 
-    Letterforms are set in a serif stack rather than Ovo. An SVG favicon
-    cannot rely on a webfont loading, and Georgia is the fallback the
-    stylesheet already names for Ovo, so it matches what the site shows
-    before the webfont lands.
+    The O is drawn, not set. An SVG favicon cannot rely on a webfont, so Ovo
+    — the display face the wordmark uses — would fall back to whatever serif
+    the machine happens to have. These two ellipses carry the upright axis
+    and the modest thick/thin contrast Ovo's O has, and render identically
+    everywhere.
+
+    fill-rule="evenodd" punches the counter out of the bowl, so the letter is
+    one shape and stays a letter on any ground.
   -->
 
-  <!-- Grounds -->
-  <rect x="0"  y="0"  width="32" height="32" fill="#F8E9C8"/>
-  <rect x="32" y="0"  width="32" height="32" fill="#2B3B2E"/>
-  <rect x="0"  y="32" width="32" height="32" fill="#8C4227"/>
-  <rect x="32" y="32" width="32" height="32" fill="#A8C7DC"/>
+  <rect width="64" height="64" fill="#5C2020"/>
 
-  <!-- Letters. Ink on the light grounds, cream on the dark ones. -->
-  <g font-family="Georgia, 'Times New Roman', Times, serif"
-     font-size="23"
-     text-anchor="middle"
-     dominant-baseline="central">
-    <text x="16" y="16.25" fill="#221F18">O</text>
-    <text x="48" y="16.25" fill="#F8E9C8">L</text>
-    <text x="16" y="48.25" fill="#F8E9C8">M</text>
-    <text x="48" y="48.25" fill="#221F18">I</text>
-  </g>
+  <path fill="#F8E9C8" fill-rule="evenodd"
+        d="M 13,32 A 19,21.5 0 0 1 51,32 A 19,21.5 0 0 1 13,32 Z
+           M 19.8,32 A 12.2,17.8 0 0 1 44.2,32 A 12.2,17.8 0 0 1 19.8,32 Z"/>
 </svg>
