@@ -8,7 +8,6 @@ secondaryCategory: Style
 author: M. Otieno
 place: Mombasa
 date: 2026-02-20
-readingTime: 6
 cover:
   tone: terracotta
   ratio: portrait

@@ -8,7 +8,6 @@ secondaryCategory: People
 author: S. Nakato
 place: Kampala
 date: 2026-02-02
-readingTime: 9
 cover:
   tone: green
   ratio: portrait

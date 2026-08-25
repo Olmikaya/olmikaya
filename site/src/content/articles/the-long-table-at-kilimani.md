@@ -10,7 +10,6 @@ author: A. Wanjiru
 photographer: ""
 place: Nairobi
 date: 2026-03-14
-readingTime: 12
 cover:
   tone: cream
   ratio: cinema

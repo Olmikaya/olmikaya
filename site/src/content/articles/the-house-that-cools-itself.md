@@ -8,7 +8,6 @@ secondaryCategory: Design
 author: J. Mbwana
 place: Dar es Salaam
 date: 2026-01-18
-readingTime: 11
 cover:
   tone: sky
   ratio: portrait

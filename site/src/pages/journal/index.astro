@@ -3,6 +3,7 @@ import { getCollection } from "astro:content";
 import Base from "../../layouts/Base.astro";
 import Plate from "../../components/Plate.astro";
 import Subscribe from "../../components/Subscribe.astro";
+import { readingTime } from "../../lib/reading-time";
 
 const all = (await getCollection("articles", ({ data }) => !data.draft)).sort(
   (a, b) => b.data.date.valueOf() - a.data.date.valueOf(),
@@ -67,7 +68,7 @@ const rest = all.filter((a) => a.id !== lead?.id);
                     year: "numeric",
                   })}
                 </span>
-                {lead.data.readingTime && <span>{lead.data.readingTime} min read</span>}
+                <span>{lead.data.readingTime ?? readingTime(lead.body ?? "")} min read</span>
               </p>
               <a class="more" href={`/journal/${lead.id}/`}>
                 Read the story
@@ -109,7 +110,7 @@ const rest = all.filter((a) => a.id !== lead?.id);
                   <p class="card__dek">{a.data.dek}</p>
                   <p class="meta">
                     <span>{a.data.author}</span>
-                    {a.data.readingTime && <span>{a.data.readingTime} min</span>}
+                    <span>{a.data.readingTime ?? readingTime(a.body ?? "")} min</span>
                   </p>
                 </div>
               </a>
@@ -119,10 +120,10 @@ const rest = all.filter((a) => a.id !== lead?.id);
       </div>
 
       <p class="note reveal hang">
-        <strong>Placeholder editorial.</strong> These stories, bylines and
-        reading times are written as scaffolding to prove the layout. They are
-        not real reporting, and the bylines are invented. Replace them with
-        commissioned work before this site goes anywhere public.
+        <strong>Placeholder editorial.</strong> These stories are written as
+        scaffolding to prove the layout. They are not real reporting, and the
+        bylines are invented. Replace them with commissioned work before this
+        site goes anywhere public.
       </p>
     </div>
   </section>

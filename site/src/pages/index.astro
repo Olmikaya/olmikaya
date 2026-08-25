@@ -3,6 +3,7 @@ import { getCollection } from "astro:content";
 import Base from "../layouts/Base.astro";
 import Plate from "../components/Plate.astro";
 import Subscribe from "../components/Subscribe.astro";
+import { readingTime } from "../lib/reading-time";
 
 const articles = (
   await getCollection("articles", ({ data }) => !data.draft)
@@ -96,7 +97,7 @@ const entries = (await getCollection("directory", ({ data }) => !data.draft))
               <p class="lead">{lead.data.dek}</p>
               <p class="meta">
                 <span>Words by {lead.data.author}</span>
-                {lead.data.readingTime && <span>{lead.data.readingTime} min read</span>}
+                <span>{lead.data.readingTime ?? readingTime(lead.body ?? "")} min read</span>
               </p>
               <a class="more" href={`/journal/${lead.id}/`}>Read the story</a>
             </div>

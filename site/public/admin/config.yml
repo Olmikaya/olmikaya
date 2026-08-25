@@ -21,6 +21,13 @@ backend:
   #
   # base_url: https://YOUR-WORKER.workers.dev
 
+# Work against the local folder instead of GitHub when the site is served
+# from localhost. Lets you write and save articles with no login and no
+# OAuth worker — Sveltia asks permission to open the project folder and
+# edits the Markdown files directly. Harmless in production: it is ignored
+# on any non-localhost host.
+local_backend: true
+
 # Editors can preview a draft on a deploy preview before it goes live.
 publish_mode: editorial_workflow
 
@@ -58,7 +65,13 @@ collections:
       - { name: photographer, label: Photographs by, widget: string, required: false }
       - { name: place, label: Place, widget: string, hint: "City or town, e.g. Nairobi" }
       - { name: date, label: Date, widget: datetime, format: "YYYY-MM-DD", date_format: "DD/MM/YYYY", time_format: false }
-      - { name: readingTime, label: Reading time (minutes), widget: number, required: false, value_type: int, min: 1 }
+      - name: readingTime
+        label: Reading time (minutes)
+        widget: number
+        required: false
+        value_type: int
+        min: 1
+        hint: Leave blank and it is worked out from the length of the article.
       - { name: season, label: Season, widget: string, required: false }
       - name: cover
         label: Cover image

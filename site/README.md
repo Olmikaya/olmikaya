@@ -30,30 +30,76 @@ Output lands in `site/dist/`.
 
 ## Publishing an article
 
-Once deployed (see setup below), go to `yourdomain.com/admin/`, sign in with
-GitHub, and click **Articles → New Article**. Fill in the fields, write the
-body, and press publish. The CMS commits a Markdown file to the repository, the
-site rebuilds itself, and the article is live in a couple of minutes.
+Go to `/admin/`. You get three ways in, and **two of them need no setup at
+all** — you do not have to wait for the OAuth worker to write anything.
 
-Everything appears where it should on its own — the journal index, the "read
-next" cards, the homepage lead — because those are all generated from the same
-files. There is no page to update by hand.
+### Work with Local Repository — use this now
 
-**Two things worth knowing when writing:**
+Run the site locally:
 
-- **New articles start as drafts.** Nothing is public until you untick *Draft*.
-- **Pull-quotes.** A `>` blockquote becomes the house pull-quote. To add an
-  attribution, put it after a blank quote line so it renders as the small
-  credit rather than as part of the quote:
+```bash
+npm --prefix site run dev
+```
 
-  ```markdown
-  > Nobody was invited, so nobody can be uninvited.
-  >
-  > — A regular, on the rules
-  ```
+Open `http://localhost:4321/admin/` and click **Work with Local Repository**.
+Your browser asks which folder to open — choose **`olmi-kaya`**, the outer
+folder containing `site/`, not `site/` itself. The paths in the CMS config are
+written relative to that.
 
-You can also just add a `.md` file to `src/content/articles/` by hand. The CMS
-and the filesystem are the same thing.
+The CMS then reads and writes the Markdown files on your own disk. Nothing
+touches GitHub, so nothing is public until you commit and push:
+
+```bash
+git add . && git commit -m "New article" && git push
+```
+
+Needs a Chromium browser — Chrome or Edge. It uses the File System Access API,
+which Firefox and Safari do not support.
+
+### Sign In Using Access Token — for the live site
+
+Create a GitHub personal access token with `repo` scope and paste it into the
+admin. This works on the deployed site with no worker involved. Good for one
+person; a shared token is a poor idea for a team, since everything commits as
+whoever owns the token.
+
+**Never put the token in a file in this repo.** It goes in the browser only.
+
+### Sign In with GitHub — the eventual setup
+
+The proper OAuth flow, once the Cloudflare Worker is deployed. Best for more
+than one editor: everyone signs in as themselves and commits are attributed
+correctly. See step 3 below.
+
+---
+
+### Writing the article
+
+**Articles → New Article.** The form mirrors the schema, so anything it lets
+you save will build.
+
+- **Standfirst** is the sentence or two under the headline. Around 30 words.
+- **Reading time** can be left blank — it is worked out from the length of the
+  article. Fill it in only to override, for a piece that is mostly pictures.
+- **Draft** is ticked by default. Nothing is public until you untick it.
+- **Featured** promotes the piece to the lead slot on the homepage and the top
+  of the journal. Only one article should carry it.
+
+In the body, `##` gives you a section heading. A `>` blockquote becomes the
+house pull-quote — for an attribution, put it after a blank quote line so it
+renders as the small credit rather than as part of the quote:
+
+```markdown
+> Nobody was invited, so nobody can be uninvited.
+>
+> — A regular, on the rules
+```
+
+Everything else updates itself: the journal index, the "read next" cards, the
+homepage lead. There is no page to edit by hand.
+
+You can also just drop a `.md` file into `src/content/articles/`. The CMS and
+the filesystem are the same thing — the admin is a nicer way to type.
 
 ### Photographs
 

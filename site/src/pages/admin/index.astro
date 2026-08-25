@@ -1,0 +1,30 @@
+---
+/**
+ * The CMS admin.
+ *
+ * This is an Astro page rather than a file in public/ so that /admin/ resolves
+ * with and without the trailing slash, in dev as well as in the built site.
+ * The config it reads still lives at public/admin/config.yml.
+ */
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex" />
+    <title>OLMIKAYA — Content</title>
+  </head>
+  <body>
+    <!--
+      Sveltia CMS. Reads /admin/config.yml, writes Markdown into
+      src/content/*, and commits to GitHub.
+
+      Sveltia is a drop-in replacement for Decap CMS using the same config
+      format. To use Decap instead, swap the script below for:
+      https://unpkg.com/decap-cms@^3.0.0/dist/decap-cms.js
+    -->
+    <script is:inline type="module" src="https://unpkg.com/@sveltia/cms/dist/sveltia-cms.js"></script>
+  </body>
+</html>
