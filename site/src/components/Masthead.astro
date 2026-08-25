@@ -30,6 +30,17 @@ const NAV = [
 ];
 
 const allSections = await sections();
+
+/* The panel's entrance staggers on --i, a single index running across all
+   three groups. It used to be an nth-child ladder in the stylesheet, which
+   counts per-list and so restarted at each <ul> — the three groups played
+   at once. Counting here is the only place the running total is known.
+   "The letter" joins NAV rather than being appended in the markup, so the
+   indices cannot drift from what is rendered. */
+const panelNav = [...NAV, { key: "letter", label: "The letter", href: "/letter/" }];
+const readAt = 0;
+const sectionsAt = readAt + 1 + panelNav.length;
+const footAt = sectionsAt + 1 + allSections.length;
 ---
 
 <a class="skip-link" href="#main">Skip to content</a>
@@ -97,16 +108,41 @@ const allSections = await sections();
       </div>
     </div>
   </div>
+</header>
 
-  <div class="nav-panel" id="nav-panel" data-open="false">
+{/* A full-viewport overlay, not a drawer under the masthead — so it carries
+    its own top row. The wordmark stays a link home, and the close control
+    sits where the toggle that opened it was.
+
+    A SIBLING of <header>, not a child. The masthead sets backdrop-filter,
+    which makes it the containing block for any position:fixed descendant —
+    the panel would be pinned to the header's box instead of the viewport
+    and inset:0 would land it 36px down the screen. */}
+<div class="nav-panel" id="nav-panel" data-open="false">
+  <div class="nav-panel__bar">
+    <a class="wordmark" href="/">OLMIKAYA</a>
+    <button
+      class="icon-button"
+      type="button"
+      data-nav-close
+      aria-label="Close menu"
+    >
+      <svg viewBox="0 0 20 20" aria-hidden="true" focusable="false">
+        <line x1="5" y1="5" x2="15" y2="15" />
+        <line x1="15" y1="5" x2="5" y2="15" />
+      </svg>
+    </button>
+  </div>
+
+  <div class="nav-panel__body">
     <div class="wrap">
       <div class="nav-panel__grid">
         <nav aria-label="Primary, mobile">
-          <p class="nav-panel__heading">Read</p>
+          <p class="nav-panel__heading" style={`--i:${readAt}`}>Read</p>
           <ul class="nav-panel__list">
             {
-              NAV.map((item) => (
-                <li class="nav-panel__item">
+              panelNav.map((item, i) => (
+                <li class="nav-panel__item" style={`--i:${readAt + 1 + i}`}>
                   <a
                     class="nav-panel__link"
                     href={item.href}
@@ -117,19 +153,18 @@ const allSections = await sections();
                 </li>
               ))
             }
-            <li class="nav-panel__item">
-              <a class="nav-panel__link" href="/letter/">The letter</a>
-            </li>
           </ul>
         </nav>
 
         {
           allSections.length > 0 && (
             <nav aria-label="Sections, mobile">
-              <p class="nav-panel__heading">Sections</p>
+              <p class="nav-panel__heading" style={`--i:${sectionsAt}`}>
+                Sections
+              </p>
               <ul class="nav-panel__tags">
-                {allSections.map((s) => (
-                  <li class="nav-panel__item">
+                {allSections.map((s, i) => (
+                  <li class="nav-panel__item" style={`--i:${sectionsAt + 1 + i}`}>
                     <a class="tag" href={`/sections/${s.slug}/`}>
                       {s.name}
                     </a>
@@ -141,18 +176,23 @@ const allSections = await sections();
         }
 
         <div class="nav-panel__foot">
-          <p class="nav-panel__heading">Elsewhere</p>
+          <p class="nav-panel__heading" style={`--i:${footAt}`}>Elsewhere</p>
           <ul class="nav-panel__minor">
-            <li class="nav-panel__item"><a href="/contact/">Contact</a></li>
-            <li class="nav-panel__item"><a href="/privacy/">Privacy</a></li>
-            <li class="nav-panel__item"><a href="/terms/">Terms</a></li>
+            <li class="nav-panel__item" style={`--i:${footAt + 1}`}>
+              <a href="/contact/">Contact</a>
+            </li>
+            <li class="nav-panel__item" style={`--i:${footAt + 2}`}>
+              <a href="/privacy/">Privacy</a>
+            </li>
+            <li class="nav-panel__item" style={`--i:${footAt + 3}`}>
+              <a href="/terms/">Terms</a>
+            </li>
           </ul>
         </div>
       </div>
     </div>
   </div>
-</header>
-
+</div>
 {
   showSections && allSections.length > 0 && (
     <div class="subnav">

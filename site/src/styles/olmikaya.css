@@ -142,21 +142,33 @@
   --font-display: "Ovo", "Ovo fallback", Georgia, "Times New Roman", Times, serif;
   --font-text:    "Inter", "Inter fallback", system-ui, -apple-system, "Segoe UI", Helvetica, Arial, sans-serif;
 
-  --step-display-xl: clamp(2.75rem, 1.45rem + 5.4vw, 6rem);
-  --step-display-l:  clamp(2.125rem, 1.5rem + 2.9vw, 3.75rem);
-  --step-h2:         clamp(1.625rem, 1.3rem + 1.5vw, 2.5rem);
-  --step-h3:         clamp(1.1875rem, 1.1rem + 0.5vw, 1.5rem);
-  /* Subheads inside an article are a different job from the section titles
-     that head a page, and need their own step. See §08. */
-  --step-h2-prose:   clamp(1.375rem, 1.2rem + 0.7vw, 1.75rem);
-  --step-h3-prose:   1.1875rem;
-  --step-lead:       clamp(1.125rem, 1.05rem + 0.45vw, 1.375rem);
-  --step-body:       1.0625rem;
-  --step-small:      0.875rem;
-  --step-eyebrow:    0.75rem;
+  /* One ladder, named for the JOB not the tag. A tag is not a size here:
+     <h2> heads a page at --step-section, subheads an article at --step-sub,
+     and labels a product at --step-small. Reach for the role, not the
+     element, and every size in this file is one of these ten. Nothing else
+     may declare a font-size. The specimen in /styleguide renders all ten;
+     if a new size cannot be expressed there, it does not belong. */
+  --step-hero:    clamp(2.75rem, 1.45rem + 5.4vw, 6rem);        /* 44→96  hero title */
+  --step-title:   clamp(2.125rem, 1.5rem + 2.9vw, 3.75rem);     /* 34→60  page / article title */
+  --step-feature: clamp(1.75rem, 1.25rem + 2.4vw, 3rem);        /* 28→48  feature, veil */
+  --step-section: clamp(1.5rem, 1.2rem + 1.5vw, 2.5rem);        /* 24→40  section title */
+  --step-sub:     clamp(1.375rem, 1.2rem + 0.9vw, 2rem);        /* 22→32  subhead, quote, menu */
+  --step-card:    clamp(1.1875rem, 1.1rem + 0.5vw, 1.5rem);     /* 19→24  card / entry / object */
+  --step-lead:    clamp(1.125rem, 1.05rem + 0.45vw, 1.375rem);  /* 18→22  lead, search input */
+  --step-body:    1.0625rem;                                    /* 17     body, small titles */
+  --step-small:   0.875rem;                                     /* 14     meta, caption, price */
+  --step-label:   0.75rem;                                      /* 12     every uppercase label */
+
+  /* Tracking. Two negatives for display type, one positive for the small
+     uppercase label — which is a single job, so it gets a single value. */
+  --track-hero:  -0.015em;
+  --track-tight: -0.01em;
+  --track-label:  0.12em;
 
   --leading-tight:  1.08;
   --leading-snug:   1.25;
+  --leading-title:  1.35;
+  --leading-copy:   1.55;
   --leading-body:   1.7;
 
   /* --- Space ------------------------------------------------------------ */
@@ -190,6 +202,12 @@ html {
   scroll-behavior: smooth;
   scroll-padding-top: calc(var(--masthead-h) + 1rem);
 }
+
+/* The menu covers the viewport, so the page behind it must not scroll.
+   Both elements, not just <html>: `body` already carries overflow-x, which
+   means the viewport scrollbox is propagated from body today. Locking
+   <html> alone leaves that propagation in place and the page still moves. */
+html.nav-open, html.nav-open body { overflow: hidden; }
 
 body {
   margin: 0;
@@ -237,36 +255,36 @@ hr { border: 0; border-top: 1px solid var(--rule); margin: 0; }
 }
 
 .display-xl {
-  font-size: var(--step-display-xl);
+  font-size: var(--step-hero);
   line-height: var(--leading-tight);
-  letter-spacing: -0.015em;
+  letter-spacing: var(--track-hero);
 }
 
 .display-l, h1 {
-  font-size: var(--step-display-l);
+  font-size: var(--step-title);
   line-height: 1.12;
-  letter-spacing: -0.012em;
+  letter-spacing: var(--track-tight);
 }
 
 h2, .h2 {
-  font-size: var(--step-h2);
+  font-size: var(--step-section);
   line-height: var(--leading-snug);
-  letter-spacing: -0.008em;
+  letter-spacing: var(--track-tight);
 }
 
 h3, .h3 {
-  font-size: var(--step-h3);
-  line-height: 1.3;
+  font-size: var(--step-card);
+  line-height: var(--leading-snug);
 }
 
 /* Eyebrow / kicker — the small uppercase label doing structural work. */
 .eyebrow {
   font-family: var(--font-text);
-  font-size: var(--step-eyebrow);
+  font-size: var(--step-label);
   font-weight: 500;
-  line-height: 1.2;
+  line-height: var(--leading-snug);
   text-transform: uppercase;
-  letter-spacing: 0.12em;
+  letter-spacing: var(--track-label);
   color: var(--brand);
 }
 .eyebrow--muted { color: var(--text-muted); }
@@ -274,11 +292,11 @@ h3, .h3 {
 
 .lead {
   font-size: var(--step-lead);
-  line-height: 1.55;
+  line-height: var(--leading-copy);
   color: var(--text-muted);
 }
 
-.small { font-size: var(--step-small); line-height: 1.55; }
+.small { font-size: var(--step-small); line-height: var(--leading-copy); }
 .muted { color: var(--text-muted); }
 .faint { color: var(--text-faint); }
 
@@ -475,7 +493,7 @@ h3, .h3 {
 /* Wordmark — Ovo, maroon, widely tracked. The single most important mark. */
 .wordmark {
   font-family: var(--font-display);
-  font-size: 1.0625rem;
+  font-size: var(--step-body);
   line-height: 1;
   letter-spacing: 0.34em;
   text-indent: 0.34em;      /* optically re-centre the trailing letterspace */
@@ -485,7 +503,7 @@ h3, .h3 {
   display: inline-block;
   padding-block: var(--sp-xs);   /* the most-tapped link on the site */
 }
-.wordmark--lg { font-size: clamp(1.5rem, 4.5vw, 2.75rem); }
+.wordmark--lg { font-size: var(--step-section); }
 .on-dark .wordmark { color: var(--olmi-cream); }
 
 .nav { display: none; }
@@ -499,10 +517,10 @@ h3, .h3 {
 }
 
 .nav__link {
-  font-size: var(--step-eyebrow);
+  font-size: var(--step-label);
   font-weight: 500;
   text-transform: uppercase;
-  letter-spacing: 0.12em;
+  letter-spacing: var(--track-label);
   text-decoration: none;
   color: var(--text-muted);
   padding-block: var(--sp-xs);
@@ -520,25 +538,34 @@ h3, .h3 {
   background: var(--brand);
 }
 
-/* Mobile nav toggle. Hidden at desktop where the full nav shows. */
+/* Mobile nav toggle. Hidden at desktop where the full nav shows, and hidden
+   without JavaScript: the panel it opens is a scripted overlay (§16), so an
+   unscripted page would render a button that does nothing. The desktop nav
+   is the fallback, and it is plain markup. */
 .nav-toggle {
-  display: inline-flex;
+  display: none;
   align-items: center;
   gap: var(--sp-xs);
   background: none;
   border: 1px solid var(--rule-strong);
   color: var(--text);
-  font-size: var(--step-eyebrow);
+  font-size: var(--step-label);
   font-weight: 500;
   text-transform: uppercase;
-  letter-spacing: 0.12em;
+  letter-spacing: var(--track-label);
   padding: var(--sp-xs) var(--sp-sm);
   cursor: pointer;
   transition: border-color 0.25s var(--ease), color 0.25s var(--ease);
 }
+.js .nav-toggle { display: inline-flex; }
 .nav-toggle:hover { border-color: var(--brand); color: var(--brand); }
 
-@media (min-width: 60rem) { .nav-toggle { display: none; } }
+/* Both selectors: the .js gate above is more specific than a bare
+   .nav-toggle, and a media query adds no specificity of its own. */
+@media (min-width: 60rem) {
+  .nav-toggle,
+  .js .nav-toggle { display: none; }
+}
 
 /* The menu panel is defined in section 16, with the rest of the chrome. */
 
@@ -581,9 +608,9 @@ h3, .h3 {
 .footer__brand .social-link { color: var(--olmi-cream); }
 
 .footer__place {
-  font-size: var(--step-eyebrow);
+  font-size: var(--step-label);
   text-transform: uppercase;
-  letter-spacing: 0.12em;
+  letter-spacing: var(--track-label);
   color: rgba(255, 248, 240, 0.55);   /* 5.6:1 on ink — 0.45 measured 4.2:1 */
 }
 
@@ -613,10 +640,10 @@ h3, .h3 {
 .social-link:hover span { text-decoration-color: currentColor; }
 
 .footer__heading {
-  font-size: var(--step-eyebrow);
+  font-size: var(--step-label);
   font-weight: 500;
   text-transform: uppercase;
-  letter-spacing: 0.12em;
+  letter-spacing: var(--track-label);
   color: var(--olmi-cream);
   margin-bottom: var(--sp-md);
 }
@@ -678,7 +705,7 @@ h3, .h3 {
 .plate::after {
   content: "OLMIKAYA";
   font-family: var(--font-display);
-  font-size: clamp(0.625rem, 1.1vw, 0.8125rem);
+  font-size: var(--step-label);
   letter-spacing: 0.5em;
   text-indent: 0.5em;
   color: var(--plate-mark, rgba(34, 31, 24, 0.28));
@@ -705,7 +732,7 @@ figure { display: flex; flex-direction: column; gap: var(--sp-sm); }
 
 figcaption {
   font-size: var(--step-small);
-  line-height: 1.5;
+  line-height: var(--leading-copy);
   color: var(--text-muted);
   display: flex;
   flex-wrap: wrap;
@@ -737,11 +764,10 @@ figcaption {
 
 .card__title {
   font-family: var(--font-display);
-  font-size: var(--step-h3);
-  line-height: 1.25;
+  font-size: var(--step-card);
+  line-height: var(--leading-snug);
   transition: color 0.25s var(--ease);
 }
-.card__title--lg { font-size: var(--step-h2); }
 
 .card__dek { color: var(--text-muted); font-size: var(--step-small); }
 
@@ -755,8 +781,8 @@ figcaption {
 }
 .chapter__line {
   font-family: var(--font-display);
-  font-size: clamp(1.5rem, 3.4vw, 2.75rem);
-  line-height: 1.35;
+  font-size: var(--step-section);
+  line-height: var(--leading-title);
   max-width: 26ch;
   margin-inline: auto;
   text-wrap: balance;
@@ -771,20 +797,26 @@ figcaption {
 /* --- Pull-quote ---------------------------------------------------------
    Ovo, maroon, hanging into the margin at wide viewports. */
 
-.pullquote {
+/* `.prose blockquote` shares every declaration: a Markdown `>` IS the house
+   pull-quote (see §13). It was a byte-identical copy of this rule living two
+   sections away, which is how the two drifted from `.statement`. One rule. */
+.pullquote,
+.prose blockquote {
   font-family: var(--font-display);
-  font-size: clamp(1.375rem, 2.6vw, 2rem);
-  line-height: 1.35;
+  font-size: var(--step-sub);
+  line-height: var(--leading-title);
   color: var(--brand);
   padding-left: var(--sp-md);
   border-left: 2px solid var(--brand);
   margin-block: var(--sp-xl);
   text-wrap: pretty;
 }
-.on-dark .pullquote { color: var(--olmi-cream); border-left-color: var(--olmi-cream); }
+.on-dark .pullquote,
+.on-dark .prose blockquote { color: var(--olmi-cream); border-left-color: var(--olmi-cream); }
 
 @media (min-width: 64rem) {
-  .pullquote { margin-left: calc(-1 * var(--sp-xl)); }
+  .pullquote,
+  .prose blockquote { margin-left: calc(-1 * var(--sp-xl)); }
 }
 
 .pullquote__attr {
@@ -809,11 +841,11 @@ figcaption {
 }
 .season__index {
   font-family: var(--font-display);
-  font-size: 2.5rem;
+  font-size: var(--step-section);
   line-height: 1;
   color: var(--olmi-terracotta);   /* light ground only — see the rule in 01 */
 }
-.season__title { font-family: var(--font-display); font-size: var(--step-h3); }
+.season__title { font-family: var(--font-display); font-size: var(--step-card); }
 
 /* --- Directory entry ---------------------------------------------------- */
 
@@ -831,12 +863,12 @@ figcaption {
   .entry { grid-template-columns: 3.5rem minmax(0, 1fr) minmax(0, 11rem); }
 }
 .entry__no {
-  font-size: var(--step-eyebrow);
-  letter-spacing: 0.12em;
+  font-size: var(--step-label);
+  letter-spacing: var(--track-label);
   color: var(--text-faint);
   padding-top: 0.45rem;
 }
-.entry__name { font-family: var(--font-display); font-size: var(--step-h3); }
+.entry__name { font-family: var(--font-display); font-size: var(--step-card); }
 .entry__place {
   font-size: var(--step-small);
   color: var(--text-muted);
@@ -874,7 +906,7 @@ a.entry__place:hover::before { background: var(--brand); }
   padding-bottom: var(--sp-xs);
   border-bottom: 1px solid var(--rule);
 }
-.object__name { font-family: var(--font-display); font-size: var(--step-h3); }
+.object__name { font-family: var(--font-display); font-size: var(--step-card); }
 .object__price {
   font-size: var(--step-small);
   color: var(--text-muted);
@@ -919,10 +951,10 @@ a.entry__place:hover::before { background: var(--brand); }
   color: var(--olmi-offwhite);
   border: 1px solid var(--olmi-maroon);
   padding: var(--sp-sm) var(--sp-lg);
-  font-size: var(--step-eyebrow);
+  font-size: var(--step-label);
   font-weight: 500;
   text-transform: uppercase;
-  letter-spacing: 0.12em;
+  letter-spacing: var(--track-label);
   text-decoration: none;
   cursor: pointer;
   transition: background 0.25s var(--ease), color 0.25s var(--ease);
@@ -995,7 +1027,7 @@ a.entry__place:hover::before { background: var(--brand); }
   border-left: 2px solid var(--olmi-terracotta);
   padding: var(--sp-sm) 0 var(--sp-sm) var(--sp-md);
   font-size: var(--step-small);
-  line-height: 1.6;
+  line-height: var(--leading-copy);
   color: var(--text-muted);
   background: rgba(140, 66, 39, 0.05);
 }
@@ -1007,10 +1039,10 @@ a.entry__place:hover::before { background: var(--brand); }
   display: inline-flex;
   align-items: baseline;
   gap: var(--sp-xs);
-  font-size: var(--step-eyebrow);
+  font-size: var(--step-label);
   font-weight: 500;
   text-transform: uppercase;
-  letter-spacing: 0.12em;
+  letter-spacing: var(--track-label);
   color: var(--brand);
   text-decoration: none;
   white-space: nowrap;
@@ -1033,23 +1065,25 @@ a.entry__place:hover::before { background: var(--brand); }
 .prose > figure, .prose > .pullquote { margin-block: var(--sp-xl); }
 
 /* Headings inside the article are NOT the page's section titles.
-   --step-h2 tops out at 40px, which is what a section head wants when it
-   spans the full grid; set on a subhead in a 34rem column against 17px body
-   it is 2.35x the text it introduces and reads as a new article starting.
-   Sized against the body instead — about 1.6x — so a subhead marks a turn
-   in the piece without breaking the column. Space still belongs above a
-   heading, not below, so the top margins are unchanged. */
+   --step-section tops out at 40px, which is what a section head wants when
+   it spans the full grid; set on a subhead in a 34rem column against 17px
+   body it is 2.35x the text it introduces and reads as a new article
+   starting. --step-sub is sized against the body instead — under 2x — so a
+   subhead marks a turn in the piece without breaking the column. It is the
+   same step the pull-quote uses, which is right: both are a voice change
+   inside the column, not a new page. Space still belongs above a heading,
+   not below, so the top margins are unchanged. */
 .prose h2 {
-  font-size: var(--step-h2-prose);
-  line-height: 1.28;
-  letter-spacing: -0.006em;
+  font-size: var(--step-sub);
+  line-height: var(--leading-snug);
+  letter-spacing: var(--track-tight);
   margin-top: var(--sp-xl);
   text-wrap: balance;
 }
 
 .prose h3 {
-  font-size: var(--step-h3-prose);
-  line-height: 1.35;
+  font-size: var(--step-card);
+  line-height: var(--leading-title);
   margin-top: var(--sp-lg);
   text-wrap: balance;
 }
@@ -1060,7 +1094,7 @@ a.entry__place:hover::before { background: var(--brand); }
 .prose p { text-wrap: pretty; }
 
 /* Drop the first paragraph a size up — the entry into the piece. */
-.prose > p:first-of-type { font-size: var(--step-lead); line-height: 1.55; }
+.prose > p:first-of-type { font-size: var(--step-lead); line-height: var(--leading-copy); }
 
 .prose ul { list-style: none; padding-left: 0; }
 .prose ul li {
@@ -1140,7 +1174,12 @@ a.entry__place:hover::before { background: var(--brand); }
 .js .reveal.is-visible { opacity: 1; transform: none; }
 
 @media (prefers-reduced-motion: reduce) {
-  html { scroll-behavior: auto; }
+  /* Every scroll container, not just the document. The menu body and the
+     section strip set their own scroll-behavior and would otherwise keep
+     animating after the page stopped. */
+  html,
+  .nav-panel__body,
+  .subnav__inner { scroll-behavior: auto; }
   .js .reveal,
   .js .reveal.is-visible {
     opacity: 1;
@@ -1157,7 +1196,9 @@ a.entry__place:hover::before { background: var(--brand); }
      allow-discrete. Zeroing the duration above already collapses them to an
      instant swap, which is the correct reduced-motion behaviour: the toggle
      still works, it simply stops moving. Nothing here may set opacity or
-     display itself — the open states must keep winning. */
+     display on THOSE elements — their open states must keep winning. Their
+     children are a different matter; see the menu stagger at the foot of
+     this file, which has to be forced visible rather than merely stopped. */
 }
 
 /* Print: strip chrome, let the writing stand. */
@@ -1196,8 +1237,8 @@ a.entry__place:hover::before { background: var(--brand); }
 
 .statement {
   font-family: var(--font-display);
-  font-size: clamp(1.375rem, 2.4vw, 2rem);
-  line-height: 1.4;
+  font-size: var(--step-sub);
+  line-height: var(--leading-title);
   max-width: 30ch;
   text-wrap: pretty;
 }
@@ -1231,12 +1272,12 @@ a.entry__place:hover::before { background: var(--brand); }
   .masthead-list__row { grid-template-columns: 14rem 1fr; align-items: baseline; }
 }
 .masthead-list__role {
-  font-size: var(--step-eyebrow);
+  font-size: var(--step-label);
   text-transform: uppercase;
-  letter-spacing: 0.12em;
+  letter-spacing: var(--track-label);
   color: var(--text-muted);
 }
-.masthead-list__name { font-family: var(--font-display); font-size: 1.1875rem; }
+.masthead-list__name { font-family: var(--font-display); font-size: var(--step-card); }
 
 /* --- Swatch (styleguide) ------------------------------------------------ */
 
@@ -1262,16 +1303,16 @@ a.entry__place:hover::before { background: var(--brand); }
   vertical-align: top;
 }
 .table th {
-  font-size: var(--step-eyebrow);
+  font-size: var(--step-label);
   text-transform: uppercase;
-  letter-spacing: 0.12em;
+  letter-spacing: var(--track-label);
   font-weight: 500;
   color: var(--text-muted);
   white-space: nowrap;
 }
 .table code {
   font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-  font-size: 0.8125rem;
+  font-size: var(--step-small);
 }
 .pass { color: var(--olmi-green); font-weight: 600; }
 .fail { color: var(--olmi-maroon); font-weight: 600; }
@@ -1306,21 +1347,8 @@ a.entry__place:hover::before { background: var(--brand); }
    without anyone needing to know a class name.
    ========================================================================== */
 
-.prose blockquote {
-  font-family: var(--font-display);
-  font-size: clamp(1.375rem, 2.6vw, 2rem);
-  line-height: 1.35;
-  color: var(--brand);
-  padding-left: var(--sp-md);
-  border-left: 2px solid var(--brand);
-  margin-block: var(--sp-xl);
-  text-wrap: pretty;
-}
-
-@media (min-width: 64rem) {
-  .prose blockquote { margin-left: calc(-1 * var(--sp-xl)); }
-}
-
+/* A `>` blockquote is styled as .pullquote, in §07, on a shared selector.
+   Only the paragraph handling below is specific to Markdown. */
 .prose blockquote p { margin: 0; font-size: inherit; line-height: inherit; }
 .prose blockquote p + p {
   margin-top: var(--sp-sm);
@@ -1371,8 +1399,8 @@ a.entry__place:hover::before { background: var(--brand); }
 .utility {
   background: var(--olmi-ink);
   color: var(--text-on-dark-muted);
-  font-size: var(--step-eyebrow);
-  letter-spacing: 0.06em;
+  font-size: var(--step-label);
+  letter-spacing: var(--track-label);
 }
 
 .utility__inner {
@@ -1392,7 +1420,7 @@ a.entry__place:hover::before { background: var(--brand); }
   color: var(--text-on-dark-muted);
   text-decoration: none;
   text-transform: uppercase;
-  letter-spacing: 0.12em;
+  letter-spacing: var(--track-label);
   transition: color 0.25s var(--ease);
   white-space: nowrap;
 }
@@ -1419,18 +1447,23 @@ a.entry__place:hover::before { background: var(--brand); }
   align-items: center;
   min-height: 2.75rem;
   overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scroll-behavior: smooth;
+  scroll-snap-type: x proximity;
+  scroll-padding-inline: var(--gutter);
   scrollbar-width: none;
 }
 .subnav__inner::-webkit-scrollbar { display: none; }
 
 .subnav__link {
-  font-size: var(--step-eyebrow);
+  font-size: var(--step-label);
   font-weight: 500;
   text-transform: uppercase;
-  letter-spacing: 0.1em;
+  letter-spacing: var(--track-label);
   color: var(--text-muted);
   text-decoration: none;
   white-space: nowrap;
+  scroll-snap-align: start;
   padding-block: var(--sp-xs);
   border-bottom: 1px solid transparent;
   transition: color 0.2s var(--ease), border-color 0.2s var(--ease);
@@ -1462,10 +1495,10 @@ a.entry__place:hover::before { background: var(--brand); }
 
 .module-head__title {
   font-family: var(--font-text);
-  font-size: var(--step-eyebrow);
+  font-size: var(--step-label);
   font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 0.14em;
+  letter-spacing: var(--track-label);
   color: var(--brand);
 }
 .on-dark .module-head__title { color: var(--olmi-cream); }
@@ -1487,24 +1520,23 @@ a.entry__place:hover::before { background: var(--brand); }
 .tile__link:hover .tile__title { color: var(--brand); }
 
 .tile__kicker {
-  font-size: 0.6875rem;
+  font-size: var(--step-label);
   font-weight: 500;
   text-transform: uppercase;
-  letter-spacing: 0.12em;
+  letter-spacing: var(--track-label);
   color: var(--text-muted);
 }
 
 .tile__title {
   font-family: var(--font-display);
-  font-size: 1.0625rem;
-  line-height: 1.28;
+  font-size: var(--step-body);
+  line-height: var(--leading-snug);
   transition: color 0.2s var(--ease);
   text-wrap: pretty;
 }
-.tile__title--lg { font-size: clamp(1.25rem, 1.8vw, 1.625rem); }
 
 .tile__meta {
-  font-size: 0.75rem;
+  font-size: var(--step-label);
   color: var(--text-faint);
   display: flex;
   flex-wrap: wrap;
@@ -1536,13 +1568,13 @@ a.entry__place:hover::before { background: var(--brand); }
 
 .brief__title {
   font-family: var(--font-display);
-  font-size: 1rem;
-  line-height: 1.3;
+  font-size: var(--step-body);
+  line-height: var(--leading-snug);
   transition: color 0.2s var(--ease);
 }
 
 .brief__meta {
-  font-size: 0.75rem;
+  font-size: var(--step-label);
   color: var(--text-faint);
   display: flex;
   flex-wrap: wrap;
@@ -1590,9 +1622,9 @@ a.entry__place:hover::before { background: var(--brand); }
 
 .lead-block__title {
   font-family: var(--font-display);
-  font-size: clamp(1.875rem, 3.6vw, 3rem);
+  font-size: var(--step-feature);
   line-height: 1.1;
-  letter-spacing: -0.01em;
+  letter-spacing: var(--track-tight);
   text-wrap: balance;
   transition: color 0.2s var(--ease);
 }
@@ -1608,7 +1640,7 @@ a:hover > .lead-block__title, a:hover .lead-block__title { color: var(--brand); 
 }
 
 /* Seasons index inside a dense tile wants to be smaller than in a .season. */
-.tile__link .season__index { font-size: 1.75rem; }
+.tile__link .season__index { font-size: var(--step-sub); }
 
 /* ==========================================================================
    15  SHOP — product index
@@ -1652,10 +1684,10 @@ a:hover > .lead-block__title, a:hover .lead-block__title { color: var(--brand); 
 
 .shop-filter__link {
   font-family: var(--font-text);
-  font-size: var(--step-eyebrow);
+  font-size: var(--step-label);
   font-weight: 500;
   text-transform: uppercase;
-  letter-spacing: 0.1em;
+  letter-spacing: var(--track-label);
   color: var(--text-muted);
   background: none;
   border: 0;
@@ -1692,10 +1724,10 @@ a:hover > .lead-block__title, a:hover .lead-block__title { color: var(--brand); 
   appearance: none;
   -webkit-appearance: none;
   font-family: var(--font-text);
-  font-size: var(--step-eyebrow);
+  font-size: var(--step-label);
   font-weight: 500;
   text-transform: uppercase;
-  letter-spacing: 0.1em;
+  letter-spacing: var(--track-label);
   color: var(--text-muted);
   background: none;
   border: 0;
@@ -1737,11 +1769,11 @@ a:hover > .lead-block__title, a:hover .lead-block__title { color: var(--brand); 
    headings where it belongs. */
 .product__name {
   font-family: var(--font-text);
-  font-size: 0.8125rem;
+  font-size: var(--step-small);
   font-weight: 500;
-  line-height: 1.35;
+  line-height: var(--leading-title);
   text-transform: uppercase;
-  letter-spacing: 0.1em;
+  letter-spacing: var(--track-label);
   color: var(--text);
 }
 
@@ -1753,14 +1785,14 @@ a:hover > .lead-block__title, a:hover .lead-block__title { color: var(--brand); 
 }
 
 .product__note {
-  font-size: 0.8125rem;
-  line-height: 1.6;
+  font-size: var(--step-small);
+  line-height: var(--leading-copy);
   color: var(--text-muted);
   margin-top: var(--sp-2xs);
 }
 
 .product__maker {
-  font-size: 0.75rem;
+  font-size: var(--step-label);
   color: var(--text-faint);
 }
 
@@ -1812,8 +1844,8 @@ a:hover > .lead-block__title, a:hover .lead-block__title { color: var(--brand); 
 /* Small CTA. The full .button is too heavy inside a 4.25rem masthead. */
 .button--sm {
   padding: 0.5rem var(--sp-md);
-  font-size: 0.6875rem;
-  letter-spacing: 0.14em;
+  font-size: var(--step-label);
+  letter-spacing: var(--track-label);
 }
 
 /* The subscribe CTA is the one thing we ask for; below 30rem the wordmark and
@@ -1893,11 +1925,34 @@ a:hover > .lead-block__title, a:hover .lead-block__title { color: var(--brand); 
    A 0fr-to-1fr height animation was tried before either of these and
    rejected: its open height DEPENDS on the transition running, so a stall
    leaves the menu open to nothing. Opacity cannot fail that way. */
+/* It fills the viewport rather than hanging off the masthead. It used to be
+   an in-flow block inside a position:sticky header, so an open menu grew the
+   sticky box — past a screenful the header stopped behaving and the bottom
+   of the menu could only be reached by scrolling the page underneath it. On
+   a phone this is the only navigation the site has.
+
+   100dvh, not 100vh: on mobile the URL bar retracts as you scroll and 100vh
+   measures the LARGE viewport, so a vh panel hides its own last rows behind
+   browser chrome. dvh tracks the viewport that is actually visible.
+
+   Above the masthead (z-index 100) rather than below it, so nothing has to
+   measure where the sticky header currently sits — which varies, because
+   the utility strip above it scrolls away. The panel carries its own bar
+   instead. The <dialog> search is in the top layer and still wins. */
 .nav-panel {
+  /* top/left/right rather than inset: with `bottom` also set, height and
+     bottom over-constrain the box and one has to be dropped. Say the height
+     once, in the unit that matters. */
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 100dvh;
+  z-index: 200;
   display: none;
+  flex-direction: column;
   opacity: 0;
   transform: translateY(-0.5rem);
-  border-top: 1px solid var(--rule);
   background: var(--olmi-offwhite);
   transition:
     opacity 0.28s var(--ease),
@@ -1908,9 +1963,36 @@ a:hover > .lead-block__title, a:hover .lead-block__title { color: var(--brand); 
 }
 
 .nav-panel[data-open="true"] {
-  display: block;
+  display: flex;
   opacity: 1;
   transform: none;
+}
+
+/* The panel own masthead row. Same height as the real one, so opening reads
+   as the header taking the screen rather than a new surface arriving from
+   nowhere. */
+.nav-panel__bar {
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-md);
+  min-height: var(--masthead-h);
+  padding-inline: var(--gutter);
+  border-bottom: 1px solid var(--rule);
+}
+
+/* Everything below the bar scrolls INSIDE the panel. `contain` stops the
+   scroll chaining onward once this reaches its end — belt to the
+   html.nav-open braces, and the thing that stops iOS rubber-banding the
+   document behind the menu. */
+.nav-panel__body {
+  flex: 1 1 auto;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+  scroll-behavior: smooth;
+  padding-bottom: env(safe-area-inset-bottom, 0px);
 }
 
 /* The frame the opening transition starts from. Without it the panel is
@@ -1941,10 +2023,10 @@ a:hover > .lead-block__title, a:hover .lead-block__title { color: var(--brand); 
 }
 
 .nav-panel__heading {
-  font-size: var(--step-eyebrow);
+  font-size: var(--step-label);
   font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 0.14em;
+  letter-spacing: var(--track-label);
   color: var(--brand);
   margin-bottom: var(--sp-sm);
 }
@@ -1953,7 +2035,7 @@ a:hover > .lead-block__title, a:hover .lead-block__title { color: var(--brand); 
   display: block;
   padding: var(--sp-xs) 0;
   font-family: var(--font-display);
-  font-size: 1.375rem;
+  font-size: var(--step-sub);
   text-decoration: none;
   color: var(--text);
   transition: color 0.2s var(--ease);
@@ -1967,9 +2049,9 @@ a:hover > .lead-block__title, a:hover .lead-block__title { color: var(--brand); 
   display: inline-block;
   padding: 0.3rem var(--sp-sm);
   border: 1px solid var(--rule);
-  font-size: var(--step-eyebrow);
+  font-size: var(--step-label);
   text-transform: uppercase;
-  letter-spacing: 0.1em;
+  letter-spacing: var(--track-label);
   color: var(--text-muted);
   text-decoration: none;
   transition: border-color 0.2s var(--ease), color 0.2s var(--ease);
@@ -1987,27 +2069,57 @@ a:hover > .lead-block__title, a:hover .lead-block__title { color: var(--brand); 
 .nav-panel__mail { font-size: var(--step-small); color: var(--text-faint); text-decoration: none; }
 .nav-panel__mail:hover { color: var(--brand); }
 
-/* Items rise in behind the panel opening. Purely decorative, so it is the
-   first thing dropped under reduced motion. */
-/* No fill-mode on purpose. With `both`, the from-frame applies during the
-   delay and before the animation starts — so a stalled animation clock pins
-   every item at opacity 0 and the menu reads as empty. Without it the items
-   are simply visible until the animation runs. Same rule as the reveal
-   system: nothing is ever left stranded invisible. */
-.nav-panel[data-open="true"] .nav-panel__item {
-  animation: rise 0.34s var(--ease);
-}
-.nav-panel[data-open="true"] .nav-panel__item:nth-child(1) { animation-delay: 0.06s; }
-.nav-panel[data-open="true"] .nav-panel__item:nth-child(2) { animation-delay: 0.09s; }
-.nav-panel[data-open="true"] .nav-panel__item:nth-child(3) { animation-delay: 0.12s; }
-.nav-panel[data-open="true"] .nav-panel__item:nth-child(4) { animation-delay: 0.15s; }
-.nav-panel[data-open="true"] .nav-panel__item:nth-child(5) { animation-delay: 0.18s; }
-.nav-panel[data-open="true"] .nav-panel__item:nth-child(6) { animation-delay: 0.21s; }
-.nav-panel[data-open="true"] .nav-panel__item:nth-child(n + 7) { animation-delay: 0.24s; }
+/* Items and headings rise in behind the panel opening. Purely decorative,
+   so it is the first thing dropped under reduced motion.
 
-@keyframes rise {
-  from { opacity: 0; transform: translateY(0.5rem); }
-  to   { opacity: 1; transform: none; }
+   A transition, not a keyframe. The old version was `animation: rise` with a
+   delay and deliberately no fill-mode — the reasoning being that `both`
+   would pin an item at opacity 0 if the animation clock ever stalled. But
+   without a fill-mode the item renders NORMALLY during the delay and only
+   then snaps to the from-frame, so what it actually produced was: visible,
+   blink to invisible, fade in. A flicker, not a stagger. A transition has no
+   such gap — it holds its start value for the whole delay, which is exactly
+   the behaviour wanted — and the no-stranding guarantee is kept the way 10
+   keeps it for .reveal, by scoping the hidden state to .js.
+
+   The delay reads --i, a running index Masthead.astro stamps across ALL
+   three groups. The nth-child ladder this replaces counted per-<ul>, so
+   Read, Sections and Elsewhere each restarted at 1 and played at the same
+   time; what looked like one cascade was three overlapping ones. min() caps
+   the tail so a site with forty sections still finishes in half a second.
+
+   Closing carries no delay and a shorter duration, so every item has settled
+   well before the panel own 0.28s display transition flips it to none. */
+.js .nav-panel__item,
+.js .nav-panel__heading {
+  opacity: 0;
+  transform: translateY(0.5rem);
+  transition: opacity 0.2s var(--ease), transform 0.2s var(--ease);
+  transition-delay: 0s;
+}
+.js .nav-panel[data-open="true"] .nav-panel__item,
+.js .nav-panel[data-open="true"] .nav-panel__heading {
+  opacity: 1;
+  transform: none;
+  transition: opacity 0.42s var(--ease), transform 0.42s var(--ease);
+  transition-delay: calc(0.06s + min(var(--i, 0), 14) * 0.03s);
+}
+
+/* The same reason the panel needs one, one level down. A closed panel is
+   display:none, so its children are not rendered at all — and a transition
+   cannot start on an element that had no previous rendered style. Without
+   this the items simply appear at their open values and the whole cascade
+   is skipped. This is the start frame the first render transitions from.
+
+   The open state above stays an ordinary declaration, so the §16 guarantee
+   still holds: a browser without @starting-style ignores this block, misses
+   the movement, and lands on a fully visible menu. */
+@starting-style {
+  .js .nav-panel[data-open="true"] .nav-panel__item,
+  .js .nav-panel[data-open="true"] .nav-panel__heading {
+    opacity: 0;
+    transform: translateY(0.5rem);
+  }
 }
 
 /* --- Search -------------------------------------------------------------- */
@@ -2129,12 +2241,12 @@ a:hover > .lead-block__title, a:hover .lead-block__title { color: var(--brand); 
 }
 
 .search__kind {
-  font-size: 0.6875rem;
+  font-size: var(--step-label);
   text-transform: uppercase;
-  letter-spacing: 0.12em;
+  letter-spacing: var(--track-label);
   color: var(--text-faint);
 }
-.search__title { font-family: var(--font-display); font-size: 1.0625rem; line-height: 1.3; }
+.search__title { font-family: var(--font-display); font-size: var(--step-body); line-height: var(--leading-snug); }
 .search__dek {
   font-size: var(--step-small);
   color: var(--text-muted);
@@ -2184,7 +2296,7 @@ a:hover > .lead-block__title, a:hover .lead-block__title { color: var(--brand); 
 
 .veil__title {
   font-family: var(--font-display);
-  font-size: clamp(1.75rem, 5vw, 3rem);
+  font-size: var(--step-feature);
   line-height: 1.05;
   color: var(--brand);
   text-wrap: balance;
@@ -2199,6 +2311,26 @@ a:hover > .lead-block__title, a:hover .lead-block__title { color: var(--brand); 
   /* The staggered entrance is the one piece here that is pure decoration, so
      it is dropped outright rather than shortened. The panel and the dialog
      keep their (now instant) display swap from §10 — turning motion off must
-     not turn the toggles off. */
-  .nav-panel[data-open="true"] .nav-panel__item { animation: none; }
+     not turn the toggles off.
+
+     Forcing the visible state, not `transition: none`. The resting state of
+     a staggered item is now opacity 0 (it is a transition, not a keyframe),
+     so merely removing the transition would leave the whole menu blank. The
+     same treatment .reveal gets in §10.
+
+     The open state is listed too, and not for tidiness. §10 zeroes every
+     transition-DURATION, but a delay is not a duration: the open rule's
+     `transition-delay` would survive, and with it @starting-style holding
+     each item at opacity 0 for up to half a second before it popped in.
+     Reduced motion would have produced the worst version of the animation.
+     These selectors match the open rule's specificity and come later, so
+     they win outright and there is no transition left to delay. */
+  .js .nav-panel__item,
+  .js .nav-panel__heading,
+  .js .nav-panel[data-open="true"] .nav-panel__item,
+  .js .nav-panel[data-open="true"] .nav-panel__heading {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
 }

@@ -23,6 +23,14 @@
     var panel = document.getElementById("nav-panel");
     if (!toggle || !panel) return;
 
+    var closer = panel.querySelector("[data-nav-close]");
+
+    /* The panel covers the viewport, so everything else has to leave the tab
+       order and the accessibility tree while it is open, not merely fall
+       behind it. The panel is a sibling of the masthead, so the whole header
+       goes — see the note in Masthead.astro for why it is not a child. */
+    var BEHIND = [".utility", ".masthead", ".subnav", "#main", ".footer"];
+
     function setOpen(open) {
       panel.setAttribute("data-open", open ? "true" : "false");
       toggle.setAttribute("aria-expanded", open ? "true" : "false");
@@ -32,21 +40,54 @@
       if (open) panel.removeAttribute("inert");
       else panel.setAttribute("inert", "");
 
+      for (var i = 0; i < BEHIND.length; i++) {
+        var el = document.querySelector(BEHIND[i]);
+        if (!el) continue;
+        if (open) el.setAttribute("inert", "");
+        else el.removeAttribute("inert");
+      }
+
+      /* Stops the page scrolling behind the overlay. The stylesheet locks
+         both <html> and <body>; see the note beside html.nav-open. */
+      root.classList.toggle("nav-open", open);
+
       var label = toggle.querySelector("[data-nav-label]");
       if (label) label.textContent = open ? "Close" : "Menu";
     }
 
     setOpen(false);
 
+    /* preventScroll on every one of these. The toggle lives in a sticky
+       masthead, and focusing a sticky element makes the browser scroll
+       toward where that element sits in normal flow — the top of the page.
+       With `scroll-behavior: smooth` on <html> that is a visible glide back
+       to the masthead every time the menu closes, losing the reader's place.
+       Moving focus is not a request to move the page. */
+    function focusQuietly(el) {
+      if (el) el.focus({ preventScroll: true });
+    }
+
     toggle.addEventListener("click", function () {
-      setOpen(toggle.getAttribute("aria-expanded") !== "true");
+      var open = toggle.getAttribute("aria-expanded") !== "true";
+      setOpen(open);
+      /* The toggle is behind the overlay once it is open, so the close
+         control in the panel takes over — and focus has to follow it there
+         or the next Tab lands on nothing. */
+      focusQuietly(open && closer ? closer : toggle);
     });
+
+    if (closer) {
+      closer.addEventListener("click", function () {
+        setOpen(false);
+        focusQuietly(toggle);
+      });
+    }
 
     // Escape closes the panel and returns focus to the control.
     document.addEventListener("keydown", function (e) {
       if (e.key === "Escape" && toggle.getAttribute("aria-expanded") === "true") {
         setOpen(false);
-        toggle.focus();
+        focusQuietly(toggle);
       }
     });
 
@@ -525,8 +566,32 @@
     render("");
   }
 
+  /* ------------------------------------------------------------------------
+     2b. Show the reader where they are in the section strip.
+
+     The strip scrolls sideways and starts at the left, so on a section eight
+     chips deep the current one was simply off-screen. Nothing about the page
+     said which section you were reading.
+     --------------------------------------------------------------------- */
+  function initSubnav() {
+    var strip = document.querySelector(".subnav__inner");
+    if (!strip) return;
+    var active = strip.querySelector('[aria-current="page"]');
+    if (!active) return;
+
+    /* scrollLeft, not scrollIntoView: the latter can scroll the PAGE
+       vertically as a side effect, and this runs on load. The strip declares
+       scroll-behavior: smooth for taps, which would animate this first
+       positioning too — so it is suppressed for the one assignment. */
+    var behavior = strip.style.scrollBehavior;
+    strip.style.scrollBehavior = "auto";
+    strip.scrollLeft = active.offsetLeft - (strip.clientWidth - active.offsetWidth) / 2;
+    strip.style.scrollBehavior = behavior;
+  }
+
   function init() {
     initNav();
+    initSubnav();
     initReveal();
     initLetterMemory();
     initSubscribe();

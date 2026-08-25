@@ -543,7 +543,8 @@ start writing it in Markdown.
 
 ## Design system
 
-Unchanged from the static build, and documented at `/styleguide/`.
+Documented at `/styleguide/`, which is the fastest way to see the whole thing
+at once. The palette is unchanged from the static build; the type scale is not.
 
 - **Palette** — seven colours extracted exactly from `color-palette.jpeg`.
   Maroon `#5C2020` is the wordmark colour and the primary brand.
@@ -553,6 +554,105 @@ Unchanged from the static build, and documented at `/styleguide/`.
 - **Ovo has one weight and no italic.** It is a display face only — headings,
   wordmark, pull-quotes. Inter carries everything you actually read. Never put
   bold or italic inside Ovo-set text.
+
+### The type scale
+
+Ten steps, and **nothing in the stylesheet may declare a `font-size` that is
+not one of them.** There is no eleventh size for a special case; if a design
+needs one, the ladder is wrong and the ladder gets changed.
+
+| Token | Size | Job |
+|---|---|---|
+| `--step-hero` | 44→96 | Hero title — `/about/` only |
+| `--step-title` | 34→60 | Page title, article title (`h1`, `.display-l`) |
+| `--step-feature` | 28→48 | Lead story, the shop veil |
+| `--step-section` | 24→40 | Section title (`h2`, `.h2`) |
+| `--step-sub` | 22→32 | Article subhead, pull-quote, statement, menu link |
+| `--step-card` | 19→24 | Card, entry and object titles (`h3`, `.h3`) |
+| `--step-lead` | 18→22 | Standfirst, first paragraph, search input |
+| `--step-body` | 17 | Body copy, wordmark, small card titles |
+| `--step-small` | 14 | Metadata, captions, prices, notes |
+| `--step-label` | 12 | Every small uppercase label |
+
+**They are named for the job, not the tag.** This matters because a tag is not
+a size here: `<h2>` heads a page at `--step-section`, subheads an article at
+`--step-sub`, and labels a product at `--step-small`. Reach for the role.
+
+Three supporting sets, on the same principle:
+
+- **Tracking** — `--track-hero` and `--track-tight` for display type,
+  `--track-label` (`0.12em`) for *every* small uppercase label. One job, one
+  value. The wordmark's `0.34em` and the plate mark's `0.5em` are deliberate
+  one-offs and stay.
+- **Leading** — `--leading-tight` `--leading-snug` `--leading-title`
+  `--leading-copy` `--leading-body`. Display headings additionally carry their
+  own literal line-heights (1, 1.05, 1.1, 1.12); those are per-size optical
+  corrections, not drift, and merging them would visibly loosen large type.
+- **Responsive type is entirely `clamp()`.** No media query anywhere in the
+  stylesheet changes a font-size, so there are no breakpoint overrides to
+  reconcile when a step moves.
+
+`/styleguide/` renders all ten steps in order. **If a new size cannot be shown
+there, it does not belong** — the scale fragmented once already because the
+specimen only carried six of them, and sizes with nowhere to be checked drift.
+
+---
+
+## Navigation and motion
+
+Three invariants that are easy to break by accident, and expensive to notice.
+
+### The mobile menu is a full-viewport overlay
+
+`.nav-panel` is `position: fixed`, `height: 100dvh`, layered above the
+masthead, with its own bar and an internal scroll area. It locks the page
+behind it, marks everything else `inert`, and moves focus in and back out.
+
+- **`dvh`, not `vh`.** On a phone the URL bar retracts as you scroll and `vh`
+  measures the *large* viewport, so a `vh` panel hides its own last rows behind
+  browser chrome.
+- **The panel is a sibling of `<header>`, not a child.** The masthead sets
+  `backdrop-filter`, which makes it the containing block for any `fixed`
+  descendant — move the panel back inside and it pins to the header's box
+  instead of the viewport, landing ~36px down the screen.
+- **Focus moves use `preventScroll: true`.** The toggle lives in a sticky
+  masthead, and focusing a sticky element makes the browser scroll toward where
+  that element sits in normal flow. With `scroll-behavior: smooth` on `<html>`
+  that is a visible glide to the top of the page every time the menu closes.
+
+### The staggered entrance runs on `--i`
+
+`Masthead.astro` stamps a single running index across all three groups (Read,
+Sections, Elsewhere) and the stylesheet turns it into a `transition-delay`.
+
+A per-list `nth-child` ladder cannot do this — it restarts at each `<ul>`, so
+the three groups play at once and what looks like one cascade is three
+overlapping ones. **If you add a group to the panel, extend the counter in the
+frontmatter**; the CSS needs no change.
+
+It is a transition rather than a keyframe on purpose. An `animation` with a
+delay and no `fill-mode` renders the item *normally* during the delay and only
+then snaps to its from-frame — visible, blink, fade in. A transition holds its
+start value for the whole delay, which is the behaviour actually wanted.
+
+### Nothing is ever left stranded invisible
+
+The rule the whole motion layer is built around, and the reason several things
+look more roundabout than they need to.
+
+- Every hidden start state is scoped to `html.js`, which the script sets
+  synchronously. **With JavaScript off the class never lands and content is
+  simply visible** — it can never be stuck at `opacity: 0`.
+- Every *visible* end state is an ordinary declaration. `@starting-style`
+  carries only the start frame, so a browser that does not support it skips the
+  movement and lands on a fully-formed element.
+- `prefers-reduced-motion` **forces the visible state**, it does not merely
+  remove the transition — the resting state of a staggered item is
+  `opacity: 0`, so removing the transition alone would leave the menu blank.
+  It also has to override `transition-delay`: §10 zeroes every transition
+  *duration*, and a delay is not a duration.
+
+The same three rules govern `.reveal`, the search dialog and the shop filter.
 
 ---
 
