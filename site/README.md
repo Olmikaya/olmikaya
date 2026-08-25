@@ -84,9 +84,9 @@ git init && git add . && git commit -m "OLMIKAYA site"
 
 Then push it to your repository.
 
-### 2a. Deploy with Cloudflare Pages
+### 2. Deploy with Cloudflare Pages
 
-Create a Pages project from the GitHub repo and set:
+This is the chosen host. Create a Pages project from the GitHub repo and set:
 
 | Setting | Value |
 |---|---|
@@ -96,23 +96,13 @@ Create a Pages project from the GitHub repo and set:
 | Node version | `22` |
 
 Every push to `main` rebuilds and republishes. Pull requests get preview URLs.
+`public/_headers` sets response headers, including `noindex` on `/admin/`.
 
-### 2b. Or deploy with GitHub Pages
-
-`.github/workflows/deploy.yml` is already written — it builds the site and
-publishes `site/dist`. You only need to switch it on:
-
-**Settings → Pages → Source → GitHub Actions.**
-
-One thing to get right first. A repo named `olmikaya` publishes to
-`olmikaya.github.io/olmikaya/` — a sub-path — and every internal link in this
-site is absolute, so they would all 404. Avoid that by either:
-
-- **using a custom domain** (olmikaya.com), or
-- **renaming the repo to `Olmikaya.github.io`**, which publishes at the root.
-
-Both need no code changes. See the note in `astro.config.mjs` if you would
-rather keep the project URL.
+**GitHub Pages is not in use.** `.github/workflows/deploy.yml` is kept as a
+fallback but runs only when triggered by hand, so it no longer fails on every
+push. Two things would need sorting before switching it back on — Pages is
+currently disabled on the repo, and this repo would publish to a sub-path that
+breaks every absolute link. See the note in `astro.config.mjs`.
 
 ### 3. Turn on the CMS login
 

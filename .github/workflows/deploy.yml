@@ -1,15 +1,20 @@
 # Build the Astro site and publish it to GitHub Pages.
 #
-# GitHub Pages cannot build Astro on its own — it only knows Jekyll — so the
-# build happens here and the finished dist/ folder is what gets published.
+# NOT IN USE. The site is hosted on Cloudflare Pages, which builds from the
+# repo directly and serves from the domain root. This workflow is kept as a
+# fallback and runs only when triggered by hand, so it no longer fails on
+# every push.
 #
-# Before this runs: repo Settings -> Pages -> Source -> "GitHub Actions".
+# Two things to sort out before switching it back on:
+#   1. Repo Settings -> Pages -> Source -> "GitHub Actions" (currently off).
+#   2. This repo would publish to olmikaya.github.io/olmikaya/ — a sub-path —
+#      and every internal link in the site is absolute, so they would all
+#      404. Fix with a custom domain, or by renaming the repo to
+#      Olmikaya.github.io. See the note in site/astro.config.mjs.
 
 name: Deploy to GitHub Pages
 
 on:
-  push:
-    branches: [main]
   workflow_dispatch:
 
 permissions:
