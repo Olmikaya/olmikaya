@@ -43,14 +43,24 @@ export const PLATE_RATIOS = [
   "cinema",
 ] as const;
 
+/* An optional field the editor left blank.
+
+   The CMS writes an empty string rather than omitting the key, and Zod would
+   reject that — "" is not a member of an enum and not a number. Because the
+   content collections are validated at build time, one blank dropdown does
+   not just break its own entry: it fails the whole build, and nothing on the
+   site deploys. Treat blank as absent instead. */
+const optional = <T extends z.ZodType>(schema: T) =>
+  z.preprocess((v) => (v === "" || v === null ? undefined : v), schema.optional());
+
 /* A photograph, or — until there is one — a plate standing in for it.
    `src` is optional on purpose: an article can be laid out and published
    before the photography exists, and the plate keeps the composition intact. */
 const image = z.object({
-  src: z.string().optional(),
+  src: optional(z.string()),
   alt: z.string().default(""),
-  caption: z.string().optional(),
-  credit: z.string().optional(),
+  caption: optional(z.string()),
+  credit: optional(z.string()),
   tone: z.enum(PLATE_TONES).default("sky"),
   ratio: z.enum(PLATE_RATIOS).default("landscape"),
 });
@@ -61,13 +71,13 @@ const articles = defineCollection({
     title: z.string(),
     dek: z.string(),
     category: z.enum(CATEGORIES),
-    secondaryCategory: z.enum(CATEGORIES).optional(),
+    secondaryCategory: optional(z.enum(CATEGORIES)),
     author: z.string(),
-    photographer: z.string().optional(),
+    photographer: optional(z.string()),
     place: z.string(),
     date: z.coerce.date(),
-    readingTime: z.number().int().positive().optional(),
-    season: z.string().optional(),
+    readingTime: optional(z.number().int().positive()),
+    season: optional(z.string()),
     cover: image.default({}),
     featured: z.boolean().default(false),
     draft: z.boolean().default(false),
@@ -80,9 +90,9 @@ const directory = defineCollection({
     name: z.string(),
     dek: z.string(),
     city: z.string(),
-    neighbourhood: z.string().optional(),
+    neighbourhood: optional(z.string()),
     /* Links an entry to the piece written about it. */
-    relatedArticle: z.string().optional(),
+    relatedArticle: optional(z.string()),
     visits: z.number().int().min(1).default(1),
     order: z.number().int().default(999),
     draft: z.boolean().default(false),
@@ -94,7 +104,7 @@ const objects = defineCollection({
   schema: z.object({
     name: z.string(),
     note: z.string(),
-    maker: z.string().optional(),
+    maker: optional(z.string()),
     /* What sort of thing this is — "Cloth", "Paper", "Table". Free text,
        not an enum: the shop filter bar is built from the kinds that actually
        exist, the way sections are built from the articles that exist, so a
@@ -103,7 +113,7 @@ const objects = defineCollection({
     /* Deliberately a free-text status, not a price. Nothing is for sale yet
        and no price should be invented. */
     availability: z.string().default("Not yet released"),
-    relatedArticle: z.string().optional(),
+    relatedArticle: optional(z.string()),
     cover: image.default({}),
     order: z.number().int().default(999),
     draft: z.boolean().default(false),
@@ -131,7 +141,7 @@ const seasons = defineCollection({
     index: z.number().int().positive(),
     title: z.string(),
     question: z.string(),
-    dates: z.string().optional(),
+    dates: optional(z.string()),
     draft: z.boolean().default(false),
   }),
 });
