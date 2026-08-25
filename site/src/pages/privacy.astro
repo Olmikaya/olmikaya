@@ -1,0 +1,144 @@
+---
+import Base from "../layouts/Base.astro";
+import { CONTACT_EMAIL, POLICY_UPDATED } from "../lib/site";
+
+/* Describes what the site actually does. Every claim here is checkable
+   against the code: there is no analytics script, no tag manager, no
+   advertising pixel and no cookie set anywhere in the project. If that ever
+   changes, this page changes in the same commit. */
+---
+
+<Base
+  title="Privacy policy — OLMIKAYA"
+  description="What OLMIKAYA collects, what it does not, and how to get it removed."
+  current="privacy"
+  showSections={false}
+>
+  <section class="section--tight">
+    <div class="wrap">
+      <div class="grid">
+        <div class="col-8 start-3 stack reveal">
+          <p class="eyebrow">Legal</p>
+          <h1 class="display-l">Privacy policy</h1>
+          <p class="lead">
+            The short version: the only thing we ever ask for is an email
+            address, and only if you want the letter. Nothing else is collected,
+            and nothing is sold.
+          </p>
+          <p class="small muted">Last updated {POLICY_UPDATED}</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section--tight">
+    <div class="wrap">
+      <div class="grid">
+        <div class="col-8 start-3">
+          <div class="prose reveal">
+            <h2>What we collect</h2>
+            <p>
+              <strong>Your email address, if you give it to us.</strong> The
+              sign-up form for the letter is the only place this site asks for
+              anything. We store the address, the date you signed up and which
+              page you signed up from. That is the whole record.
+            </p>
+            <p>
+              We do not ask for your name, and there is nowhere on this site to
+              create an account, because there are no accounts.
+            </p>
+
+            <h2>What we do not collect</h2>
+            <p>
+              There is no analytics on this site. No Google Analytics, no tag
+              manager, no advertising pixel, no session recording, no
+              fingerprinting and no third-party script of any kind. We cannot
+              tell you how many people read a given piece, because we do not
+              measure it.
+            </p>
+
+            <h2 id="cookies">Cookies</h2>
+            <p>
+              <strong>This site sets no cookies.</strong> That is why there is
+              no cookie banner — there is nothing to consent to.
+            </p>
+            <p>
+              One thing is stored in your browser: when you sign up to the
+              letter, the site leaves a note to itself so that it stops showing
+              you the sign-up form. It records only that this browser signed up
+              and whether the address was confirmed. It holds no email address,
+              it is never sent anywhere, and clearing your browser data removes
+              it. Every sign-up panel carries a control that clears it too.
+            </p>
+
+            <h2>Who else handles your address</h2>
+            <p>
+              <strong>Kit</strong> runs the mailing list and sends the letter.
+              Your address is stored on their systems, in the United States,
+              under their own privacy policy. They are a processor acting on our
+              instructions and do not use your address for their own purposes.
+            </p>
+            <p>
+              <strong>Cloudflare</strong> hosts the site and, like any web host,
+              processes the requests your browser makes in order to serve pages
+              and to block abuse.
+            </p>
+            <p>
+              Nobody else. We do not sell, rent, share or trade your address,
+              and we do not hand it to anyone buying an audience.
+            </p>
+
+            <h2>Confirming, and leaving</h2>
+            <p>
+              Signing up is double opt-in: you are not added to the mailing list
+              until you click the link in the confirmation email. Sign up and
+              never confirm, and you are never sent anything.
+            </p>
+            <p>
+              Every issue carries an unsubscribe link at the foot. It works on
+              the first click and needs no email to us and no reason given.
+            </p>
+
+            <h2>How long we keep it</h2>
+            <p>
+              Until you unsubscribe, or until you ask us to delete it. We do not
+              keep a shadow copy of people who have left beyond what Kit retains
+              to honour an unsubscribe.
+            </p>
+
+            <h2>Your rights</h2>
+            <p>
+              You can ask what we hold about you, ask for it corrected, ask for
+              it deleted, or ask for a copy. Write to{" "}
+              <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a> and we
+              will act on it. Since the record is one email address and a date,
+              this is usually a very short conversation.
+            </p>
+            <p>
+              We are based in Kenya and operate under the Data Protection Act
+              2019. If you are in a jurisdiction with its own rules, those
+              rights apply too and we will honour them.
+            </p>
+
+            <h2>Children</h2>
+            <p>
+              This site is not aimed at children and we do not knowingly collect
+              anything from them.
+            </p>
+
+            <h2>Changes</h2>
+            <p>
+              If this policy changes in substance, the date at the top changes
+              with it. We will not quietly broaden what we collect.
+            </p>
+
+            <h2>Contact</h2>
+            <p>
+              <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</Base>

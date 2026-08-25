@@ -437,25 +437,7 @@ h3, .h3 {
 
 @media (min-width: 60rem) { .nav-toggle { display: none; } }
 
-.nav-panel {
-  display: none;
-  border-top: 1px solid var(--rule);
-  background: var(--olmi-offwhite);
-}
-.nav-panel[data-open="true"] { display: block; }
-@media (min-width: 60rem) { .nav-panel { display: none !important; } }
-
-.nav-panel__list { padding-block: var(--sp-md); }
-.nav-panel__link {
-  display: block;
-  padding: var(--sp-sm) 0;
-  font-family: var(--font-display);
-  font-size: 1.375rem;
-  text-decoration: none;
-  color: var(--text);
-  border-bottom: 1px solid var(--rule);
-}
-.nav-panel__link[aria-current="page"] { color: var(--brand); }
+/* The menu panel is defined in section 16, with the rest of the chrome. */
 
 /* --- Footer ------------------------------------------------------------- */
 
@@ -470,8 +452,32 @@ h3, .h3 {
   gap: var(--sp-xl) clamp(1rem, 3vw, 3rem);
   grid-template-columns: 1fr;
 }
-@media (min-width: 48rem) {
-  .footer__grid { grid-template-columns: 1.4fr 1fr 1fr; }
+/* Two up on a tablet, then the brand block plus three link columns. */
+@media (min-width: 34rem) { .footer__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (min-width: 62rem) { .footer__grid { grid-template-columns: 1.6fr 1fr 1fr 1.2fr; } }
+
+.footer__brand { display: flex; flex-direction: column; align-items: flex-start; gap: var(--sp-sm); }
+@media (min-width: 34rem) { .footer__brand { grid-column: 1 / -1; } }
+@media (min-width: 62rem) { .footer__brand { grid-column: auto; } }
+
+/* The address is a real link and has to read as one on ink. */
+.footer__mail {
+  font-size: var(--step-small);
+  color: var(--olmi-cream);
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.18em;
+  text-decoration-color: rgba(248, 233, 200, 0.4);
+  transition: text-decoration-color 0.25s var(--ease);
+  word-break: break-word;
+}
+.footer__mail:hover { text-decoration-color: currentColor; }
+
+.footer__place {
+  font-size: var(--step-eyebrow);
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: rgba(255, 248, 240, 0.45);
 }
 
 .footer__heading {
@@ -1570,4 +1576,395 @@ a:hover > .lead-block__title, a:hover .lead-block__title { color: var(--brand); 
   font-size: var(--step-small);
   color: var(--text-muted);
   padding-block: var(--sp-lg);
+}
+
+/* ==========================================================================
+   16  CHROME EXTRAS — actions, menu, search, boot
+   --------------------------------------------------------------------------
+   Everything here is enhancement. Without JavaScript the search button and
+   the menu toggle are simply not shown, the CTA is an ordinary link, and the
+   site behaves exactly as it did before.
+   ========================================================================== */
+
+/* --- The action cluster in the masthead ---------------------------------- */
+
+.masthead__actions {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-sm);
+}
+
+/* Small CTA. The full .button is too heavy inside a 4.25rem masthead. */
+.button--sm {
+  padding: 0.5rem var(--sp-md);
+  font-size: 0.6875rem;
+  letter-spacing: 0.14em;
+}
+
+/* The subscribe CTA is the one thing we ask for; below 30rem the wordmark and
+   the controls need the room more than it does. */
+@media (max-width: 30rem) { .masthead__cta { display: none; } }
+
+/* --- Icon buttons -------------------------------------------------------- */
+
+.icon-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  padding: 0;
+  background: none;
+  border: 1px solid transparent;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: color 0.2s var(--ease), border-color 0.2s var(--ease);
+}
+.icon-button:hover { color: var(--brand); border-color: var(--rule); }
+.icon-button svg {
+  width: 1.125rem;
+  height: 1.125rem;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.5;
+  stroke-linecap: round;
+}
+
+/* Search is opened by script, so it must not be offered without one. */
+[data-search-open] { display: none; }
+.js [data-search-open] { display: inline-flex; }
+
+/* --- Menu toggle --------------------------------------------------------- */
+
+/* Two rules that become an X. Cheaper than an icon font, and it animates. */
+.nav-toggle__bars {
+  display: inline-block;
+  position: relative;
+  width: 0.875rem;
+  height: 0.625rem;
+}
+.nav-toggle__bars i {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: currentColor;
+  transition: transform 0.3s var(--ease), opacity 0.2s var(--ease);
+}
+.nav-toggle__bars i:first-child { top: 0; }
+.nav-toggle__bars i:last-child { bottom: 0; }
+
+[aria-expanded="true"] .nav-toggle__bars i:first-child { transform: translateY(4.5px) rotate(45deg); }
+[aria-expanded="true"] .nav-toggle__bars i:last-child { transform: translateY(-4.5px) rotate(-45deg); }
+
+/* --- Menu panel ---------------------------------------------------------- */
+
+/* A plain display toggle, and the panel animates itself in.
+
+   A 0fr-to-1fr grid-row height animation was tried first. It is the prettier
+   effect, but its open height depends on a transition actually running, and
+   anything that stalls that transition — a throttled background tab, a
+   browser that will not animate the property — leaves the menu open to
+   nothing. `display` cannot stall. The movement is an entry animation
+   instead, which is decoration on top of a panel that is already the right
+   size. */
+.nav-panel {
+  display: none;
+  border-top: 1px solid var(--rule);
+  background: var(--olmi-offwhite);
+}
+
+.nav-panel[data-open="true"] {
+  display: block;
+  animation: panel-in 0.32s var(--ease);
+}
+
+@keyframes panel-in {
+  from { opacity: 0; transform: translateY(-0.5rem); }
+  to   { opacity: 1; transform: none; }
+}
+
+/* Keeping a collapsed panel out of the tab order is the script's job, via
+   the `inert` attribute. It was a transitioned `visibility` here, which does
+   not reliably land and left the links reachable while invisible. */
+.nav-panel[inert] { pointer-events: none; }
+
+@media (min-width: 60rem) { .nav-panel, .nav-panel[data-open="true"] { display: none; } }
+
+.nav-panel__grid {
+  display: grid;
+  gap: var(--sp-lg);
+  padding-block: var(--sp-lg) var(--sp-xl);
+}
+@media (min-width: 34rem) {
+  .nav-panel__grid { grid-template-columns: 1.2fr 1fr; }
+  .nav-panel__foot { grid-column: 1 / -1; }
+}
+
+.nav-panel__heading {
+  font-size: var(--step-eyebrow);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: var(--brand);
+  margin-bottom: var(--sp-sm);
+}
+
+.nav-panel__link {
+  display: block;
+  padding: var(--sp-xs) 0;
+  font-family: var(--font-display);
+  font-size: 1.375rem;
+  text-decoration: none;
+  color: var(--text);
+  transition: color 0.2s var(--ease);
+}
+.nav-panel__link:hover { color: var(--brand); }
+.nav-panel__link[aria-current="page"] { color: var(--brand); }
+
+.nav-panel__tags { display: flex; flex-wrap: wrap; gap: var(--sp-xs); }
+
+.tag {
+  display: inline-block;
+  padding: 0.3rem var(--sp-sm);
+  border: 1px solid var(--rule);
+  font-size: var(--step-eyebrow);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--text-muted);
+  text-decoration: none;
+  transition: border-color 0.2s var(--ease), color 0.2s var(--ease);
+}
+.tag:hover { border-color: var(--brand); color: var(--brand); }
+
+.nav-panel__foot { border-top: 1px solid var(--rule); padding-top: var(--sp-md); }
+.nav-panel__minor { display: flex; flex-wrap: wrap; gap: var(--sp-md); margin-bottom: var(--sp-sm); }
+.nav-panel__minor a {
+  font-size: var(--step-small);
+  color: var(--text-muted);
+  text-decoration: none;
+}
+.nav-panel__minor a:hover { color: var(--brand); }
+.nav-panel__mail { font-size: var(--step-small); color: var(--text-faint); text-decoration: none; }
+.nav-panel__mail:hover { color: var(--brand); }
+
+/* Items rise in behind the panel opening. Purely decorative, so it is the
+   first thing dropped under reduced motion. */
+/* No fill-mode on purpose. With `both`, the from-frame applies during the
+   delay and before the animation starts — so a stalled animation clock pins
+   every item at opacity 0 and the menu reads as empty. Without it the items
+   are simply visible until the animation runs. Same rule as the reveal
+   system: nothing is ever left stranded invisible. */
+.nav-panel[data-open="true"] .nav-panel__item {
+  animation: rise 0.34s var(--ease);
+}
+.nav-panel[data-open="true"] .nav-panel__item:nth-child(1) { animation-delay: 0.06s; }
+.nav-panel[data-open="true"] .nav-panel__item:nth-child(2) { animation-delay: 0.09s; }
+.nav-panel[data-open="true"] .nav-panel__item:nth-child(3) { animation-delay: 0.12s; }
+.nav-panel[data-open="true"] .nav-panel__item:nth-child(4) { animation-delay: 0.15s; }
+.nav-panel[data-open="true"] .nav-panel__item:nth-child(5) { animation-delay: 0.18s; }
+.nav-panel[data-open="true"] .nav-panel__item:nth-child(6) { animation-delay: 0.21s; }
+.nav-panel[data-open="true"] .nav-panel__item:nth-child(n + 7) { animation-delay: 0.24s; }
+
+@keyframes rise {
+  from { opacity: 0; transform: translateY(0.5rem); }
+  to   { opacity: 1; transform: none; }
+}
+
+/* --- Search -------------------------------------------------------------- */
+
+.search {
+  width: min(46rem, calc(100vw - 2rem));
+  max-height: min(34rem, calc(100vh - 6rem));
+  margin: 4.5rem auto auto;
+  padding: 0;
+  border: 1px solid var(--rule-strong);
+  background: var(--olmi-offwhite);
+  color: var(--text);
+  overflow: hidden;
+}
+.search[open] { display: flex; flex-direction: column; }
+
+.search::backdrop {
+  background: rgba(34, 31, 24, 0.42);
+  -webkit-backdrop-filter: blur(3px);
+  backdrop-filter: blur(3px);
+}
+
+/* Opening: the panel lifts, the backdrop washes in. */
+.search[open] { animation: search-in 0.28s var(--ease); }
+.search[open]::backdrop { animation: fade-in 0.28s var(--ease); }
+
+@keyframes search-in {
+  from { opacity: 0; transform: translateY(-0.75rem) scale(0.985); }
+  to   { opacity: 1; transform: none; }
+}
+@keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
+
+.search__bar {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-sm);
+  padding: var(--sp-sm) var(--sp-md);
+  border-bottom: 1px solid var(--rule);
+}
+.search__icon {
+  width: 1.125rem; height: 1.125rem; flex: none;
+  fill: none; stroke: var(--text-faint); stroke-width: 1.5; stroke-linecap: round;
+}
+
+.search__input {
+  flex: 1 1 auto;
+  min-width: 0;
+  background: none;
+  border: 0;
+  padding: var(--sp-xs) 0;
+  font-family: var(--font-text);
+  font-size: var(--step-lead);
+  color: var(--text);
+}
+.search__input:focus { outline: none; }
+.search__input::placeholder { color: var(--text-faint); }
+.search__input::-webkit-search-cancel-button { display: none; }
+
+.search__results { overflow-y: auto; padding: var(--sp-xs) 0 var(--sp-sm); }
+
+.search__hint,
+.search__empty {
+  padding: var(--sp-md);
+  font-size: var(--step-small);
+  color: var(--text-muted);
+}
+
+.search__hit {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  padding: var(--sp-sm) var(--sp-md);
+  text-decoration: none;
+  color: inherit;
+  border-left: 2px solid transparent;
+  transition: background 0.15s var(--ease), border-color 0.15s var(--ease);
+}
+.search__hit:hover,
+.search__hit:focus-visible,
+.search__hit[data-active="true"] {
+  background: rgba(34, 31, 24, 0.04);
+  border-left-color: var(--brand);
+  outline: none;
+}
+
+.search__kind {
+  font-size: 0.6875rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--text-faint);
+}
+.search__title { font-family: var(--font-display); font-size: 1.0625rem; line-height: 1.3; }
+.search__dek {
+  font-size: var(--step-small);
+  color: var(--text-muted);
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.search__hit mark { background: var(--olmi-cream); color: inherit; }
+
+/* --- Boot screen ---------------------------------------------------------
+   Ovo and Inter arrive over the network, and the swap from the fallback face
+   is visible on a first load. This holds a plain ground over the page until
+   the faces are ready, then clears.
+
+   Three rules keep it from becoming the usual loading-screen nuisance: it
+   only exists when the script runs, it clears itself after 1.2s whatever the
+   network is doing, and it shows once per session rather than on every page. */
+
+/* Only ever shown while the head script says so. Absent that script — or
+   without JavaScript at all — this element is display:none and the page is
+   simply the page. */
+.boot { display: none; }
+[data-booting] .boot { display: grid; }
+
+.boot {
+  position: fixed;
+  inset: 0;
+  z-index: 300;
+  display: grid;
+  place-items: center;
+  background: var(--olmi-offwhite);
+  transition: opacity 0.45s var(--ease), visibility 0s linear 0.45s;
+}
+.boot[data-done="true"] { opacity: 0; visibility: hidden; pointer-events: none; }
+
+.boot__mark {
+  font-family: var(--font-display);
+  font-size: clamp(1.25rem, 4vw, 1.75rem);
+  letter-spacing: 0.34em;
+  text-indent: 0.34em;
+  color: var(--brand);
+  animation: boot-pulse 1.6s var(--ease) infinite;
+}
+
+@keyframes boot-pulse {
+  0%, 100% { opacity: 0.35; }
+  50%      { opacity: 1; }
+}
+
+/* --- Coming soon veil ----------------------------------------------------
+   Sits over a finished layout rather than replacing it: the shop is built and
+   can be seen, it simply is not open yet. */
+
+.veil { position: relative; }
+
+.veil__content {
+  filter: blur(7px) saturate(0.75);
+  opacity: 0.5;
+  pointer-events: none;
+  user-select: none;
+}
+
+.veil__panel {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: start center;
+  padding: var(--sp-2xl) var(--sp-lg);
+  text-align: center;
+}
+
+.veil__inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--sp-md);
+  max-width: 34rem;
+  padding: var(--sp-xl) var(--sp-lg);
+  background: color-mix(in srgb, var(--olmi-offwhite) 92%, transparent);
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+  border: 1px solid var(--rule);
+  position: sticky;
+  top: 9rem;
+}
+
+.veil__title {
+  font-family: var(--font-display);
+  font-size: clamp(1.75rem, 5vw, 3rem);
+  line-height: 1.05;
+  color: var(--brand);
+  text-wrap: balance;
+}
+
+/* --- Motion --------------------------------------------------------------
+   Everything above that moves is decoration. None of it survives here. */
+
+@media (prefers-reduced-motion: reduce) {
+  .nav-toggle__bars i,
+  .boot { transition: none; }
+  .search[open],
+  .search[open]::backdrop,
+  .nav-panel[data-open="true"],
+  .nav-panel[data-open="true"] .nav-panel__item { animation: none; }
+  .boot__mark { animation: none; opacity: 1; }
 }

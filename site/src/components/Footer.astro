@@ -1,42 +1,62 @@
 ---
+import { CONTACT_EMAIL, PLACE } from "../lib/site";
+
 const year = new Date().getFullYear();
 ---
 
 <footer class="footer on-dark">
   <div class="wrap">
     <div class="footer__grid">
-      <div>
+      <div class="footer__brand">
         <a class="wordmark" href="/">OLMIKAYA</a>
         <p class="small muted footer__blurb">
           Ordinary Living Made Intentional. An independent East African
           editorial and lifestyle company.
         </p>
+        <a class="footer__mail" href={`mailto:${CONTACT_EMAIL}`}>
+          {CONTACT_EMAIL}
+        </a>
+        <p class="footer__place">{PLACE}</p>
       </div>
 
-      <div>
-        <h2 class="footer__heading">Read</h2>
+      <nav class="footer__col" aria-labelledby="footer-read">
+        <h2 class="footer__heading" id="footer-read">Read</h2>
         <ul class="footer__list">
           <li><a class="footer__link" href="/journal/">Journal</a></li>
+          <li><a class="footer__link" href="/sections/">Sections</a></li>
           <li><a class="footer__link" href="/letter/">The letter</a></li>
-          <li><a class="footer__link" href="/seasons/">Seasons</a></li>
           <li><a class="footer__link" href="/directory/">Directory</a></li>
+          <li><a class="footer__link" href="/seasons/">Seasons</a></li>
           <li><a class="footer__link" href="/shop/">Shop</a></li>
         </ul>
-      </div>
+      </nav>
 
-      <div>
-        <h2 class="footer__heading">Company</h2>
+      <nav class="footer__col" aria-labelledby="footer-company">
+        <h2 class="footer__heading" id="footer-company">Company</h2>
         <ul class="footer__list">
           <li><a class="footer__link" href="/about/">About</a></li>
           <li><a class="footer__link" href="/about/#masthead">Masthead</a></li>
+          <li><a class="footer__link" href="/contact/">Contact</a></li>
         </ul>
-      </div>
+      </nav>
+
+      <nav class="footer__col" aria-labelledby="footer-legal">
+        <h2 class="footer__heading" id="footer-legal">Legal &amp; privacy</h2>
+        <ul class="footer__list">
+          <li><a class="footer__link" href="/privacy/">Privacy policy</a></li>
+          <li><a class="footer__link" href="/terms/">Terms &amp; conditions</a></li>
+          <li>
+            {/* No separate cookie policy: the site sets none, and the privacy
+                page says so plainly rather than pointing at an empty page. */}
+            <a class="footer__link" href="/privacy/#cookies">Cookies</a>
+          </li>
+        </ul>
+      </nav>
     </div>
 
     <div class="colophon">
-      <span>&copy; {year} OLMIKAYA</span>
-      <span>Nairobi</span>
-      <span class="credit">Set in Ovo and Inter</span>
+      <span>&copy; {year} OLMIKAYA. All rights reserved.</span>
+      <span class="credit">No paid coverage, ever.</span>
     </div>
   </div>
 </footer>

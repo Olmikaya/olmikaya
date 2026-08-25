@@ -1,0 +1,121 @@
+---
+import Base from "../layouts/Base.astro";
+import { CONTACT_EMAIL, PLACE, POLICY_UPDATED } from "../lib/site";
+---
+
+<Base
+  title="Terms & conditions — OLMIKAYA"
+  description="The terms on which OLMIKAYA publishes, and what you may do with what you read here."
+  current="terms"
+  showSections={false}
+>
+  <section class="section--tight">
+    <div class="wrap">
+      <div class="grid">
+        <div class="col-8 start-3 stack reveal">
+          <p class="eyebrow">Legal</p>
+          <h1 class="display-l">Terms &amp; conditions</h1>
+          <p class="lead">
+            What you can expect from us, and what we ask in return. Written to
+            be read rather than to be impenetrable.
+          </p>
+          <p class="small muted">Last updated {POLICY_UPDATED}</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section--tight">
+    <div class="wrap">
+      <div class="grid">
+        <div class="col-8 start-3">
+          <div class="prose reveal">
+            <h2>Who we are</h2>
+            <p>
+              OLMIKAYA is an independent editorial and lifestyle company based
+              in {PLACE}. Using this site means accepting these terms.
+            </p>
+
+            <h2>What you may do with the writing</h2>
+            <p>
+              Read it, quote it, and link to it. Quote a reasonable extract with
+              our name on it and a link back, and you need no permission.
+            </p>
+            <p>
+              Republishing a piece in full, or using our photography, wordmark
+              or design elsewhere, does need permission. Ask — we are not
+              precious, but we do want to know.
+            </p>
+            <p>
+              Everything published here remains the property of OLMIKAYA or of
+              the writer or photographer credited on it.
+            </p>
+
+            <h2>The directory</h2>
+            <p>
+              Directory entries describe places we have visited more than once.
+              Nothing is listed because it paid to be, and we do not take
+              payment for coverage of any kind. Entries are our opinion at the
+              time of writing, and places change — check before you travel.
+            </p>
+            <p>
+              If you run somewhere we have listed and want it removed, write to
+              us and we will remove it.
+            </p>
+
+            <h2>The letter</h2>
+            <p>
+              Signing up is free and leaving is one click. We may change what
+              the letter contains or how often it goes out; if it changes in
+              any material way, the letter itself will say so first.
+            </p>
+
+            <h2>Objects</h2>
+            <p>
+              Nothing on this site is currently for sale. There is no cart, no
+              checkout and no payment processing anywhere on it. When that
+              changes, terms of sale will be published here before anything can
+              be bought, not after.
+            </p>
+
+            <h2>Accuracy, and getting it wrong</h2>
+            <p>
+              We report carefully and we still get things wrong. When we do, we
+              correct the piece and say that we corrected it. Nothing is quietly
+              edited after publication.
+            </p>
+            <p>
+              The site is published as it is. We do not warrant that it will
+              always be available or error-free, and nothing here is
+              professional advice — not legal, financial, medical or otherwise.
+              Decisions you take on the strength of what you read here are
+              yours.
+            </p>
+
+            <h2>Links to other sites</h2>
+            <p>
+              We link to places we find worth reading. We do not control them
+              and are not responsible for what they publish or collect.
+            </p>
+
+            <h2>Changes to these terms</h2>
+            <p>
+              If these terms change in substance, the date at the top changes
+              with them.
+            </p>
+
+            <h2>Governing law</h2>
+            <p>
+              These terms are governed by the laws of Kenya.
+            </p>
+
+            <h2>Contact</h2>
+            <p>
+              <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</Base>

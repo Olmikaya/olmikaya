@@ -44,9 +44,56 @@ const canonical = new URL(Astro.url.pathname, Astro.site).href;
       rel="stylesheet"
       href="https://fonts.googleapis.com/css2?family=Ovo&family=Inter:ital,wght@0,400;0,500;0,600;1,400&display=swap"
     />
+
+    {/*
+      The boot screen. Inline and in the head on purpose: it has to run before
+      the body paints, or the swap from the fallback face has already happened
+      and there is nothing left to hide.
+
+      Deliberately self-contained. It does NOT depend on olmikaya.js, because
+      a screen that hides the page until a script arrives is a screen that
+      hides the page forever when that script fails. It clears itself on
+      document.fonts.ready, on window load, and on a 1.2s timer — whichever
+      comes first — and only ever runs once per session, so ordinary
+      navigation is never interrupted.
+    */}
+    <script is:inline>
+      (function () {
+        var root = document.documentElement;
+
+        try {
+          if (sessionStorage.getItem("olmikaya.booted")) return;
+        } catch (e) {
+          return; /* storage blocked: skip it rather than risk showing it every page */
+        }
+
+        root.setAttribute("data-booting", "");
+
+        var cleared = false;
+        function done() {
+          if (cleared) return;
+          cleared = true;
+          try { sessionStorage.setItem("olmikaya.booted", "1"); } catch (e) {}
+
+          var el = document.querySelector("[data-boot]");
+          if (el) el.setAttribute("data-done", "true");
+          setTimeout(function () { root.removeAttribute("data-booting"); }, 500);
+        }
+
+        setTimeout(done, 1200);
+        window.addEventListener("load", done);
+        if (document.fonts && document.fonts.ready) {
+          document.fonts.ready.then(function () { setTimeout(done, 60); });
+        }
+      })();
+    </script>
   </head>
 
   <body>
+    <div class="boot" data-boot aria-hidden="true">
+      <p class="boot__mark">OLMIKAYA</p>
+    </div>
+
     <Masthead
       current={current}
       currentSection={currentSection}

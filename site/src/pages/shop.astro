@@ -33,7 +33,15 @@ const kinds = [...new Set(objects.map((o) => o.data.kind))].sort((a, b) =>
   <h1 class="visually-hidden">Shop</h1>
 
   <section class="section--tight">
-    <div class="wrap">
+    <div class="wrap veil">
+      {/*
+        The shop is finished and can be seen — it is simply not open. The
+        layout stays underneath, blurred and inert, rather than being replaced
+        by an empty holding page. Everything inside .veil__content is
+        pointer-events:none, so nothing under the blur can be clicked or
+        tabbed into.
+      */}
+      <div class="veil__content" inert>
       {/*
         Controls are enhancement only: .shop-bar is display:none until the
         script adds html.js. With the script absent or blocked every object
@@ -111,6 +119,22 @@ const kinds = [...new Set(objects.map((o) => o.data.kind))].sort((a, b) =>
       <p class="shop-empty" data-shop-empty hidden>
         Nothing in that kind yet.
       </p>
+      </div>
+
+      <div class="veil__panel">
+        <div class="veil__inner reveal">
+          <p class="eyebrow">The shop</p>
+          <h2 class="veil__title">Coming soon.</h2>
+          <p class="lead">
+            Four objects, made with the people we have written about. They are
+            not finished, and nothing here is for sale yet.
+          </p>
+          <p class="small muted">
+            The letter says when the first run is ready, and nothing else.
+          </p>
+          <a class="button" href="/letter/">Tell me when it opens</a>
+        </div>
+      </div>
     </div>
   </section>
 

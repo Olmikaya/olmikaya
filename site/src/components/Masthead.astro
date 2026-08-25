@@ -1,10 +1,14 @@
 ---
 import { sections } from "../lib/sections";
+import { CONTACT_EMAIL } from "../lib/site";
 
 /**
- * Site masthead: a thin utility strip, the wordmark and primary navigation,
- * then a section strip built from the categories that actually have articles.
- * Defined once here and rendered on every page.
+ * Site masthead: a thin utility strip, the wordmark, primary navigation, and
+ * the two controls that are always reachable — search and the subscribe CTA.
+ *
+ * The menu panel is not a copy of the desktop nav. On a phone it is the only
+ * navigation there is, so it carries the sections, the standing pages and the
+ * contact address as well.
  */
 interface Props {
   /** Which primary nav item is the current page. */
@@ -36,9 +40,9 @@ const allSections = await sections();
     <div class="utility__inner">
       <span class="utility__note">Ordinary Living Made Intentional</span>
       <div class="utility__group">
-        <a class="utility__link" href="/seasons/">Seasons</a>
-        <a class="utility__link" href="/directory/">Directory</a>
         <a class="utility__link" href="/letter/">The letter</a>
+        <a class="utility__link" href="/directory/">Directory</a>
+        <a class="utility__link" href="/contact/">Contact</a>
       </div>
     </div>
   </div>
@@ -63,37 +67,92 @@ const allSections = await sections();
         }
       </nav>
 
-      <button
-        class="nav-toggle"
-        type="button"
-        data-nav-toggle
-        aria-expanded="false"
-        aria-controls="nav-panel"
-      >
-        <span data-nav-label>Menu</span>
-      </button>
+      <div class="masthead__actions">
+        <button
+          class="icon-button"
+          type="button"
+          data-search-open
+          aria-label="Search"
+          title="Search  ( / )"
+        >
+          <svg viewBox="0 0 20 20" aria-hidden="true" focusable="false">
+            <circle cx="9" cy="9" r="6" />
+            <line x1="13.5" y1="13.5" x2="18" y2="18" />
+          </svg>
+        </button>
+
+        <a class="button button--sm masthead__cta" href="/letter/">
+          Subscribe
+        </a>
+
+        <button
+          class="nav-toggle"
+          type="button"
+          data-nav-toggle
+          aria-expanded="false"
+          aria-controls="nav-panel"
+        >
+          <span class="nav-toggle__bars" aria-hidden="true"><i></i><i></i></span>
+          <span data-nav-label>Menu</span>
+        </button>
+      </div>
     </div>
   </div>
 
   <div class="nav-panel" id="nav-panel" data-open="false">
     <div class="wrap">
-      <nav aria-label="Primary, mobile">
-        <ul class="nav-panel__list">
-          {
-            NAV.map((item) => (
-              <li>
-                <a
-                  class="nav-panel__link"
-                  href={item.href}
-                  aria-current={item.key === current ? "page" : undefined}
-                >
-                  {item.label}
-                </a>
-              </li>
-            ))
-          }
-        </ul>
-      </nav>
+      <div class="nav-panel__grid">
+        <nav aria-label="Primary, mobile">
+          <p class="nav-panel__heading">Read</p>
+          <ul class="nav-panel__list">
+            {
+              NAV.map((item) => (
+                <li class="nav-panel__item">
+                  <a
+                    class="nav-panel__link"
+                    href={item.href}
+                    aria-current={item.key === current ? "page" : undefined}
+                  >
+                    {item.label}
+                  </a>
+                </li>
+              ))
+            }
+            <li class="nav-panel__item">
+              <a class="nav-panel__link" href="/letter/">The letter</a>
+            </li>
+          </ul>
+        </nav>
+
+        {
+          allSections.length > 0 && (
+            <nav aria-label="Sections, mobile">
+              <p class="nav-panel__heading">Sections</p>
+              <ul class="nav-panel__tags">
+                {allSections.map((s) => (
+                  <li class="nav-panel__item">
+                    <a class="tag" href={`/sections/${s.slug}/`}>
+                      {s.name}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </nav>
+          )
+        }
+
+        <div class="nav-panel__foot">
+          <p class="nav-panel__heading">Elsewhere</p>
+          <ul class="nav-panel__minor">
+            <li class="nav-panel__item"><a href="/contact/">Contact</a></li>
+            <li class="nav-panel__item"><a href="/privacy/">Privacy</a></li>
+            <li class="nav-panel__item"><a href="/terms/">Terms</a></li>
+          </ul>
+          <a class="nav-panel__mail" href={`mailto:${CONTACT_EMAIL}`}>
+            {CONTACT_EMAIL}
+          </a>
+        </div>
+      </div>
     </div>
   </div>
 </header>
@@ -124,3 +183,30 @@ const allSections = await sections();
     </div>
   )
 }
+
+{/* Native <dialog>: Escape, focus handling and the backdrop come free. */}
+<dialog class="search" data-search aria-label="Search OLMIKAYA">
+  <form class="search__bar" method="dialog" data-search-form>
+    <svg class="search__icon" viewBox="0 0 20 20" aria-hidden="true" focusable="false">
+      <circle cx="9" cy="9" r="6" />
+      <line x1="13.5" y1="13.5" x2="18" y2="18" />
+    </svg>
+    <label class="visually-hidden" for="search-input">Search</label>
+    <input
+      class="search__input"
+      id="search-input"
+      type="search"
+      placeholder="Search stories, places, objects"
+      autocomplete="off"
+      data-search-input
+    />
+    <button class="icon-button" type="button" data-search-close aria-label="Close search">
+      <svg viewBox="0 0 20 20" aria-hidden="true" focusable="false">
+        <line x1="5" y1="5" x2="15" y2="15" />
+        <line x1="15" y1="5" x2="5" y2="15" />
+      </svg>
+    </button>
+  </form>
+
+  <div class="search__results" data-search-results role="region" aria-live="polite"></div>
+</dialog>

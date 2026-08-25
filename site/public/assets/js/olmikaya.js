@@ -26,6 +26,12 @@
     function setOpen(open) {
       panel.setAttribute("data-open", open ? "true" : "false");
       toggle.setAttribute("aria-expanded", open ? "true" : "false");
+
+      /* A collapsed panel is still in the document, so without this its links
+         stay tabbable and stay in the accessibility tree while invisible. */
+      if (open) panel.removeAttribute("inert");
+      else panel.setAttribute("inert", "");
+
       var label = toggle.querySelector("[data-nav-label]");
       if (label) label.textContent = open ? "Close" : "Menu";
     }
@@ -314,6 +320,211 @@
     apply();
   }
 
+  /* ------------------------------------------------------------------------
+     7. Search.
+
+     The whole site is a few dozen entries, so /search.json is fetched once on
+     the first open and filtered in memory. No index library, no service, no
+     request per keystroke.
+
+     The control is hidden until this file runs (see the .js gate in the
+     stylesheet), so nothing offers a search that cannot happen.
+     --------------------------------------------------------------------- */
+  function initSearch() {
+    var dialog = document.querySelector("[data-search]");
+    var openers = document.querySelectorAll("[data-search-open]");
+    if (!dialog || !openers.length || typeof dialog.showModal !== "function") return;
+
+    var input = dialog.querySelector("[data-search-input]");
+    var results = dialog.querySelector("[data-search-results]");
+    var closer = dialog.querySelector("[data-search-close]");
+    var form = dialog.querySelector("[data-search-form]");
+
+    var index = null;
+    var loading = false;
+    var active = -1;
+
+    function escapeHtml(s) {
+      return String(s)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;");
+    }
+
+    /* Marks the matched run in already-escaped text. */
+    function mark(text, query) {
+      var safe = escapeHtml(text);
+      var at = safe.toLowerCase().indexOf(query);
+      if (at < 0) return safe;
+      return (
+        safe.slice(0, at) +
+        "<mark>" +
+        safe.slice(at, at + query.length) +
+        "</mark>" +
+        safe.slice(at + query.length)
+      );
+    }
+
+    function show(html) {
+      results.innerHTML = html;
+      active = -1;
+    }
+
+    function hits() {
+      return results.querySelectorAll(".search__hit");
+    }
+
+    function render(query) {
+      if (!query) {
+        show('<p class="search__hint">Stories, places, objects and pages.</p>');
+        return;
+      }
+      if (!index) {
+        show('<p class="search__hint">Loading…</p>');
+        return;
+      }
+
+      var q = query.toLowerCase();
+
+      var found = index
+        .filter(function (e) {
+          return (
+            e.title.toLowerCase().indexOf(q) > -1 ||
+            e.dek.toLowerCase().indexOf(q) > -1 ||
+            String(e.kind).toLowerCase().indexOf(q) > -1
+          );
+        })
+        /* A title match is what someone meant; a body match is a maybe. */
+        .sort(function (a, b) {
+          var at = a.title.toLowerCase().indexOf(q) > -1 ? 0 : 1;
+          var bt = b.title.toLowerCase().indexOf(q) > -1 ? 0 : 1;
+          return at - bt;
+        })
+        .slice(0, 8);
+
+      if (!found.length) {
+        show(
+          '<p class="search__empty">Nothing for “' +
+            escapeHtml(query) +
+            '”. Try a place, a section, or part of a title.</p>'
+        );
+        return;
+      }
+
+      show(
+        found
+          .map(function (e) {
+            return (
+              '<a class="search__hit" href="' +
+              escapeHtml(e.url) +
+              '"><span class="search__kind">' +
+              escapeHtml(e.kind) +
+              '</span><span class="search__title">' +
+              mark(e.title, q) +
+              '</span><span class="search__dek">' +
+              mark(e.dek, q) +
+              "</span></a>"
+            );
+          })
+          .join("")
+      );
+    }
+
+    function load() {
+      if (index || loading) return;
+      loading = true;
+
+      fetch("/search.json")
+        .then(function (r) { return r.json(); })
+        .then(function (data) {
+          index = data;
+          render(input.value.trim());
+        })
+        .catch(function () {
+          show('<p class="search__empty">Search is unavailable just now.</p>');
+        })
+        .then(function () { loading = false; });
+    }
+
+    function open() {
+      if (dialog.open) return;
+      dialog.showModal();
+      load();
+      render(input.value.trim());
+      input.focus();
+      input.select();
+    }
+
+    function close() {
+      if (dialog.open) dialog.close();
+    }
+
+    /* Arrow keys walk the results; Enter follows the highlighted one. */
+    function move(step) {
+      var list = hits();
+      if (!list.length) return;
+
+      active = (active + step + list.length) % list.length;
+
+      Array.prototype.forEach.call(list, function (el, i) {
+        if (i === active) el.setAttribute("data-active", "true");
+        else el.removeAttribute("data-active");
+      });
+
+      list[active].scrollIntoView({ block: "nearest" });
+    }
+
+    Array.prototype.forEach.call(openers, function (b) {
+      b.addEventListener("click", open);
+    });
+    if (closer) closer.addEventListener("click", close);
+
+    /* method="dialog" would close on Enter, which is the opposite of what a
+       search box should do. */
+    if (form) form.addEventListener("submit", function (e) { e.preventDefault(); });
+
+    input.addEventListener("input", function () {
+      render(input.value.trim());
+    });
+
+    input.addEventListener("keydown", function (e) {
+      if (e.key === "ArrowDown") { e.preventDefault(); move(1); }
+      else if (e.key === "ArrowUp") { e.preventDefault(); move(-1); }
+      else if (e.key === "Enter") {
+        var list = hits();
+        var target = active > -1 ? list[active] : list[0];
+        if (target) { e.preventDefault(); window.location.href = target.href; }
+      }
+    });
+
+    /* Clicking the backdrop is a click on the dialog itself. */
+    dialog.addEventListener("click", function (e) {
+      if (e.target === dialog) close();
+    });
+
+    /* "/" the way every reader-facing site does it, and Cmd/Ctrl-K for the
+       people who expect that instead. Neither steals a keystroke from someone
+       who is actually typing. */
+    document.addEventListener("keydown", function (e) {
+      var el = document.activeElement;
+      var typing =
+        el &&
+        (el.tagName === "INPUT" ||
+          el.tagName === "TEXTAREA" ||
+          el.isContentEditable);
+
+      if ((e.key === "k" || e.key === "K") && (e.metaKey || e.ctrlKey)) {
+        e.preventDefault();
+        open();
+      } else if (e.key === "/" && !typing && !dialog.open) {
+        e.preventDefault();
+        open();
+      }
+    });
+
+    render("");
+  }
+
   function init() {
     initNav();
     initReveal();
@@ -321,6 +532,7 @@
     initSubscribe();
     initYear();
     initShop();
+    initSearch();
   }
 
   if (document.readyState === "loading") {

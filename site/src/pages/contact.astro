@@ -1,0 +1,65 @@
+---
+import Base from "../layouts/Base.astro";
+import { CONTACT_EMAIL, PLACE } from "../lib/site";
+---
+
+<Base
+  title="Contact — OLMIKAYA"
+  description="How to reach OLMIKAYA — pitches, corrections, directory suggestions and everything else."
+  current="contact"
+  showSections={false}
+>
+  <section class="section--tight">
+    <div class="wrap">
+      <div class="grid">
+        <div class="col-7 stack reveal">
+          <p class="eyebrow">Contact</p>
+          <h1 class="display-l">One address, read by a person.</h1>
+          <p class="lead">
+            There is no contact form and no ticket number. Write and someone
+            reads it.
+          </p>
+          <p class="contact-address">
+            <a class="link" href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>
+          </p>
+          <p class="small muted">{PLACE}</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap">
+      <div class="grid">
+        <div class="col-4 stack reveal">
+          <p class="eyebrow">What to send</p>
+          <h2 class="h2">Useful things to write about</h2>
+        </div>
+
+        <div class="col-7 start-6 reveal">
+          <div class="prose">
+            <p>
+              <strong>A correction.</strong> If we have got something wrong,
+              tell us and we will fix it and say that we did. Corrections are
+              not quietly edited in.
+            </p>
+            <p>
+              <strong>A place for the directory.</strong> Somewhere you think is
+              worth crossing a city for. We go more than once before anything is
+              listed, and nothing is listed because it paid to be.
+            </p>
+            <p>
+              <strong>A pitch.</strong> A paragraph on the story and why you are
+              the person to report it. We commission rarely and pay on
+              acceptance.
+            </p>
+            <p>
+              <strong>Anything about the letter.</strong> Sign-ups, unsubscribes
+              and anything that went wrong with either.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</Base>
