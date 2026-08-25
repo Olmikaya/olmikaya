@@ -91,14 +91,21 @@ export async function onRequestPost(context) {
     return respond(request, 400, false, "We could not read that submission.");
   }
 
+  const email = (fields.email || "").trim().toLowerCase();
+  const trap = (fields.trap || "").trim().toLowerCase();
+
   /* Honeypot. A bot fills every field it can see; a person never sees this
      one. Answer exactly as we would on success so the bot learns nothing,
-     and tell the provider nothing. */
-  if (fields.company) {
+     and tell the provider nothing.
+
+     The exception matters more than the rule: password managers and browser
+     autofill routinely ignore autocomplete="off" and put the SAME address
+     into every text input they find. Discarding those would silently throw
+     away real sign-ups from exactly the people most likely to use a manager.
+     A trap that only echoes the address is autofill, not a bot. */
+  if (trap && trap !== email) {
     return respond(request, 200, true, CONFIRM_MESSAGE, "pending");
   }
-
-  const email = (fields.email || "").trim().toLowerCase();
 
   if (!email || email.length > 254 || !EMAIL.test(email)) {
     return respond(request, 400, false, "That does not look like an email address.");
@@ -267,18 +274,21 @@ async function addToForm(env, email, referrer) {
 async function readFields(request) {
   const type = request.headers.get("Content-Type") || "";
 
+  /* The trap field was renamed from `company`; both are read so a page
+     cached from before the rename still submits something the endpoint
+     understands. */
   if (type.includes("application/json")) {
     const body = await request.json();
     return {
       email: typeof body.email === "string" ? body.email : "",
-      company: typeof body.company === "string" ? body.company : "",
+      trap: String(body["olmi-check"] || body.company || ""),
     };
   }
 
   const form = await request.formData();
   return {
     email: String(form.get("email") || ""),
-    company: String(form.get("company") || ""),
+    trap: String(form.get("olmi-check") || form.get("company") || ""),
   };
 }
 

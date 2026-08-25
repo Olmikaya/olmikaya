@@ -500,6 +500,47 @@ them all once the real framework is in and the notices disappear on their own.
 
 ---
 
+## Fonts, and why there is no loading screen
+
+Ovo and Inter are **self-hosted**, latin subsets, in `public/assets/fonts/`.
+Two files, 64KB, preloaded in the head. Nothing is requested from
+fonts.googleapis.com any more — that removes two third-party connections from
+the critical path and means no reader's IP is handed to Google just to read
+the site, which is what the privacy policy claims.
+
+There was a loading screen here to hide the font swap. It is gone: hiding the
+page until fonts arrive trades a brief flash for a guaranteed delay, which is
+the worse deal. The swap is handled properly instead, with metric-matched
+fallbacks — `Ovo fallback` and `Inter fallback` in section 00 of the
+stylesheet, built on the local faces with `size-adjust` and metric overrides so
+the stand-in occupies the same space as the real thing. Measured drift is
+**0.03%**, so text does not move when the webfont lands.
+
+### Redoing the measurements
+
+If either font is updated, recompute `size-adjust`. Render the same string at
+the same size in the real face and in the raw fallback, and divide the widths:
+
+```js
+const s = document.createElement('span');
+s.style.cssText = 'position:absolute;left:-9999px;white-space:nowrap;font-size:100px';
+s.textContent = 'Ordinary Living Made Intentional 0123456789';
+document.body.appendChild(s);
+const w = f => { s.style.fontFamily = f; return s.getBoundingClientRect().width; };
+w('"Inter"') / w('"Segoe UI"');   // -> size-adjust for Inter fallback
+w('"Ovo"')   / w('Georgia');      // -> size-adjust for Ovo fallback
+```
+
+It can only be exact for one fallback and the fallback differs by platform;
+these are tuned against Georgia and Segoe UI. Elsewhere the match is close
+rather than perfect, which still beats untuned.
+
+Italic is not included. Nothing on the site uses it, and browsers synthesise a
+passable oblique. Add the italic file and a matching `@font-face` if editors
+start writing it in Markdown.
+
+---
+
 ## Design system
 
 Unchanged from the static build, and documented at `/styleguide/`.

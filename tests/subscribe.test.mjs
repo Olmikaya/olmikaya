@@ -42,15 +42,15 @@ function stubKit({ existing = null, create = 201, form = 201, lookupOk = true } 
 const writes = () => calls.filter((c) => (c.init.method || "GET") === "POST");
 const hit = (frag) => calls.some((c) => c.url.includes(frag));
 
-function req({ email = "", company = "", json = true, origin = ORIGIN, asJson = false } = {}) {
+function req({ email = "", trap = "", json = true, origin = ORIGIN, asJson = false } = {}) {
   const headers = { Accept: json ? "application/json" : "text/html" };
   if (origin) headers.Origin = origin;
   let body;
   if (asJson) {
     headers["Content-Type"] = "application/json";
-    body = JSON.stringify({ email, company });
+    body = JSON.stringify({ email, "olmi-check": trap });
   } else {
-    body = new URLSearchParams({ email, company });
+    body = new URLSearchParams({ email, "olmi-check": trap });
   }
   return new Request(URL_, { method: "POST", headers, body });
 }
@@ -75,9 +75,35 @@ console.log("\n/api/subscribe");
 
 await check("honeypot is accepted silently and never reaches Kit", async () => {
   stubKit();
-  const res = await onRequestPost({ request: req({ email: "a@b.com", company: "bot" }), env: ENV });
+  const res = await onRequestPost({ request: req({ email: "a@b.com", trap: "Acme Ltd" }), env: ENV });
   eq(res.status, 200, "status");
   eq((await res.json()).ok, true, "ok");
+  eq(calls.length, 0, "provider calls");
+});
+
+await check("autofill echoing the address into the trap is NOT treated as a bot", async () => {
+  stubKit();
+  const res = await onRequestPost({ request: req({ email: "reader@example.com", trap: "reader@example.com" }), env: ENV });
+  eq(res.status, 200, "status");
+  eq((await res.json()).state, "pending", "state");
+  if (!hit("/forms/")) throw new Error("a real sign-up was silently discarded");
+});
+
+await check("the trap still catches a bot that fills it with something else", async () => {
+  stubKit();
+  await onRequestPost({ request: req({ email: "bot@example.com", trap: "http://spam.example" }), env: ENV });
+  eq(calls.length, 0, "provider calls");
+});
+
+await check("the pre-rename field name is still honoured", async () => {
+  stubKit();
+  const request = new Request(URL_, {
+    method: "POST",
+    headers: { Accept: "application/json", Origin: ORIGIN },
+    body: new URLSearchParams({ email: "a@b.com", company: "bot" }),
+  });
+  const res = await onRequestPost({ request, env: ENV });
+  eq(res.status, 200, "status");
   eq(calls.length, 0, "provider calls");
 });
 

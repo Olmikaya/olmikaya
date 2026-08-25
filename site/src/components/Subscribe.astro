@@ -71,12 +71,20 @@ const { source = "site", archiveLink = true, compact = false } = Astro.props;
               Honeypot. A person never sees this and never fills it; a bot fills
               every field it finds. Submissions carrying it are accepted and
               silently dropped, so the bot learns nothing from the response.
+
+              It used to be called `company`, with a Company label, which was a
+              mistake: "company" is a name browsers and password managers
+              recognise and autofill, autocomplete="off" is widely ignored, and
+              a filled trap silently discards a real person's sign-up. The name
+              is now one no autofill heuristic matches, and the endpoint also
+              forgives a trap that merely echoes the address — which is exactly
+              what autofill does.
             */}
             <div class="visually-hidden" aria-hidden="true">
-              <label for="company">Company</label>
+              <label for="olmi-check">Leave this field empty</label>
               <input
-                id="company"
-                name="company"
+                id="olmi-check"
+                name="olmi-check"
                 type="text"
                 tabindex="-1"
                 autocomplete="off"

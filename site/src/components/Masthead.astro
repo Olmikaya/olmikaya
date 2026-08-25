@@ -1,6 +1,5 @@
 ---
 import { sections } from "../lib/sections";
-import { CONTACT_EMAIL } from "../lib/site";
 
 /**
  * Site masthead: a thin utility strip, the wordmark, primary navigation, and
@@ -148,9 +147,6 @@ const allSections = await sections();
             <li class="nav-panel__item"><a href="/privacy/">Privacy</a></li>
             <li class="nav-panel__item"><a href="/terms/">Terms</a></li>
           </ul>
-          <a class="nav-panel__mail" href={`mailto:${CONTACT_EMAIL}`}>
-            {CONTACT_EMAIL}
-          </a>
         </div>
       </div>
     </div>

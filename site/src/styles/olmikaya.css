@@ -22,6 +22,70 @@
    ========================================================================== */
 
 /* ==========================================================================
+   00  FONTS
+   --------------------------------------------------------------------------
+   Self-hosted, same origin, preloaded in the head. See
+   public/assets/fonts/README.txt for why, and for the licence.
+
+   `swap` rather than `block`: text must never be invisible waiting on a
+   file. The fallback metrics below are tuned so the swap moves nothing —
+   that, not a loading screen, is what removes the flash.
+   ========================================================================== */
+
+@font-face {
+  font-family: "Ovo";
+  src: url("/assets/fonts/ovo-latin.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* One variable file covers every weight the site uses. */
+@font-face {
+  font-family: "Inter";
+  src: url("/assets/fonts/inter-latin.woff2") format("woff2");
+  font-weight: 400 600;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* --------------------------------------------------------------------------
+   Metric-matched fallbacks.
+
+   These are the local faces that stand in for the first few hundred
+   milliseconds, adjusted so their glyphs occupy the same space as the real
+   ones. When the webfont arrives it replaces text of identical size, so
+   nothing reflows and the swap is close to invisible.
+
+   size-adjust is MEASURED, not guessed: render the same string at the same
+   size in the real face and in the raw fallback, and divide the widths. The
+   method is in README.md so it can be redone if either font is updated.
+
+   It can only be exact for one fallback, and the fallback differs by
+   platform — these are tuned against Georgia and Segoe UI, what Windows
+   reaches for first. Elsewhere the match is close rather than perfect, which
+   is still far better than untuned.
+   ----------------------------------------------------------------------- */
+
+@font-face {
+  font-family: "Ovo fallback";
+  src: local("Georgia"), local("Times New Roman"), local("Times");
+  size-adjust: 98%;       /* Ovo 2027.45 / Georgia 2069.3 at 100px */
+  ascent-override: 91%;
+  descent-override: 22%;
+  line-gap-override: 0%;
+}
+
+@font-face {
+  font-family: "Inter fallback";
+  src: local("Segoe UI"), local("Helvetica Neue"), local("Arial"), local("Liberation Sans");
+  size-adjust: 106.6%;    /* Inter 2151.56 / Segoe UI 2017.64 at 100px */
+  ascent-override: 90%;
+  descent-override: 22%;
+  line-gap-override: 0%;
+}
+
+/* ==========================================================================
    01  TOKENS
    ========================================================================== */
 
@@ -69,8 +133,8 @@
      Never put <strong>/<em> inside Ovo-set text; the browser would
      synthesise faux bold/oblique. Inter carries all reading text and UI.
      --------------------------------------------------------------------- */
-  --font-display: "Ovo", Georgia, "Times New Roman", Times, serif;
-  --font-text:    "Inter", system-ui, -apple-system, "Segoe UI", Helvetica, Arial, sans-serif;
+  --font-display: "Ovo", "Ovo fallback", Georgia, "Times New Roman", Times, serif;
+  --font-text:    "Inter", "Inter fallback", system-ui, -apple-system, "Segoe UI", Helvetica, Arial, sans-serif;
 
   --step-display-xl: clamp(2.75rem, 1.45rem + 5.4vw, 6rem);
   --step-display-l:  clamp(2.125rem, 1.5rem + 2.9vw, 3.75rem);
@@ -1579,7 +1643,7 @@ a:hover > .lead-block__title, a:hover .lead-block__title { color: var(--brand); 
 }
 
 /* ==========================================================================
-   16  CHROME EXTRAS — actions, menu, search, boot
+   16  CHROME EXTRAS — actions, menu, search, veil
    --------------------------------------------------------------------------
    Everything here is enhancement. Without JavaScript the search button and
    the menu toggle are simply not shown, the CTA is an ordinary link, and the
@@ -1871,46 +1935,6 @@ a:hover > .lead-block__title, a:hover .lead-block__title { color: var(--brand); 
 }
 .search__hit mark { background: var(--olmi-cream); color: inherit; }
 
-/* --- Boot screen ---------------------------------------------------------
-   Ovo and Inter arrive over the network, and the swap from the fallback face
-   is visible on a first load. This holds a plain ground over the page until
-   the faces are ready, then clears.
-
-   Three rules keep it from becoming the usual loading-screen nuisance: it
-   only exists when the script runs, it clears itself after 1.2s whatever the
-   network is doing, and it shows once per session rather than on every page. */
-
-/* Only ever shown while the head script says so. Absent that script — or
-   without JavaScript at all — this element is display:none and the page is
-   simply the page. */
-.boot { display: none; }
-[data-booting] .boot { display: grid; }
-
-.boot {
-  position: fixed;
-  inset: 0;
-  z-index: 300;
-  display: grid;
-  place-items: center;
-  background: var(--olmi-offwhite);
-  transition: opacity 0.45s var(--ease), visibility 0s linear 0.45s;
-}
-.boot[data-done="true"] { opacity: 0; visibility: hidden; pointer-events: none; }
-
-.boot__mark {
-  font-family: var(--font-display);
-  font-size: clamp(1.25rem, 4vw, 1.75rem);
-  letter-spacing: 0.34em;
-  text-indent: 0.34em;
-  color: var(--brand);
-  animation: boot-pulse 1.6s var(--ease) infinite;
-}
-
-@keyframes boot-pulse {
-  0%, 100% { opacity: 0.35; }
-  50%      { opacity: 1; }
-}
-
 /* --- Coming soon veil ----------------------------------------------------
    Sits over a finished layout rather than replacing it: the shop is built and
    can be seen, it simply is not open yet. */
@@ -1960,11 +1984,9 @@ a:hover > .lead-block__title, a:hover .lead-block__title { color: var(--brand); 
    Everything above that moves is decoration. None of it survives here. */
 
 @media (prefers-reduced-motion: reduce) {
-  .nav-toggle__bars i,
-  .boot { transition: none; }
+  .nav-toggle__bars i { transition: none; }
   .search[open],
   .search[open]::backdrop,
   .nav-panel[data-open="true"],
   .nav-panel[data-open="true"] .nav-panel__item { animation: none; }
-  .boot__mark { animation: none; opacity: 1; }
 }
