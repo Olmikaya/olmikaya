@@ -80,25 +80,76 @@
   }
 
   /* ------------------------------------------------------------------------
-     4. Newsletter form — deliberately not wired.
-     There is no mailing provider connected yet. Rather than let the form
-     submit to nowhere and reload the page, we stop it and say plainly that
-     it is not connected. We never show a success state for something that
-     did not happen. Replace this whole function when a provider is added;
-     see README.md.
+     4. The letter sign-up.
+
+     The form works without this function: it posts normally to
+     /api/subscribe and the endpoint redirects to /letter/thank-you/. All
+     this does is keep the reader on the page and report inline.
+
+     The endpoint answers JSON when asked for it, so the only difference
+     between the two paths is the Accept header.
      --------------------------------------------------------------------- */
   function initSubscribe() {
     var forms = document.querySelectorAll("[data-subscribe]");
+    if (!forms.length || typeof window.fetch !== "function") return;
 
     Array.prototype.forEach.call(forms, function (form) {
       var status = form.parentNode.querySelector("[data-subscribe-status]");
+      var button = form.querySelector("[data-subscribe-submit]");
+      var busy = false;
+
+      function say(message, kind) {
+        if (!status) return;
+        status.textContent = message;
+        status.classList.remove("subscribe__status--ok");
+        status.classList.remove("subscribe__status--error");
+        if (kind) status.classList.add("subscribe__status--" + kind);
+      }
+
+      function setBusy(state) {
+        busy = state;
+        if (!button) return;
+        button.setAttribute("aria-disabled", state ? "true" : "false");
+      }
 
       form.addEventListener("submit", function (e) {
         e.preventDefault();
-        if (!status) return;
-        status.textContent =
-          "This form is not connected to a mailing provider yet, so nothing " +
-          "was sent. Connect one in assets/js/olmikaya.js — see README.md.";
+        if (busy) return;
+
+        setBusy(true);
+        say("Signing you up…");
+
+        fetch(form.action, {
+          method: "POST",
+          body: new FormData(form),
+          headers: { Accept: "application/json" }
+        })
+          .then(function (res) {
+            return res.json().then(function (data) {
+              return { ok: res.ok, data: data };
+            });
+          })
+          .then(function (result) {
+            if (result.ok && result.data && result.data.ok) {
+              say(result.data.message || "You are on the list.", "ok");
+              form.reset();
+            } else {
+              say(
+                (result.data && result.data.message) ||
+                  "That did not go through. Try again in a moment.",
+                "error"
+              );
+            }
+          })
+          .catch(function () {
+            say(
+              "That did not go through — check your connection and try again.",
+              "error"
+            );
+          })
+          .then(function () {
+            setBusy(false);
+          });
       });
     });
   }
@@ -112,11 +163,84 @@
     for (var i = 0; i < nodes.length; i++) nodes[i].textContent = year;
   }
 
+  /* ------------------------------------------------------------------------
+     6. Shop filtering and sorting.
+     Runs only on a page carrying [data-shop]. The controls are hidden by CSS
+     until html.js lands, so without this file every product is shown in
+     curated order and there is nothing to click that does nothing.
+
+     Sorting sets the CSS `order` property rather than moving nodes: the grid
+     reorders visually, the DOM stays put, and nothing that has already been
+     revealed is torn out and re-inserted.
+     --------------------------------------------------------------------- */
+  function initShop() {
+    var bar = document.querySelector("[data-shop]");
+    var grid = document.querySelector("[data-shop-grid]");
+    if (!bar || !grid) return;
+
+    var products = Array.prototype.slice.call(
+      grid.querySelectorAll("[data-product]")
+    );
+    if (!products.length) return;
+
+    var filters = bar.querySelectorAll("[data-shop-filter]");
+    var sorter = bar.querySelector("[data-shop-sort]");
+    var empty = document.querySelector("[data-shop-empty]");
+    var kind = "all";
+
+    function name(el) {
+      return (el.getAttribute("data-name") || "").toLowerCase();
+    }
+
+    function apply() {
+      var mode = sorter ? sorter.value : "order";
+      var shown = 0;
+
+      var ranked = products.slice();
+      if (mode === "name-asc" || mode === "name-desc") {
+        ranked.sort(function (a, b) {
+          var cmp = name(a).localeCompare(name(b));
+          return mode === "name-asc" ? cmp : -cmp;
+        });
+      } else {
+        ranked.sort(function (a, b) {
+          return (a.getAttribute("data-order") | 0) - (b.getAttribute("data-order") | 0);
+        });
+      }
+
+      ranked.forEach(function (el, i) {
+        var match = kind === "all" || el.getAttribute("data-kind") === kind;
+        el.classList.toggle("is-filtered-out", !match);
+        el.style.order = String(i);
+        if (match) shown++;
+      });
+
+      if (empty) empty.hidden = shown > 0;
+    }
+
+    Array.prototype.forEach.call(filters, function (button) {
+      button.addEventListener("click", function () {
+        kind = button.getAttribute("data-shop-filter");
+
+        Array.prototype.forEach.call(filters, function (other) {
+          other.setAttribute("aria-pressed", other === button ? "true" : "false");
+        });
+
+        apply();
+      });
+    });
+
+    if (sorter) sorter.addEventListener("change", apply);
+
+    apply();
+  }
+
   function init() {
     initNav();
     initReveal();
     initSubscribe();
     initYear();
+    initShop();
   }
 
   if (document.readyState === "loading") {

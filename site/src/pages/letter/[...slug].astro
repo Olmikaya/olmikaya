@@ -1,0 +1,108 @@
+---
+import { getCollection, render } from "astro:content";
+import Base from "../../layouts/Base.astro";
+import Subscribe from "../../components/Subscribe.astro";
+
+export async function getStaticPaths() {
+  const issues = await getCollection("letters", ({ data }) => !data.draft);
+  return issues.map((issue) => ({
+    params: { slug: issue.id },
+    props: { issue },
+  }));
+}
+
+const { issue } = Astro.props;
+const { Content } = await render(issue);
+const l = issue.data;
+
+const dateLabel = l.date.toLocaleDateString("en-GB", {
+  day: "numeric",
+  month: "long",
+  year: "numeric",
+});
+
+/* The issues either side, so a reader can walk the archive. */
+const all = (await getCollection("letters", ({ data }) => !data.draft)).sort(
+  (a, b) => a.data.number - b.data.number,
+);
+const at = all.findIndex((x) => x.id === issue.id);
+const previous = at > 0 ? all[at - 1] : undefined;
+const next = at > -1 && at < all.length - 1 ? all[at + 1] : undefined;
+---
+
+<Base
+  title={`${l.title} — The letter — OLMIKAYA`}
+  description={l.dek}
+  current="letter"
+  showSections={false}
+>
+  <article>
+    <header class="section">
+      <div class="wrap">
+        <div class="grid">
+          <div class="col-8 start-3 article-head reveal">
+            <p class="eyebrow">
+              The letter · No. {String(l.number).padStart(2, "0")}
+            </p>
+            <h1 class="display-l article-head__title">{l.title}</h1>
+            <p class="lead">{l.dek}</p>
+            <p class="meta">
+              <span>{dateLabel}</span>
+            </p>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <div class="section--tight">
+      <div class="wrap">
+        <div class="grid">
+          <div class="col-8 start-3">
+            <div class="prose reveal">
+              <Content />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </article>
+
+  <section class="section--tight">
+    <div class="wrap">
+      <div class="grid">
+        <div class="col-8 start-3 reveal">
+          <div class="briefs">
+            {
+              next && (
+                <a class="brief brief--top" href={`/letter/${next.id}/`}>
+                  <p class="brief__meta">
+                    <span>Next</span>
+                    <span>No. {String(next.data.number).padStart(2, "0")}</span>
+                  </p>
+                  <h2 class="brief__title">{next.data.title}</h2>
+                </a>
+              )
+            }
+            {
+              previous && (
+                <a class="brief brief--top" href={`/letter/${previous.id}/`}>
+                  <p class="brief__meta">
+                    <span>Previous</span>
+                    <span>No. {String(previous.data.number).padStart(2, "0")}</span>
+                  </p>
+                  <h2 class="brief__title">{previous.data.title}</h2>
+                </a>
+              )
+            }
+          </div>
+
+          <p class="small" style="margin-top: var(--sp-lg)">
+            <a class="link" href="/letter/">Every issue</a>
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <Subscribe source="letter-issue" archiveLink={false} />
+</Base>

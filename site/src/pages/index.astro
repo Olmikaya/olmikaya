@@ -23,7 +23,6 @@ const objects = (await getCollection("objects", ({ data }) => !data.draft)).sort
 const seasons = (await getCollection("seasons", ({ data }) => !data.draft)).sort(
   (a, b) => a.data.index - b.data.index,
 );
-const anyScaffold = seasons.some((s) => s.data.scaffold);
 
 const dateOf = (d: Date) =>
   d.toLocaleDateString("en-GB", { month: "short", year: "numeric" });
@@ -153,13 +152,13 @@ const mins = (a: (typeof articles)[number]) =>
     <section class="module">
       <div class="module-head">
         <h2 class="module-head__title">Objects</h2>
-        <a class="more" href="/objects/">All objects</a>
+        <a class="more" href="/shop/">All objects</a>
       </div>
 
       <div class="grid-dense grid-dense--4 grid-dense--ruled reveal">
         {
           objects.map((o) => (
-            <a class="tile__link" href="/objects/">
+            <a class="tile__link" href="/shop/">
               <Plate
                 bare
                 src={o.data.cover.src}
@@ -193,24 +192,12 @@ const mins = (a: (typeof articles)[number]) =>
               <p class="season__index">{String(s.data.index).padStart(2, "0")}</p>
               <h3 class="tile__title">{s.data.title}</h3>
               <p class="tile__meta">
-                <span>
-                  {s.data.scaffold ? "Awaiting the framework" : s.data.dates}
-                </span>
+                <span>{s.data.dates}</span>
               </p>
             </a>
           ))
         }
       </div>
-
-      {
-        anyScaffold && (
-          <p class="note reveal hang">
-            <strong>Scaffold.</strong> These slots are structural placeholders,
-            not proposed seasons. The OLMIKAYA seasonal framework was not
-            included with the brand assets and has not been invented here.
-          </p>
-        )
-      }
     </section>
   </div>
 

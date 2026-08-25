@@ -1,0 +1,37 @@
+---
+import Base from "../../layouts/Base.astro";
+
+/* Where /api/subscribe sends a reader whose browser posted the form itself,
+   without JavaScript. With the script running nobody ever arrives here. */
+---
+
+<Base
+  title="Check your email — OLMIKAYA"
+  description="One more click confirms your subscription to the OLMIKAYA letter."
+  current="letter"
+  showSections={false}
+  noindex
+>
+  <section class="section">
+    <div class="wrap">
+      <div class="grid">
+        <div class="col-7 stack reveal">
+          <p class="eyebrow">The letter</p>
+          <h1 class="display-l">One click to go.</h1>
+          <p class="lead">
+            We have sent you a note. Click the link in it to confirm, and
+            nothing is sent until you do.
+          </p>
+          <p class="small muted">
+            Nothing arrived? Check the folder your mail app files promotions
+            in. Adding us to your contacts keeps the letter itself out of it.
+          </p>
+          <p class="small">
+            <a class="link" href="/letter/">Past letters</a> ·
+            <a class="link" href="/journal/">The journal</a>
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+</Base>

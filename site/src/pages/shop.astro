@@ -1,0 +1,148 @@
+---
+import { getCollection } from "astro:content";
+import Base from "../layouts/Base.astro";
+import Plate from "../components/Plate.astro";
+import Subscribe from "../components/Subscribe.astro";
+
+const objects = (await getCollection("objects", ({ data }) => !data.draft)).sort(
+  (a, b) => a.data.order - b.data.order,
+);
+
+/* Filters are derived from the objects that exist, never from a hardcoded
+   list — the same rule sections follow in src/lib/sections.ts. A kind with
+   nothing in it produces no filter, so the bar can never point at nothing.
+   With only one kind there is nothing to filter, and the bar drops the
+   category side entirely. */
+const kinds = [...new Set(objects.map((o) => o.data.kind))].sort((a, b) =>
+  a.localeCompare(b),
+);
+---
+
+<Base
+  title="Shop — OLMIKAYA"
+  description="A small number of things, made slowly, with the people we write about."
+  current="shop"
+>
+  {/*
+    A shop grid — filter bar, sorting, three-up products — carrying each
+    object's availability where a price would sit. There is no cart and no
+    payment processing on this site. To sell, add a price field in
+    src/content.config.ts and mirror it in public/admin/config.yml.
+  */}
+
+  <h1 class="visually-hidden">Shop</h1>
+
+  <section class="section--tight">
+    <div class="wrap">
+      {/*
+        Controls are enhancement only: .shop-bar is display:none until the
+        script adds html.js. With the script absent or blocked every object
+        shows, in curated order, and nothing is a dead control.
+      */}
+      <div class="shop-bar" data-shop>
+        {
+          kinds.length > 1 && (
+            <div class="shop-filter" role="group" aria-label="Filter objects">
+              <button
+                class="shop-filter__link"
+                type="button"
+                data-shop-filter="all"
+                aria-pressed="true"
+              >
+                All objects
+              </button>
+              {kinds.map((kind) => (
+                <button
+                  class="shop-filter__link"
+                  type="button"
+                  data-shop-filter={kind}
+                  aria-pressed="false"
+                >
+                  {kind}
+                </button>
+              ))}
+            </div>
+          )
+        }
+
+        <div class="shop-sort">
+          <label class="visually-hidden" for="shop-sort">Sort objects</label>
+          <select class="shop-sort__select" id="shop-sort" data-shop-sort>
+            <option value="order">Default sorting</option>
+            <option value="name-asc">Sort by name, A–Z</option>
+            <option value="name-desc">Sort by name, Z–A</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="grid-dense grid-dense--3 shop-grid reveal" data-shop-grid>
+        {
+          objects.map((o, i) => (
+            <article
+              class="product"
+              data-product
+              data-kind={o.data.kind}
+              data-order={i}
+              data-name={o.data.name}
+            >
+              <Plate
+                bare
+                src={o.data.cover.src}
+                alt={o.data.cover.alt}
+                tone={o.data.cover.tone}
+                ratio="square"
+              />
+              <h2 class="product__name">{o.data.name}</h2>
+              <p class="product__price">{o.data.availability}</p>
+              <p class="product__note">{o.data.note}</p>
+              {o.data.maker && (
+                <p class="product__maker">Made with {o.data.maker}</p>
+              )}
+              {o.data.relatedArticle && (
+                <a class="more" href={`/journal/${o.data.relatedArticle}/`}>
+                  Read the story
+                </a>
+              )}
+            </article>
+          ))
+        }
+      </div>
+
+      <p class="shop-empty" data-shop-empty hidden>
+        Nothing in that kind yet.
+      </p>
+    </div>
+  </section>
+
+  <section class="section ground-cream">
+    <div class="wrap">
+      <div class="grid">
+        <div class="col-4 stack reveal">
+          <p class="eyebrow">Method</p>
+          <h2 class="h2">How anything gets made</h2>
+        </div>
+
+        <div class="col-7 start-6 reveal">
+          <div class="prose">
+            <p>
+              An object only exists because a story came first. We do not design
+              a product and then find someone to make it; we write about someone,
+              and occasionally that turns into something you can hold.
+            </p>
+            <p>
+              The maker is named on the object and paid a share, not a fee. Runs
+              are small and finite. When a run is gone it is gone, and nothing is
+              reissued to meet demand.
+            </p>
+            <p>
+              If we cannot make something better than what the maker already
+              sells, we do not make it, and we point you at theirs instead.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <Subscribe />
+</Base>

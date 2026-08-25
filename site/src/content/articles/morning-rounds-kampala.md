@@ -13,7 +13,7 @@ cover:
   ratio: portrait
   caption: The route starts at ten past five, before the traffic finds its shape.
 featured: false
-draft: false
+draft: true
 ---
 
 The route starts at ten past five. Not five, and not quarter past. Ten past,

@@ -6,7 +6,6 @@ import Subscribe from "../components/Subscribe.astro";
 const seasons = (await getCollection("seasons", ({ data }) => !data.draft)).sort(
   (a, b) => a.data.index - b.data.index,
 );
-const anyScaffold = seasons.some((s) => s.data.scaffold);
 
 const STRUCTURE = [
   {
@@ -58,28 +57,6 @@ const STRUCTURE = [
       </div>
     </div>
   </section>
-
-  {
-    anyScaffold && (
-      <section class="section--tight">
-        <div class="wrap">
-          <div class="grid">
-            <div class="col-8 reveal">
-              <p class="note">
-                <strong>This page is a scaffold.</strong>
-                The OLMIKAYA seasonal framework was listed among the brand assets
-                but did not arrive, and nothing here invents one. The slots below
-                are structural placeholders only — they are not proposed seasons,
-                and their titles are deliberately bracketed so they cannot be
-                mistaken for real ones. Fill them in from the CMS and the
-                brackets and this notice both disappear.
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-    )
-  }
 
   <section class="section">
     <div class="wrap">

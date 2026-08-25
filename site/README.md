@@ -171,15 +171,172 @@ which is part of why Cloudflare Pages is the simpler answer.
 Until this is done, `/admin/` loads but will not sign in. The site itself works
 from step 2 onward.
 
+### 4. Connect the letter
+
+Sign-ups post to `/api/subscribe`, a Cloudflare Pages Function at
+`functions/api/subscribe.js`. It runs on your own domain, so the provider key
+never reaches the browser and the reader never leaves the site to subscribe.
+
+**Where the file lives matters.** Pages looks for `functions/` at the *root
+directory* configured for the build — which is `site`, per the table above —
+so the endpoint is at `site/functions/api/subscribe.js`. At the repository root
+it is silently ignored and `/api/subscribe` 404s with no error anywhere.
+
+The provider is [Kit](https://kit.com), on its free plan.
+
+**`KIT_API_KEY`** — a **V4** key, which is not the same as the older V3 one and
+lives somewhere else in the dashboard:
+
+1. In Kit, click your name, top right → **Settings** → **Developer**.
+2. Under **V4 Keys**, click **Add a new key**.
+3. Copy it before closing the dialog. **It is shown once.** Lose it and you
+   cannot retrieve it — you have to Edit that key and Reset it, which
+   invalidates the old one.
+
+**`KIT_FORM_ID`** — the number in the form's own URL. Go to **Grow** →
+**Landing Pages & Forms** and open the form you want sign-ups to land on; the
+address bar reads `app.kit.com/forms/1357975/...` and `1357975` is the id.
+It is also in the `<form action>` of the form's HTML embed code.
+
+Which form matters: adding someone to a form is what triggers *that form's*
+confirmation email and welcome sequence. Point it at the one you actually want
+new readers to get.
+
+#### The form to build in Kit
+
+**Nobody ever sees this form.** The sign-up on the site is our own HTML,
+posting to our own endpoint; the Kit form exists only as the thing an address
+gets attached to. So its layout, colours and copy do not matter — what matters
+is the settings, and the confirmation email, which readers *do* see.
+
+Create it under **Grow → Landing Pages & Forms → Create new → Form → Inline**,
+then pick any template. Fill in:
+
+| Where | Setting | Value |
+|---|---|---|
+| Form builder | Form name | `OLMIKAYA letter — site sign-up` |
+| Settings → General | After subscribing | Show success message |
+| Settings → General | Success message | `Check your email to confirm.` |
+| Settings → Incentive Email | Send incentive email | **On** |
+| Settings → Incentive Email | Auto-confirm new members | **Off** — see below |
+| Settings → Incentive Email | Subject | `Confirm your subscription — the OLMIKAYA letter` |
+| Settings → Incentive Email | Button label | `Confirm subscription` |
+| Settings → Incentive Email | Redirect after confirming | `https://olmikaya.com/letter/confirmed/` |
+
+**Leave auto-confirm off.** That keeps double opt-in, which is the honest
+default, protects the sending reputation of the domain, and is what the site's
+own wording assumes — the form says *check your email and click to confirm*,
+and both `/letter/thank-you/` and the endpoint's response say the same. Turn
+auto-confirm on and all three become untrue.
+
+Until someone clicks that link Kit lists them as **inactive**. That is correct,
+not a fault.
+
+#### The confirmation email
+
+The one piece of this a reader actually reads. In OLMIKAYA's voice, not Kit's
+default:
+
+```
+You asked for the OLMIKAYA letter. One click confirms it, and nothing
+is sent until you do.
+
+It goes out once, at the end of each month: what we published, what we
+found and did not publish, and where we are going next. No more than
+twelve a year.
+
+[ Confirm subscription ]
+
+If you did not sign up, ignore this. Nothing further will arrive.
+```
+
+Keep it plain text with the single button. No banner image, no exclamation
+marks, no second call to action — the same restraint as the rest of the site.
+
+On the free plan you get **one sequence**, so do the welcoming here rather than
+spending the sequence on a one-email welcome. Save the sequence for when there
+is something that genuinely needs several.
+
+Check the key works before deploying anything:
+
+```bash
+curl https://api.kit.com/v4/account -H "X-Kit-Api-Key: YOUR_KEY"
+```
+
+Your account details back means the key is good. A 401 means it is not, or you
+copied a V3 key.
+
+Then add both in Cloudflare under **Workers & Pages → the project → Settings →
+Variables and Secrets**:
+
+| Variable | Type |
+|---|---|
+| `KIT_API_KEY` | **Secret** |
+| `KIT_FORM_ID` | Plain text |
+
+Set both for **Production and Preview**, or previews will report that sign-ups
+are closed. Until they are set the endpoint answers 503 and the form says
+sign-ups are not open yet — nobody is ever told they subscribed when they did
+not, and no address is dropped on the floor.
+
+Confirm the free plan's current subscriber limit on Kit's pricing page before
+you rely on it; these change.
+
+**Testing it.** The endpoint's logic is covered without touching Kit or
+spending a real address:
+
+```bash
+node tests/subscribe.test.mjs
+```
+
+`npm run dev` serves the pages but not the Function — Astro's dev server knows
+nothing about `functions/`, so submitting the form locally shows the failure
+state. To exercise the real endpoint end to end, either use a Cloudflare deploy
+preview, or build and serve it with Wrangler:
+
+```bash
+npx wrangler pages dev dist
+```
+
+**Swapping provider.** Everything Kit-specific is inside `subscribeToKit()`.
+Replace that one function and the two variable names; nothing else changes.
+
+---
+
+## The letter
+
+Issues live in `src/content/letters/`, one Markdown file each, written in the
+CMS under **The letter**. Publishing an issue puts it in the public archive at
+`/letter/` — it is not a private copy.
+
+The folder starts empty and the archive says so. Astro warns
+`The collection "letters" does not exist or is empty` on every build until the
+first issue exists; that is expected and clears itself.
+
+Three pages back it:
+
+```
+/letter/                What it is, the sign-up, and the archive
+/letter/<slug>/         One issue, with previous and next
+/letter/thank-you/      Where a sign-up lands without JavaScript
+/letter/sorry/          Where a failed one lands, so nobody is told
+                        they subscribed when they did not
+/letter/confirmed/      Where Kit sends them after they click Confirm
+```
+
+Both landing pages carry `noindex`. Nobody with JavaScript ever sees them —
+the script reports inline and the page never navigates.
+
 ---
 
 ## How the content is organised
 
-Four collections, each a folder of Markdown files:
+Five collections, each a folder of Markdown files:
 
 ```
 src/content/articles/     Journal pieces
 src/content/directory/    People and places
+src/content/letters/      Issues of the letter
 src/content/objects/      Things you make
 src/content/seasons/      The seasonal framework
 ```
@@ -200,8 +357,8 @@ produces no nav item and no page, so the site can never link to an empty
 section. Both an article's primary and secondary category count, so a
 Food/Ritual piece appears under both.
 
-They live at `/sections/<name>/` rather than at the top level, because the
-`Objects` category would otherwise collide with the `/objects/` product page.
+They live at `/sections/<name>/` rather than at the top level, so a category
+can never collide with a top-level page of the same name.
 
 ### Density
 
@@ -251,8 +408,11 @@ Marked in the pages themselves so it cannot be mistaken for finished work:
 - **The masthead** on `/about/` — left bracketed rather than filled with
   invented people.
 - **Product positioning** — the original brief was truncated mid-sentence at
-  "Products should feel like", so `/objects/` takes the most conservative
+  "Products should feel like", so `/shop/` takes the most conservative
   reading: objects as extensions of the reporting, no commerce mechanics, no
-  prices.
-- **The newsletter** — the form is inert and says so. Connect a provider by
-  replacing `initSubscribe()` in `public/assets/js/olmikaya.js`.
+  prices. The page is laid out as a shop grid, but the line under each object
+  is its `availability`, not a price — none has been set. To sell, add a price
+  field in `src/content.config.ts` and mirror it in `public/admin/config.yml`.
+- **The letter** — wired to Kit through `/api/subscribe`, but dormant until
+  `KIT_API_KEY` and `KIT_FORM_ID` are set in Cloudflare. Until then the form
+  says sign-ups are not open. See step 4 above.

@@ -1,0 +1,36 @@
+---
+import Base from "../../layouts/Base.astro";
+
+/* The failure counterpart of thank-you.astro. A reader without JavaScript
+   lands here rather than being told they signed up when they did not. */
+---
+
+<Base
+  title="That did not go through — OLMIKAYA"
+  description="The OLMIKAYA letter sign-up could not be completed."
+  current="letter"
+  showSections={false}
+  noindex
+>
+  <section class="section">
+    <div class="wrap">
+      <div class="grid">
+        <div class="col-7 stack reveal">
+          <p class="eyebrow">The letter</p>
+          <h1 class="display-l">That did not go through.</h1>
+          <p class="lead">
+            Nothing was saved, so nothing is half-done. Either the address had
+            a typo in it or the sign-up service did not answer.
+          </p>
+          <p class="small muted">
+            Trying again usually settles it. If it keeps failing, write to us
+            and we will add you by hand.
+          </p>
+          <p class="small">
+            <a class="link" href="/letter/">Back to the letter</a>
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+</Base>

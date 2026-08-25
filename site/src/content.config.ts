@@ -95,12 +95,32 @@ const objects = defineCollection({
     name: z.string(),
     note: z.string(),
     maker: z.string().optional(),
+    /* What sort of thing this is — "Cloth", "Paper", "Table". Free text,
+       not an enum: the shop filter bar is built from the kinds that actually
+       exist, the way sections are built from the articles that exist, so a
+       new kind needs no code change. */
+    kind: z.string().default("Objects"),
     /* Deliberately a free-text status, not a price. Nothing is for sale yet
        and no price should be invented. */
     availability: z.string().default("Not yet released"),
     relatedArticle: z.string().optional(),
     cover: image.default({}),
     order: z.number().int().default(999),
+    draft: z.boolean().default(false),
+  }),
+});
+
+/* Issues of the letter. One file per issue, published to the archive at
+   /letter/ as well as sent by email — the site is the permanent record. */
+const letters = defineCollection({
+  loader: glob({ base: "./src/content/letters", pattern: "**/*.md" }),
+  schema: z.object({
+    /* Issue number, as printed on the letter itself. */
+    number: z.number().int().positive(),
+    title: z.string(),
+    dek: z.string(),
+    /* The date it went out. */
+    date: z.coerce.date(),
     draft: z.boolean().default(false),
   }),
 });
@@ -112,11 +132,8 @@ const seasons = defineCollection({
     title: z.string(),
     question: z.string(),
     dates: z.string().optional(),
-    /* Until the real OLMIKAYA seasonal framework is supplied, seasons stay
-       flagged as scaffolding and render with a visible placeholder note. */
-    scaffold: z.boolean().default(true),
     draft: z.boolean().default(false),
   }),
 });
 
-export const collections = { articles, directory, objects, seasons };
+export const collections = { articles, directory, letters, objects, seasons };

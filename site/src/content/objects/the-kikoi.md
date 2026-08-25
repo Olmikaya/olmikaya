@@ -2,6 +2,7 @@
 name: The Kikoi
 note: The cloth from the story. A towel, a curtain, a sling, a tablecloth and a gift. Made with the weavers we wrote about, in the two colourways they already had.
 maker: The weavers in Mombasa
+kind: Cloth
 availability: Not yet released
 relatedArticle: notes-on-a-kikoi
 cover:

@@ -48,7 +48,7 @@ const hasCaption = Boolean(caption || credit);
       {hasCaption && (
         <figcaption>
           {caption && <span>{caption}</span>}
-          <span class="credit">{credit ?? "Photograph to come"}</span>
+          {credit && <span class="credit">{credit}</span>}
         </figcaption>
       )}
     </figure>

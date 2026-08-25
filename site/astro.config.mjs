@@ -30,5 +30,9 @@ export default defineConfig({
      base: "/olmikaya",
      -------------------------------------------------------------------- */
 
+  /* The products page was /objects/ until it was renamed to /shop/. Anything
+     already pointing at the old URL keeps working. Remove once nothing does. */
+  redirects: { "/objects": "/shop" },
+
   build: { format: "directory" },
 });

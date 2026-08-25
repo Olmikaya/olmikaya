@@ -81,7 +81,7 @@ collections:
           - { name: src, label: Image, widget: image, required: false }
           - { name: alt, label: Alt text, widget: string, required: false, hint: Describe the photograph for screen readers. }
           - { name: caption, label: Caption, widget: string, required: false }
-          - { name: credit, label: Credit, widget: string, required: false, default: "Photograph to come" }
+          - { name: credit, label: Credit, widget: string, required: false }
           - { name: tone, label: Plate tone, widget: select, default: sky, options: [sky, cream, green, ink, terracotta, maroon] }
           - { name: ratio, label: Shape, widget: select, default: landscape, options: [portrait, square, landscape, wide, cinema] }
       - { name: featured, label: Featured as the lead story, widget: boolean, default: false }
@@ -121,6 +121,37 @@ collections:
       - { name: draft, label: Draft, widget: boolean, default: true }
 
   # -------------------------------------------------------------------------
+  - name: letters
+    label: The letter
+    label_singular: Issue
+    folder: "site/src/content/letters"
+    create: true
+    slug: "{{slug}}"
+    preview_path: "letter/{{slug}}"
+    summary: "No. {{number}} — {{title}}"
+    sortable_fields: [number, date]
+    fields:
+      - name: number
+        label: Issue number
+        widget: number
+        value_type: int
+        min: 1
+        hint: As printed on the letter itself. One higher than the last one sent.
+      - { name: title, label: Title, widget: string }
+      - name: dek
+        label: Standfirst
+        widget: text
+        hint: One or two sentences describing the issue, shown in the archive.
+      - { name: date, label: Sent, widget: datetime, format: "YYYY-MM-DD", date_format: "DD/MM/YYYY", time_format: false }
+      - { name: draft, label: Draft, widget: boolean, default: true }
+      - name: body
+        label: The letter
+        widget: markdown
+        hint: >-
+          The issue as it goes out. Publishing it here puts it in the public
+          archive at /letter/ — it is not a private copy.
+
+  # -------------------------------------------------------------------------
   - name: objects
     label: Objects
     label_singular: Object
@@ -133,6 +164,11 @@ collections:
       - { name: name, label: Name, widget: string }
       - { name: note, label: Note, widget: text }
       - { name: maker, label: Made with, widget: string, required: false }
+      - name: kind
+        label: Kind
+        widget: string
+        default: Objects
+        hint: Groups the object in the shop filter bar. Reuse an existing kind where one fits.
       - name: availability
         label: Availability
         widget: string
@@ -153,7 +189,7 @@ collections:
           - { name: src, label: Image, widget: image, required: false }
           - { name: alt, label: Alt text, widget: string, required: false }
           - { name: caption, label: Caption, widget: string, required: false }
-          - { name: credit, label: Credit, widget: string, required: false, default: "Photograph to come" }
+          - { name: credit, label: Credit, widget: string, required: false }
           - { name: tone, label: Plate tone, widget: select, default: cream, options: [sky, cream, green, ink, terracotta, maroon] }
           - { name: ratio, label: Shape, widget: select, default: landscape, options: [portrait, square, landscape, wide, cinema] }
       - { name: order, label: Order, widget: number, default: 999, value_type: int }
@@ -173,9 +209,4 @@ collections:
       - { name: title, label: Title, widget: string }
       - { name: question, label: The question, widget: text, hint: The single question everything in this season answers to. }
       - { name: dates, label: Running dates, widget: string, required: false }
-      - name: scaffold
-        label: Still a placeholder
-        widget: boolean
-        default: true
-        hint: Untick once this holds the real framework. The scaffold notice disappears when no season is ticked.
       - { name: draft, label: Draft, widget: boolean, default: false }

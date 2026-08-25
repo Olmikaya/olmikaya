@@ -1,0 +1,40 @@
+---
+import Base from "../../layouts/Base.astro";
+
+/* Where Kit sends a reader after they click Confirm in the confirmation
+   email. Set as the redirect on the form's Incentive Email settings — see
+   the form design in README.md.
+
+   Distinct from thank-you.astro on purpose. That page is reached the moment
+   an address is submitted, when the subscription is still pending; this one
+   is reached only once it is real. */
+---
+
+<Base
+  title="You are on the list — OLMIKAYA"
+  description="Your subscription to the OLMIKAYA letter is confirmed."
+  current="letter"
+  showSections={false}
+  noindex
+>
+  <section class="section">
+    <div class="wrap">
+      <div class="grid">
+        <div class="col-7 stack reveal">
+          <p class="eyebrow">The letter</p>
+          <h1 class="display-l">That is confirmed.</h1>
+          <p class="lead">
+            The next letter reaches you at the end of the month. Until then
+            there is nothing else to do, and we will not email you for any
+            other reason.
+          </p>
+          <p class="small">
+            <a class="link" href="/letter/">Past letters</a> ·
+            <a class="link" href="/journal/">The journal</a> ·
+            <a class="link" href="/directory/">The directory</a>
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+</Base>

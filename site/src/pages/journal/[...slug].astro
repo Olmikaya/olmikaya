@@ -47,7 +47,7 @@ const others = (await getCollection("articles", ({ data }) => !data.draft))
             <p class="lead">{a.dek}</p>
             <p class="meta">
               <span>Words by {a.author}</span>
-              <span>{a.photographer || "Photographs to come"}</span>
+              {a.photographer && <span>{a.photographer}</span>}
               <span>{a.place}</span>
               <span>{dateLabel}</span>
               <span>{minutes} min read</span>

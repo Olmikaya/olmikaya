@@ -1,0 +1,113 @@
+---
+import { getCollection } from "astro:content";
+import Base from "../../layouts/Base.astro";
+import Subscribe from "../../components/Subscribe.astro";
+
+const issues = (await getCollection("letters", ({ data }) => !data.draft)).sort(
+  (a, b) => b.data.number - a.data.number,
+);
+
+const dateOf = (d: Date) =>
+  d.toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" });
+---
+
+<Base
+  title="The letter — OLMIKAYA"
+  description="One letter, at the end of each month. What we published, what we found, and where we are going next."
+  current="letter"
+  showSections={false}
+>
+  <section class="section--tight">
+    <div class="wrap">
+      <div class="grid">
+        <div class="col-7 stack reveal">
+          <p class="eyebrow">The letter</p>
+          <h1 class="display-l">Once a month, and never otherwise.</h1>
+          <p class="lead">
+            What we published, what we found and did not publish, and where we
+            are going next. It goes out at the end of the month, and no more
+            than twelve times a year.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <Subscribe source="letter" archiveLink={false} compact />
+
+  <section class="section">
+    <div class="wrap">
+      <div class="module module--first">
+        <div class="module-head">
+          <h2 class="module-head__title">The archive</h2>
+          {
+            issues.length > 0 && (
+              <p class="small muted">
+                {issues.length} {issues.length === 1 ? "issue" : "issues"}
+              </p>
+            )
+          }
+        </div>
+
+        {
+          issues.length > 0 ? (
+            <div class="briefs reveal">
+              {issues.map((issue) => (
+                <a class="brief brief--top" href={`/letter/${issue.id}/`}>
+                  <div class="stack-sm">
+                    <p class="brief__meta">
+                      <span>No. {String(issue.data.number).padStart(2, "0")}</span>
+                      <span>{dateOf(issue.data.date)}</span>
+                    </p>
+                    <h3 class="brief__title">{issue.data.title}</h3>
+                    <p class="card__dek">{issue.data.dek}</p>
+                  </div>
+                </a>
+              ))}
+            </div>
+          ) : (
+            <div class="grid">
+              <div class="col-7 reveal">
+                <p class="lead">The first letter has not gone out yet.</p>
+                <p class="small muted">
+                  Every issue is kept here once it has been sent, in full and
+                  without a sign-up wall.
+                </p>
+              </div>
+            </div>
+          )
+        }
+      </div>
+    </div>
+  </section>
+
+  <section class="section ground-cream">
+    <div class="wrap">
+      <div class="grid">
+        <div class="col-4 stack reveal">
+          <p class="eyebrow">Terms</p>
+          <h2 class="h2">What signing up means</h2>
+        </div>
+
+        <div class="col-7 start-6 reveal">
+          <div class="prose">
+            <p>
+              One email a month, from us, about our own work. Your address is
+              used for the letter and for nothing else. We do not sell it, rent
+              it, or hand it to anyone buying an audience.
+            </p>
+            <p>
+              Every issue carries an unsubscribe link at the foot, and it works
+              on the first click. Leaving takes no email to us and no reason
+              given.
+            </p>
+            <p>
+              The archive stays public and complete. Nothing published in the
+              letter is later put behind a sign-up.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</Base>

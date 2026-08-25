@@ -14,7 +14,6 @@ cover:
   tone: cream
   ratio: cinema
   caption: The table seats twenty-two comfortably. On a good Sunday it takes forty.
-  credit: Photograph to come
 featured: true
 draft: false
 ---

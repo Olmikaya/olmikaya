@@ -14,6 +14,11 @@
      08  Editorial (article body)
      09  Utilities
      10  Motion & reduced motion
+     11  Composition — page-level blocks
+     12  Small pieces
+     13  Markdown
+     14  Dense — index-page components
+     15  Shop — product index
    ========================================================================== */
 
 /* ==========================================================================
@@ -230,6 +235,14 @@ h3, .h3 {
 }
 .prose a:hover,
 .link:hover { text-decoration-color: currentColor; }
+
+/* On dark grounds maroon is unreadable. Cream is the correct role here —
+   never terracotta, which fails on ink and green. See the palette rule. */
+.on-dark .prose a,
+.on-dark .link {
+  color: var(--olmi-cream);
+  text-decoration-color: rgba(248, 233, 200, 0.45);
+}
 
 /* ==========================================================================
    04  LAYOUT & GRID
@@ -718,8 +731,8 @@ figcaption {
 .object__note { font-size: var(--step-small); color: var(--text-muted); }
 
 /* --- Newsletter ---------------------------------------------------------
-   NOT WIRED. Submission is inert and shows no success state. See README
-   for the exact integration point. */
+   Posts to /api/subscribe (functions/api/subscribe.js). Status states are
+   set by the script; the element stays empty until something is said. */
 
 .subscribe { display: flex; flex-direction: column; gap: var(--sp-md); }
 
@@ -771,6 +784,16 @@ figcaption {
 
 .button--ghost { background: transparent; color: var(--brand); }
 .button--ghost:hover { background: var(--olmi-maroon); color: var(--olmi-offwhite); }
+
+/* In flight. Not disabled — a disabled control drops out of the tab order
+   mid-interaction and strands the keyboard. aria-disabled says so instead. */
+.button[aria-disabled="true"] { opacity: 0.6; cursor: progress; }
+
+/* Sign-up status. The element is empty until the script fills it, so these
+   only ever paint on text that exists. */
+.subscribe__status:empty { display: none; }
+.subscribe__status--ok { color: var(--olmi-cream); }
+.subscribe__status--error { color: var(--olmi-sky); }
 
 /* Standing note used wherever a surface is a scaffold, not finished content. */
 .note {
@@ -1357,3 +1380,167 @@ a:hover > .lead-block__title, a:hover .lead-block__title { color: var(--brand); 
 
 /* Seasons index inside a dense tile wants to be smaller than in a .season. */
 .tile__link .season__index { font-size: 1.75rem; }
+
+/* ==========================================================================
+   15  SHOP — product index
+   --------------------------------------------------------------------------
+   The shop grid: a filter bar, a sort control and a three-up run of products.
+   Structure follows the shop reference in assets/img; the type, colour and
+   spacing are the OLMIKAYA system, not the reference's.
+
+   The price slot carries each object's AVAILABILITY, not a price. Nothing on
+   this site is for sale and no price has been set — see the standing note on
+   the page itself.
+   ========================================================================== */
+
+/* --- Control bar --------------------------------------------------------
+   Enhancement only. Hidden until the script sets html.js, so a reader
+   without JavaScript gets every object in curated order and no dead
+   controls. Never style these to show by default. */
+
+.shop-bar { display: none; }
+
+.js .shop-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-md);
+  flex-wrap: wrap;
+  margin-bottom: var(--sp-xl);
+}
+
+/* Sort alone still sits right, with nothing to its left. */
+.js .shop-bar > :only-child { margin-left: auto; }
+
+.shop-filter {
+  display: flex;
+  align-items: center;
+  gap: clamp(0.875rem, 1.8vw, 1.75rem);
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.shop-filter::-webkit-scrollbar { display: none; }
+
+.shop-filter__link {
+  font-family: var(--font-text);
+  font-size: var(--step-eyebrow);
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--text-muted);
+  background: none;
+  border: 0;
+  border-bottom: 1px solid transparent;
+  padding: var(--sp-xs) 0;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: color 0.2s var(--ease), border-color 0.2s var(--ease);
+}
+.shop-filter__link:hover { color: var(--text); }
+.shop-filter__link[aria-pressed="true"] {
+  color: var(--brand);
+  border-bottom-color: var(--brand);
+}
+
+/* --- Sort ---------------------------------------------------------------
+   Native <select>, stripped back to a line of text with its own caret. */
+
+.shop-sort { position: relative; display: inline-flex; align-items: center; }
+
+.shop-sort::after {
+  content: "";
+  position: absolute;
+  right: 0;
+  width: 0.4rem;
+  height: 0.4rem;
+  border-right: 1px solid var(--text-muted);
+  border-bottom: 1px solid var(--text-muted);
+  transform: translateY(-0.1em) rotate(45deg);
+  pointer-events: none;
+}
+
+.shop-sort__select {
+  appearance: none;
+  -webkit-appearance: none;
+  font-family: var(--font-text);
+  font-size: var(--step-eyebrow);
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--text-muted);
+  background: none;
+  border: 0;
+  border-radius: 0;
+  padding: var(--sp-xs) var(--sp-md) var(--sp-xs) 0;
+  cursor: pointer;
+  transition: color 0.2s var(--ease);
+}
+.shop-sort__select:hover { color: var(--text); }
+
+/* The options themselves render in the platform's menu, which does not
+   inherit the page ground. Set both so the list is never white-on-white. */
+.shop-sort__select option {
+  background: var(--olmi-offwhite);
+  color: var(--text);
+  text-transform: none;
+  letter-spacing: normal;
+}
+
+/* --- Grid ---------------------------------------------------------------
+   .grid-dense--3 carries the columns. Rows need more air than an index grid
+   because each cell holds a note under the name. */
+
+.shop-grid { row-gap: var(--sp-xl); }
+
+/* --- Product ------------------------------------------------------------ */
+
+.product {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-xs);
+}
+
+.product .plate,
+.product .plate-img { margin-bottom: var(--sp-sm); }
+
+/* Uppercase Inter, not Ovo: this is a label in a grid of labels, and the
+   reference sets product names the same way. Ovo stays on the editorial
+   headings where it belongs. */
+.product__name {
+  font-family: var(--font-text);
+  font-size: 0.8125rem;
+  font-weight: 500;
+  line-height: 1.35;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--text);
+}
+
+/* The reference's price line. Ours states availability — there is no price. */
+.product__price {
+  font-size: var(--step-small);
+  color: var(--text-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.product__note {
+  font-size: 0.8125rem;
+  line-height: 1.6;
+  color: var(--text-muted);
+  margin-top: var(--sp-2xs);
+}
+
+.product__maker {
+  font-size: 0.75rem;
+  color: var(--text-faint);
+}
+
+/* Filtered out by the script. Display, not visibility: the cell must leave
+   the grid so the remaining products close up. */
+.product.is-filtered-out { display: none; }
+
+.shop-empty {
+  font-size: var(--step-small);
+  color: var(--text-muted);
+  padding-block: var(--sp-lg);
+}

@@ -13,7 +13,7 @@ cover:
   ratio: portrait
   caption: Built in 1962, oriented to the wind, and still cooler inside than out.
 featured: false
-draft: false
+draft: true
 ---
 
 The house was finished in 1962 and has never had air conditioning installed. On
